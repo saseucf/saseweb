@@ -36,10 +36,10 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange>
                     <div className="flex flex-row p-2 items-center">
-                        <Link href={"/"}>
-                            <Image src={saselogo} alt="saselogo" height={100} width={100} className="flex-none"></Image>
+                        <Link href={"/"} className="grow">
+                            <Image src={saselogo} alt="saselogo" height={150} width={150} className="flex-none"></Image>
                         </Link>
-                        <div className="grow ml-5">
+                        <div className="mr-5">
                             <NavigationMenu>
                                 <NavigationMenuList>
                                     <NavigationMenuItem>
@@ -93,7 +93,7 @@ export default function RootLayout({
                             </NavigationMenu>
                         </div>
 
-                        <div className="flex-none">
+                        <div >
                             <ModeToggle></ModeToggle>
                         </div>
 
