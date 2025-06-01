@@ -8,22 +8,30 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart"
 
+import {
+    Card,
+    CardAction,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 
 
-export const description = "A simple pie chart"
 
 const chartData = [
-    { major: "compsci", percent: 26, fill: "var(--chart-1)" },
-    { major: "premed", percent: 15.7, fill: "var(--chart-2)" },
-    { major: "meche", percent: 12.4, fill: "var(--chart-3)" },
-    { major: "aero", percent: 9.1, fill: "var(--chart-4)" },
-    { major: "bio", percent: 7, fill: "var(--chart-5)" },
-    { major: "compeng", percent: 5.4, fill: "var(--chart-6)" },
-    { major: "indeng", percent: 3.7, fill: "var(--chart-6)" },
-    { major: "mateng", percent: 2.9, fill: "var(--chart-6)" },
-    { major: "civeng", percent: 2.5, fill: "var(--chart-6)" },
-    { major: "eleceng", percent: 2.1, fill: "var(--chart-6)" },
-    { major: "other", percent: 13.2, fill: "var(--chart-6)" }
+    { major: "compsci", percent: 26, fill: "#6ce5e8" },
+    { major: "premed", percent: 15.7, fill: "#41b8d5" },
+    { major: "meche", percent: 12.4, fill: "#2d8bba" },
+    { major: "aero", percent: 9.1, fill: "#2f5f98" },
+    { major: "bio", percent: 7, fill: "#31356e" },
+    { major: "compeng", percent: 5.4, fill: "#5e3967" },
+    { major: "indeng", percent: 3.7, fill: "#895273" },
+    { major: "mateng", percent: 2.9, fill: "#b97286" },
+    { major: "civeng", percent: 2.5, fill: "#e28385" },
+    { major: "eleceng", percent: 2.1, fill: "#fe9273" },
+    { major: "other", percent: 13.2, fill: "#ffa95a" }
 ]
 
 const chartConfig = {
@@ -80,15 +88,15 @@ const Page = () => {
             <h1 className="text-4xl font-semibold text-center p-10">
                 About
             </h1>
-            <p className="text-2xl text-center pr-40 pl-40">
+            <p className="text-2xl text-center pr-60 pl-60">
                 Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a ​nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage ​scientific and engineering professionals achieve their full potential.
             </p>
-            <p className="text-2xl text-center pr-40 pl-40">
+            <p className="text-2xl text-center pr-60 pl-60">
                 Founded shortly before the pandemic in 2020, the University of Central Florida SASE Chapter have ​made tremendous strides towards the development of our members centered around core values of ​leadership, professionalism, diversity, and service. Our events and programs not only advance our ​professional mission, but fosters a community that celebrates Asian heritage.
             </p>
 
             <p className="text-4xl font-semibold text-center p-10">Mission Statement</p>
-            <p className="text-2xl text-center pr-40 pl-40">
+            <p className="text-2xl text-center pr-60 pl-60">
                 We work to maintain and grow a safe and inclusive space for members that prioritizes pillars of ​professional development, culture, and community. We encourage members to leverage the ​experiences, knowledge, and skills gained through our organization to pursue their goals and ​aspirations. We aim to empower members by showcasing how their diverse cultural backgrounds can ​broaden perspectives and inspire collaborative efforts. We are committed to promoting service ​opportunities that allow members to give back to the community and make a meaningful impact. UCF ​SASE welcomes everyone, regardless of background or major!
             </p>
             <p className="text-4xl font-semibold text-center p-10">Member Demographics</p>
@@ -106,8 +114,26 @@ const Page = () => {
                 </PieChart>
             </ChartContainer>
             <p className="text-4xl font-semibold text-center p-10">Awards & Accomplishments</p>
-
+            <p className="text-2xl text-center pr-60 pl-60">In 2023, UCF SASE received the distinguished honor to host one of National SASE’s annual ​regional conferences, the SASE Southeast Regional Conference (SERC).</p>
+            <div className="flex justify-center items-center p-10 w-full">
+                <div className='w-full max-w-2xl'>
+                    <Card className="bg-amber-200 text-black transition-transform duration-200 transform hover:scale-110">
+                        <CardHeader>
+                            <CardTitle>Card Title</CardTitle>
+                            <CardDescription>Card Description</CardDescription>
+                            <CardAction>Card Action</CardAction>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Card Content</p>
+                        </CardContent>
+                        <CardFooter>
+                            <p>Card Footer</p>
+                        </CardFooter>
+                    </Card>
+                </div>
+            </div>
         </div>
+
     )
 }
 
