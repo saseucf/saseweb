@@ -20,8 +20,8 @@ import hero from "../public/hero.jpg";
 import Image from "next/image";
 export default function Home() {
     return (
-        <div className="grid h-screen w-screen grid-flow-row auto-rows-max">
-            <div className="flex h-1/1.5 relative">
+        <div className="h-screen w-screen">
+            <div className="flex h-1/2 relative">
                 <Image src={hero} alt="hero" className="object-cover blur-sm " />
                 <p className="absolute top-50 sm:text-4xl md:text-3xl lg:text-9xl font-semibold text-white ">UCF Society of Asian ​Scientists & Engineers</p>
             </div>
