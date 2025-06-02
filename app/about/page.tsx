@@ -10,14 +10,10 @@ import {
 
 import {
     Card,
-    CardAction,
     CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
 } from "@/components/ui/card"
 
+import { Flower } from 'lucide-react';
 
 
 const chartData = [
@@ -85,8 +81,8 @@ const chartConfig = {
 const Page = () => {
     return (
         <div className="grid grid-rows-1">
-            <h1 className="text-4xl font-semibold text-center p-10">
-                About
+            <h1 className="text-6xl font-bold text-center p-10">
+                ABOUT
             </h1>
             <p className="text-2xl pr-60 pl-60">
                 Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a ​nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage ​scientific and engineering professionals achieve their full potential.
@@ -117,18 +113,23 @@ const Page = () => {
             <p className="text-2xl pr-60 pl-60">In 2023, UCF SASE received the distinguished honor to host one of National SASE’s annual ​regional conferences, the SASE Southeast Regional Conference (SERC).</p>
             <div className="flex justify-center items-center p-10 w-full">
                 <div className='w-full max-w-2xl'>
-                    <Card className="bg-amber-200 text-black transition-transform duration-200 transform hover:scale-110">
-                        <CardHeader>
-                            <CardTitle>Card Title</CardTitle>
-                            <CardDescription>Card Description</CardDescription>
-                            <CardAction>Card Action</CardAction>
-                        </CardHeader>
+                    <Card className="bg-awardyellow text-black transition-transform duration-200 transform hover:scale-110">
                         <CardContent>
-                            <p>Card Content</p>
+                            <p className='font-bold text-xl text-center'>2023-2024</p>
+
+                            <p className='pt-3'>
+
+                                <span><Flower className="inline"></Flower>  APAC Hidden Lotus Award : Most Innovative Organization</span> </p>
+                            <p className='pt-3 font-bold text-xl text-center'>2022-2023</p>
+                            <p className='pt-3'>
+
+
+                                <Flower className="inline"></Flower>  APAC Hidden Lotus Award: Most Innovative Organization
+                            </p>
+                            <p><Flower className="inline-block"></Flower>  APAC Hidden Lotus Award: Organization of Distinction</p>
+                            <p className='pt-3'>The Hidden Lotus Awards, presented by APAC (UCF’s Asian Pacific American ​Coalition), celebrates the work and impact of student organizations that promote ​cultural awareness, advocacy, and community engagement.
+                            </p>
                         </CardContent>
-                        <CardFooter>
-                            <p>Card Footer</p>
-                        </CardFooter>
                     </Card>
                 </div>
             </div>
