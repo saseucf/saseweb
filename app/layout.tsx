@@ -5,12 +5,10 @@ import { Geist } from 'next/font/google'
 import {
     NavigationMenu,
     NavigationMenuContent,
-    NavigationMenuIndicator,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
     NavigationMenuTrigger,
-    NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
 import { ThemeProvider } from "@/components/themeprovider";
 import Link from "next/link";
