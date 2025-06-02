@@ -7,24 +7,35 @@ import {
 } from "@/components/ui/card"
 
 import { Briefcase } from "lucide-react";
+import { HandHeart } from "lucide-react";
+import { HeartHandshake } from "lucide-react";
 import hero from "../public/hero.jpg";
-import saselogo from "../public/saselogo.png"
+import lockheed from "../public/lockheed.png";
+import northrop from "../public/northrop.svg";
+import blueorigin from "../public/blueorigin.png";
 import Image from "next/image";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
 export default function Home() {
+    useEffect(() => {
+        AOS.init({
+        });
+    }, []);
     return (
         <div className="h-screen w-screen">
-            <div className="flex h-full relative">
-                <Image src={hero} alt="hero" className="object-cover blur-sm " />
-                <p className="absolute top-90 sm:text-4xl md:text-5xl lg:text-8xl font-semibold text-white spacing -tracking-[0.25rem]">UCF Society of Asian ​Scientists & Engineers</p>
+            <div className="flex h-full relative" >
+                <Image src={hero} alt="hero" className="object-cover grayscale-75" />
+                <p className="absolute translate-y-[50%] top-[50%] sm:text-4xl md:text-5xl lg:text-8xl font-semibold text-white spacing -tracking-[0.25rem]" data-aos="fade-up" data-aos-duration="1000">Society of Asian ​Scientists & Engineers</p>
             </div>
-            <div className="flex flex-col items-center space-y-4 p-10">
+            <div className="flex flex-col items-center space-y-4 p-10" data-aos="fade-up" data-aos-duration="1000">
                 <p className="text-4xl font-bold text-saseblue">Welcome to the UCF <span className="text-sasegreen">SASE</span> Website</p>
-                <p className="text-2xl text-center lg:pr-40 lg:pl-40">
+                <p className="text-2xl text-center lg:pr-100 lg:pl-100">
                     Since its founding in 2007, the Society of Asian Scientists and Engineers ​(SASE) has grown to a nationally recognized organization with 20,000 ​members worldwide, striving to help Asian heritage scientific and ​engineering professionals achieve their full potential. The University of ​Central Florida SASE Chapter was founded in 2020, shortly before the ​pandemic. With only 4 years under our belt, we have made tremendous ​strides towards the development of our members centered around core ​values of career, diversity, and service. Our events and programs not only ​advance professional pursuits, but also foster a supportive community that ​celebrates each and every member’s story.
                 </p>
 
             </div>
-            <div className="flex flex-col grow items-center space-y-4 p-10">
+            <div className="flex flex-col grow items-center space-y-4 p-40" data-aos="fade-up" data-aos-duration="1000">
                 <p className="text-5xl font-bold text-saseblue italic">3 Core Values</p>
 
                 <div className="flex">
@@ -44,7 +55,7 @@ export default function Home() {
                         <CardHeader>
                             <CardTitle className="text-2xl text-center">Service</CardTitle>
                             <div className="flex justify-center">
-                                <Briefcase size={32} className=""></Briefcase>
+                                <HandHeart size={32} className=""></HandHeart>
                             </div>
                         </CardHeader>
                         <CardContent>
@@ -56,7 +67,7 @@ export default function Home() {
                         <CardHeader>
                             <CardTitle className="text-2xl text-center">Diversity</CardTitle>
                             <div className="flex justify-center">
-                                <Briefcase size={32} className=""></Briefcase>
+                                <HeartHandshake size={32} className=""></HeartHandshake>
                             </div>
                         </CardHeader>
                         <CardContent>
@@ -68,9 +79,9 @@ export default function Home() {
 
 
             </div>
-            <div className="flex flex-col grow items-center space-y-4 p-10">
+            <div className="flex flex-col grow items-center space-y-4 p-10" data-aos="fade-up" data-aos-duration="1000">
                 <p className="text-5xl font-bold text-saseblue">SPONSORS</p>
-                <p className="text-2xl">The University of Central Florida SASE Chapter works to
+                <p className="text-2xl pr-100 pl-100">The University of Central Florida SASE Chapter works to
                     maintain and grow a safe and inclusive environment for
                     our members while also creating various opportunities for
                     the advancement of member technical and interpersonal
@@ -81,12 +92,12 @@ export default function Home() {
                     ucfsase.evp@gmail.com for any questions.</p>
 
                 <div className="flex flex-row">
-                    <Image className="m-10 grayscale-100" src={saselogo} alt="sponsorlogo" height={200} width={200}></Image>
-                    <Image className="m-10 grayscale-100" src={saselogo} alt="sponsorlogo" height={200} width={200}></Image>
-                    <Image className="m-10 grayscale-100" src={saselogo} alt="sponsorlogo" height={200} width={200}></Image>
+                    <Image className="m-10 " src={lockheed} alt="sponsorlogo" width={300}></Image>
+                    <Image className="m-10 " src={northrop} alt="sponsorlogo" width={200}></Image>
+                    <Image className="m-10 " src={blueorigin} alt="sponsorlogo" width={200}></Image>
                 </div>
             </div>
 
-        </div>
+        </div >
     );
 }

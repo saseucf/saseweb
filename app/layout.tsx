@@ -1,4 +1,4 @@
-
+"use client";
 import "./globals.css";
 import { ModeToggle } from "@/components/modechanger";
 import { Geist } from 'next/font/google'
