@@ -26,7 +26,7 @@ export default function Home() {
         <div className="h-screen w-screen">
             <div className="flex h-full relative" >
                 <Image src={hero} alt="hero" className="object-cover grayscale-75" />
-                <p className="absolute translate-y-[50%] top-[50%] sm:text-4xl md:text-5xl lg:text-8xl font-semibold text-white spacing -tracking-[0.25rem]" data-aos="fade-up" data-aos-duration="1000">Society of Asian ​Scientists & Engineers</p>
+                <p className="absolute translate-y-[50%] top-[40%] sm:text-4xl md:text-5xl lg:text-9xl font-bold spacing -tracking-[0.25rem] text-saseblue" data-aos="fade-up" data-aos-duration="1000">Society of Asian ​Scientists & Engineers</p>
             </div>
             <div className="flex flex-col items-center space-y-4 p-10" data-aos="fade-up" data-aos-duration="1000">
                 <p className="text-4xl font-bold text-saseblue">Welcome to the UCF <span className="text-sasegreen">SASE</span> Website</p>
@@ -92,9 +92,9 @@ export default function Home() {
                     ucfsase.evp@gmail.com for any questions.</p>
 
                 <div className="flex flex-row">
-                    <Image className="m-10 " src={lockheed} alt="sponsorlogo" width={300}></Image>
-                    <Image className="m-10 " src={northrop} alt="sponsorlogo" width={200}></Image>
-                    <Image className="m-10 " src={blueorigin} alt="sponsorlogo" width={200}></Image>
+                    <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={lockheed} alt="sponsorlogo" width={300}></Image>
+                    <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={northrop} alt="sponsorlogo" width={200}></Image>
+                    <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={blueorigin} alt="sponsorlogo" width={200}></Image>
                 </div>
             </div>
 
