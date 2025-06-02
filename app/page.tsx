@@ -6,13 +6,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "@/components/ui/carousel"
 import { Briefcase } from "lucide-react";
 import hero from "../public/hero.jpg";
 import saselogo from "../public/saselogo.png"
