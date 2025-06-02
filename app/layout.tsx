@@ -1,7 +1,7 @@
 
 import "./globals.css";
 import { ModeToggle } from "@/components/modechanger";
-import { Inter } from 'next/font/google'
+import { Geist } from 'next/font/google'
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -18,7 +18,7 @@ import Image from "next/image";
 import saselogo from "@/public/saselogo.png";
 
 
-const inter = Inter({
+const geist = Geist({
     subsets: ['latin'],
     display: 'swap',
 })
@@ -29,7 +29,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className={inter.className}>
+        <html lang="en" className={geist.className}>
             <body>
                 <ThemeProvider attribute="class"
                     defaultTheme="system"

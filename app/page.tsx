@@ -23,7 +23,7 @@ export default function Home() {
         <div className="h-screen w-screen">
             <div className="flex h-1/2 relative">
                 <Image src={hero} alt="hero" className="object-cover blur-sm " />
-                <p className="absolute top-50 sm:text-4xl md:text-3xl lg:text-9xl font-semibold text-white ">UCF Society of Asian ​Scientists & Engineers</p>
+                <p className="absolute top-30 sm:text-4xl md:text-5xl lg:text-8xl font-semibold text-white ">UCF Society of Asian ​Scientists & Engineers</p>
             </div>
             <div className="flex flex-col items-center space-y-4 p-10">
                 <p className="text-4xl font-bold text-saseblue">Welcome to the UCF <span className="text-sasegreen">SASE</span> Website</p>
