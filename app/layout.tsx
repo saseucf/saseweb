@@ -14,7 +14,14 @@ import { ThemeProvider } from "@/components/themeprovider";
 import Link from "next/link";
 import Image from "next/image";
 import saselogo from "@/public/saselogo.png";
-
+import { Home } from "lucide-react";
+import { Calendar } from "lucide-react";
+import { Info } from "lucide-react";
+import { Book } from "lucide-react";
+import { File } from "lucide-react";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
 
 const geist = Geist({
     subsets: ['latin'],
@@ -26,11 +33,16 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    useEffect(() => {
+        AOS.init({
+        });
+    }, []);
     return (
         <html lang="en" className={geist.className}>
+
             <body>
                 <ThemeProvider attribute="class"
-                    defaultTheme="system"
+                    defaultTheme="dark"
                     enableSystem
                     disableTransitionOnChange>
                     <div className="flex flex-row p-2 items-center">
@@ -38,44 +50,50 @@ export default function RootLayout({
                             <Image src={saselogo} alt="saselogo" height={150} width={150} className="flex-none"></Image>
                         </Link>
                         <div className="mr-5">
-                            <NavigationMenu>
+                            <NavigationMenu className="font-extrabold">
                                 <NavigationMenuList>
                                     <NavigationMenuItem>
-                                        <Link href={'/'}><NavigationMenuLink>Home</NavigationMenuLink></Link>
+                                        <Link href={'/'}><NavigationMenuLink><p>
+                                            <Home className="inline" size={16}></Home>    Home
+                                        </p></NavigationMenuLink></Link>
                                     </NavigationMenuItem>
                                     <NavigationMenu>
                                         <NavigationMenuItem>
                                             <Link href={"/about"}>
-                                                <NavigationMenuTrigger>
-                                                    About
-                                                    <NavigationMenuContent>
-                                                        <NavigationMenuLink>About</NavigationMenuLink>
-                                                    </NavigationMenuContent>
-                                                </NavigationMenuTrigger>
+                                                <NavigationMenuTrigger className="font-extrabold"><p>
+                                                    <Info className="inline" size={16}></Info>  About
+                                                </p></NavigationMenuTrigger>
+
+                                                <NavigationMenuContent>
+                                                    <NavigationMenuLink>Info</NavigationMenuLink>
+                                                </NavigationMenuContent>
+
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
                                     <NavigationMenu>
                                         <NavigationMenuItem>
                                             <Link href={"/events"}>
-                                                <NavigationMenuTrigger>
-                                                    Events
-                                                    <NavigationMenuContent>
-                                                        <NavigationMenuLink>Link</NavigationMenuLink>
-                                                    </NavigationMenuContent>
+                                                <NavigationMenuTrigger className="font-extrabold">
+                                                    <p><Calendar className="inline" size={16}></Calendar>  Events</p>
+
                                                 </NavigationMenuTrigger>
+                                                <NavigationMenuContent>
+                                                    <NavigationMenuLink>Link</NavigationMenuLink>
+                                                </NavigationMenuContent>
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
                                     <NavigationMenu>
                                         <NavigationMenuItem>
                                             <Link href={"/programs"}>
-                                                <NavigationMenuTrigger>
-                                                    Programs
-                                                    <NavigationMenuContent>
-                                                        <NavigationMenuLink>Link</NavigationMenuLink>
-                                                    </NavigationMenuContent>
+                                                <NavigationMenuTrigger className="font-extrabold">
+                                                    <p><File className="inline" size={16}></File>  Programs</p>
+
                                                 </NavigationMenuTrigger>
+                                                <NavigationMenuContent>
+                                                    <NavigationMenuLink>Link</NavigationMenuLink>
+                                                </NavigationMenuContent>
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
@@ -83,7 +101,7 @@ export default function RootLayout({
                                         <NavigationMenuItem>
                                             <Link href={"/resources"}>
                                                 <NavigationMenuLink>
-                                                    Resources</NavigationMenuLink>
+                                                    <p><Book className="inline"></Book>  Resources</p></NavigationMenuLink>
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
@@ -98,7 +116,7 @@ export default function RootLayout({
                     </div>
                     {children}
                 </ThemeProvider>
-            </body>
+            </body >
         </html >
     );
 }
