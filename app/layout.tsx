@@ -22,6 +22,7 @@ import { File } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 const geist = Geist({
     subsets: ['latin'],
@@ -102,6 +103,15 @@ export default function RootLayout({
                                             <Link href={"/resources"}>
                                                 <NavigationMenuLink>
                                                     <p><Book className="inline"></Book>  Resources</p></NavigationMenuLink>
+                                            </Link>
+                                        </NavigationMenuItem>
+                                    </NavigationMenu>
+                                    <NavigationMenu >
+                                        <NavigationMenuItem>
+                                            <Link href={"/login"}>
+                                                <Button variant="outline" className="font-extrabold gap-x-100">
+                                                    <p>Login</p>
+                                                </Button>
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
