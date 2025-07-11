@@ -21,8 +21,10 @@ import { Book } from "lucide-react";
 import { File } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import supabase from "@/lib/auth";
 
 const geist = Geist({
     subsets: ['latin'],
@@ -34,7 +36,29 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // call unsubscribe to remove the callback
+
     useEffect(() => {
+        const { data } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log(event, session)
+
+            if (event === 'INITIAL_SESSION') {
+                // handle initial session
+            } else if (event === 'SIGNED_IN') {
+                setIsLoggedIn(true);
+            } else if (event === 'SIGNED_OUT') {
+                // handle sign out event
+                setIsLoggedIn(false);
+            } else if (event === 'PASSWORD_RECOVERY') {
+                // handle password recovery event
+            } else if (event === 'TOKEN_REFRESHED') {
+                // handle token refreshed event
+            } else if (event === 'USER_UPDATED') {
+                // handle user updated event
+            }
+        })
         AOS.init({
         });
     }, []);
@@ -108,11 +132,12 @@ export default function RootLayout({
                                     </NavigationMenu>
                                     <NavigationMenu >
                                         <NavigationMenuItem>
-                                            <Link href={"/login"}>
+                                            {isLoggedIn ? <Avatar><AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                <AvatarFallback>CN</AvatarFallback></Avatar> : <Link href={"/login"}>
                                                 <Button variant="outline" className="font-extrabold gap-x-100">
                                                     <p>Login</p>
                                                 </Button>
-                                            </Link>
+                                            </Link>}
                                         </NavigationMenuItem>
                                     </NavigationMenu>
                                 </NavigationMenuList>
