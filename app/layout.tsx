@@ -41,7 +41,7 @@ export default function RootLayout({
     // call unsubscribe to remove the callback
 
     useEffect(() => {
-        const { data } = supabase.auth.onAuthStateChange((event, session) => {
+        const { } = supabase.auth.onAuthStateChange((event, session) => {
             console.log(event, session)
 
             if (event === 'INITIAL_SESSION') {
@@ -62,6 +62,7 @@ export default function RootLayout({
         AOS.init({
         });
     }, []);
+
     return (
         <html lang="en" className={geist.className}>
 

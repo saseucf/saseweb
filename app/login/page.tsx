@@ -1,5 +1,4 @@
 import { LoginForm } from "@/components/login-form"
-import supabase from "@/lib/auth"
 
 export default function Page() {
     return (
