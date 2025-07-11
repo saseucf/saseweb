@@ -1,12 +1,21 @@
-# SASE Web Application
+# UCF SASE Website
 
-Welcome to the SASE Web Application! This project is built using [Next.js](https://nextjs.org) and is designed to provide a seamless user experience for account registration and authentication. It leverages Supabase for backend authentication and modern UI components for a clean and responsive design.
+Welcome to the official repository for the UCF SASE (Society of Asian Scientists and Engineers) website! This project is built using [Next.js](https://nextjs.org) and serves as the online platform for UCF SASE, providing tools for account registration, authentication, and event management. It leverages Supabase for backend authentication and modern UI components for a clean and responsive design.
+
+## Purpose
+
+The UCF SASE website is designed to:
+- Facilitate user registration and authentication for members.
+- Provide information about upcoming events and activities.
+- Serve as a hub for resources and tools to support the UCF SASE community.
+- Promote professional development, cultural awareness, and community engagement among students.
 
 ## Features
 
 - **User Registration**: Create accounts with email and password.
 - **Authentication**: Secure login and signup powered by Supabase.
-- **Modern UI**: Built with reusable and customizable components.
+- **Event Management**: Display and manage events for members.
+- **Modern UI**: Built with reusable and customizable components for a seamless user experience.
 - **Next.js Framework**: Fast and scalable web application framework.
 - **Optimized Fonts**: Uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) for performance and aesthetics.
 
