@@ -133,8 +133,10 @@ export default function RootLayout({
                                     </NavigationMenu>
                                     <NavigationMenu >
                                         <NavigationMenuItem>
-                                            {isLoggedIn ? <Avatar><AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                                <AvatarFallback>CN</AvatarFallback></Avatar> : <Link href={"/login"}>
+                                            {isLoggedIn ? <Link href={`/profile/${localStorage.getItem("userid")}`}>
+                                                <Avatar><AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                    <AvatarFallback>CN</AvatarFallback></Avatar>
+                                            </Link> : <Link href={"/login"}>
                                                 <Button variant="outline" className="font-extrabold gap-x-100">
                                                     <p>Login</p>
                                                 </Button>

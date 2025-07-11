@@ -16,12 +16,16 @@ import Link from "next/link"
 import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
 
+
+
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+
     const router = useRouter()
     const [email, setEmail] = useState("")
+
     const [password, setPassword] = useState("")
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -35,6 +39,7 @@ export function LoginForm({
             console.error("Error signing up:", error.message);
         } else {
             console.log("User signed up:", data.user);
+            localStorage.setItem("userid", data.user.id)
             router.push("/")
         }
     }
