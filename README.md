@@ -1,8 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SASE Web Application
+
+Welcome to the SASE Web Application! This project is built using [Next.js](https://nextjs.org) and is designed to provide a seamless user experience for account registration and authentication. It leverages Supabase for backend authentication and modern UI components for a clean and responsive design.
+
+## Features
+
+- **User Registration**: Create accounts with email and password.
+- **Authentication**: Secure login and signup powered by Supabase.
+- **Modern UI**: Built with reusable and customizable components.
+- **Next.js Framework**: Fast and scalable web application framework.
+- **Optimized Fonts**: Uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) for performance and aesthetics.
 
 ## Getting Started
 
-First, run the development server:
+To run the project locally, follow these steps:
+
+### Prerequisites
+
+Ensure you have the following installed:
+- Node.js
+- npm, yarn, pnpm, or bun (package managers)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/sase-web.git
+   cd sase-web
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   # or
+   bun install
+   ```
+
+### Running the Development Server
+
+Start the development server:
 
 ```bash
 npm run dev
@@ -14,23 +53,36 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **`components/`**: Contains reusable UI components like `RegisterForm`.
+- **`lib/`**: Includes utility functions and Supabase configuration.
+- **`app/`**: Next.js application pages and routing.
+
+## Deployment
+
+Deploy your application easily using [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), the creators of Next.js.
+
+For detailed deployment instructions, refer to the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+Explore the following resources to learn more about the technologies used:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js Documentation](https://nextjs.org/docs): Learn about Next.js features and API.
+- [Supabase Documentation](https://supabase.com/docs): Understand how Supabase works for authentication and database management.
+- [Learn Next.js](https://nextjs.org/learn): Interactive Next.js tutorial.
+- [Next.js GitHub Repository](https://github.com/vercel/next.js): Contribute to Next.js development.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Feedback and Contributions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+We welcome feedback and contributions! Feel free to open issues or submit pull requests to improve the project.
+
+---
+Thank you for contributing!
