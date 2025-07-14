@@ -1,3 +1,4 @@
+// HTTP function access supabase edge function
 export async function POST(request: Request) {
   const body = await request.json();
 
