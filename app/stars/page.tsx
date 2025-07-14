@@ -27,7 +27,7 @@ export default function Page() {
                 setLoading(false);
             })
             .catch((error) => {
-                setError("Failed to fetch data.");
+                setError("Failed to fetch data: " + error.message);
                 setLoading(false);
             });
     }, []);
