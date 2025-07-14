@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 
 export default function Page() {
-    const [data, setData] = useState<Object>();
+    const [data, setData] = useState<object>();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +54,7 @@ export default function Page() {
                         <div className="rounded p-4 text-base text-center">
                             {data
                                 ? "+50 Stars added to your account!"
-                                : "No message found in response."}
+                                : error}
                         </div>
                     )}
                 </CardContent>

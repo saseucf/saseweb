@@ -32,7 +32,7 @@ export default function Page({
     }
     const [edit, setEdit] = useState(false)
     const [stars, setStars] = useState(0)
-    stars === 0 && fetchStars().then(fetchedStars => setStars(fetchedStars))
+    fetchStars().then(fetchedStars => setStars(fetchedStars))
     return (
         <div className="flex items-center justify-center min-h-screen">
             <Card className={className}>
