@@ -1,4 +1,3 @@
-// app/api/increment/route.ts
 export async function POST(request: Request) {
   const body = await request.json();
 
