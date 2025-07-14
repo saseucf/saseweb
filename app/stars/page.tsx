@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 
 export default function Page() {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<Object>();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 

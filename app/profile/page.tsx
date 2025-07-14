@@ -16,7 +16,6 @@ interface UserCardProps {
 }
 
 export default function Page({
-    name = "Eric George",
     email = "ericgeo324@gmail.com",
     className
 }: UserCardProps) {
