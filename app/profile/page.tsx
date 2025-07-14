@@ -9,16 +9,10 @@ import {
 } from "@/components/ui/card"
 import supabase from "@/lib/auth"
 
-interface UserCardProps {
-    name: string
-    email: string
-    className?: string
-}
 
 export default function Page({
-    email = "ericgeo324@gmail.com",
-    className
-}: UserCardProps) {
+
+}) {
     async function fetchStars() {
         const { data, error } = await supabase
             .from('saseuserstats')
@@ -35,7 +29,7 @@ export default function Page({
     fetchStars().then(fetchedStars => setStars(fetchedStars))
     return (
         <div className="flex items-center justify-center min-h-screen">
-            <Card className={className}>
+            <Card>
                 <CardHeader>
                     <CardTitle>Account Settings</CardTitle>
                     <div className="mt-1 font-medium" onClick={() => { setEdit(!edit) }}>Edit  <Pencil className="inline" size={16}></Pencil></div>
@@ -48,7 +42,7 @@ export default function Page({
                         </div>
                         <div>
                             <label className="font-bold">Email: </label>
-                            {edit ? <input /> : <input value={email} disabled />}
+                            {edit ? <input /> : <input value={"ericgeo324@gmail.com"} disabled />}
                         </div>
                         <div>
                             <label className="font-bold">Password: </label>
