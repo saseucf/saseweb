@@ -41,9 +41,8 @@ export default function RootLayout({
     // call unsubscribe to remove the callback
 
     useEffect(() => {
-        const { } = supabase.auth.onAuthStateChange((event, session) => {
+        supabase.auth.onAuthStateChange((event, session) => {
             console.log(event, session)
-
             if (event === 'INITIAL_SESSION') {
                 // handle initial session
             } else if (event === 'SIGNED_IN') {
@@ -51,12 +50,6 @@ export default function RootLayout({
             } else if (event === 'SIGNED_OUT') {
                 // handle sign out event
                 setIsLoggedIn(false);
-            } else if (event === 'PASSWORD_RECOVERY') {
-                // handle password recovery event
-            } else if (event === 'TOKEN_REFRESHED') {
-                // handle token refreshed event
-            } else if (event === 'USER_UPDATED') {
-                // handle user updated event
             }
         })
         AOS.init({
@@ -133,7 +126,7 @@ export default function RootLayout({
                                     </NavigationMenu>
                                     <NavigationMenu >
                                         <NavigationMenuItem>
-                                            {isLoggedIn ? <Link href={`/profile/${localStorage.getItem("userid")}`}>
+                                            {isLoggedIn ? <Link href={`/profile`}>
                                                 <Avatar><AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                                                     <AvatarFallback>CN</AvatarFallback></Avatar>
                                             </Link> : <Link href={"/login"}>

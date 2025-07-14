@@ -39,7 +39,6 @@ export function LoginForm({
             console.error("Error signing up:", error.message);
         } else {
             console.log("User signed up:", data.user);
-            localStorage.setItem("userid", data.user.id)
             router.push("/")
         }
     }
