@@ -25,8 +25,8 @@ const montfont = Montserrat({
 export default function Home() {
 
     return (
-        <div className="h-screen w-screen">
-            <div className="flex h-full relative" >
+        <div className="min-h-screen w-full overflow-x-hidden">
+            <div className="flex h-full relative w-full" >
                 <Image src={hero} alt="hero" className="object-cover grayscale-75 blur-sm" />
                 <p
                     className={`
@@ -61,10 +61,10 @@ export default function Home() {
                 </p>
 
             </div>
-            <div className="flex flex-col grow items-center space-y-4 p-40">
+            <div className="flex flex-col grow items-center space-y-4 p-4 sm:p-10 md:p-20 lg:p-40">
                 <p className={'${montfont.className} text-5xl font-bold text-saseblue pb-10'} data-aos="fade-up" data-aos-duration="1000">3 Core Values</p>
 
-                <div className="flex flex-wrap justify-center gap-6" data-aos="fade-up" data-aos-duration="1000">
+                <div className="flex flex-wrap justify-center gap-6 w-full max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg" data-aos="fade-up" data-aos-duration="1000">
                     <div className="rounded-2xl bg-linear-65 from-sasegreen to-saseblue transition-transform duration-200 transform hover:scale-105 w-full sm:w-80 md:w-96 lg:w-[28rem] max-w-full p-1">
                         <Card className="border border-saseblue shadow-lg rounded-2xl h-full">
                             <CardHeader>

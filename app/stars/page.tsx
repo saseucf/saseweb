@@ -33,10 +33,10 @@ export default function Page() {
     }, []);
 
     return (
-        <main className="flex min-h-[70vh] items-center justify-center bg-background">
-            <Card className="w-full max-w-md">
+        <main className="min-h-screen w-full overflow-x-hidden flex items-center justify-center bg-background">
+            <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg p-4 sm:p-6 md:p-10">
                 <CardHeader>
-                    <CardTitle>Hold on while we add your stars!</CardTitle>
+                    <CardTitle className="text-2xl sm:text-3xl font-bold text-center">Hold on while we add your stars!</CardTitle>
                     <CardDescription>
                         If the text below shows an error let an officer know.
                     </CardDescription>

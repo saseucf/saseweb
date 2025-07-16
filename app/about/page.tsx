@@ -80,22 +80,22 @@ const chartConfig = {
 
 const Page = () => {
     return (
-        <div className="grid grid-rows-1">
-            <h1 className="text-6xl font-bold text-center p-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">
+        <div className="min-h-screen w-full overflow-x-hidden flex flex-col items-center">
+            <h1 className="text-4xl sm:text-6xl font-bold text-center py-4 sm:py-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">
                 ABOUT
             </h1>
-            <p className="text-2xl pr-60 pl-60" data-aos="fade-up" data-aos-duration="1000">
+            <p className="text-xl sm:text-2xl px-4 sm:px-10 md:px-20 lg:px-60 text-center" data-aos="fade-up" data-aos-duration="1000">
                 Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a ​nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage ​scientific and engineering professionals achieve their full potential.
             </p>
-            <p className="text-2xl pr-60 pl-60 pt-10" data-aos="fade-up" data-aos-duration="1000">
+            <p className="text-xl sm:text-2xl px-4 sm:px-10 md:px-20 lg:px-60 pt-4 sm:pt-10 text-center" data-aos="fade-up" data-aos-duration="1000">
                 Founded shortly before the pandemic in 2020, the University of Central Florida SASE Chapter have ​made tremendous strides towards the development of our members centered around core values of ​leadership, professionalism, diversity, and service. Our events and programs not only advance our ​professional mission, but fosters a community that celebrates Asian heritage.
             </p>
 
-            <p className="text-4xl font-semibold text-center p-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">Mission Statement</p>
-            <p className="text-2xl  pr-60 pl-60" data-aos="fade-up" data-aos-duration="1000">
+            <p className="text-2xl sm:text-4xl font-semibold text-center py-4 sm:py-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">Mission Statement</p>
+            <p className="text-xl sm:text-2xl px-4 sm:px-10 md:px-20 lg:px-60 text-center" data-aos="fade-up" data-aos-duration="1000">
                 We work to maintain and grow a safe and inclusive space for members that prioritizes pillars of ​professional development, culture, and community. We encourage members to leverage the ​experiences, knowledge, and skills gained through our organization to pursue their goals and ​aspirations. We aim to empower members by showcasing how their diverse cultural backgrounds can ​broaden perspectives and inspire collaborative efforts. We are committed to promoting service ​opportunities that allow members to give back to the community and make a meaningful impact. UCF ​SASE welcomes everyone, regardless of background or major!
             </p>
-            <p className="text-4xl text-center font-semibold p-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">Member Demographics</p>
+            <p className="text-2xl sm:text-4xl text-center font-semibold py-4 sm:py-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">Member Demographics</p>
             <ChartContainer
                 config={chartConfig}
                 className="mx-auto aspect-square max-h-[500px] w-full p-4" data-aos="fade-up" data-aos-duration="1000"

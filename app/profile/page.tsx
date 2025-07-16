@@ -41,10 +41,10 @@ export default function Page({
     const [stars, setStars] = useState(0)
     fetchStars().then(fetchedStars => setStars(fetchedStars))
     return (
-        <div className="flex items-center justify-center min-h-screen">
-            <Card>
+        <div className="min-h-screen w-full overflow-x-hidden flex items-center justify-center">
+            <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg p-4 sm:p-6 md:p-10">
                 <CardHeader>
-                    <CardTitle>Account Settings</CardTitle>
+                    <CardTitle className="text-2xl sm:text-3xl font-bold text-center">Account Settings</CardTitle>
                     <div className="mt-1 font-medium" onClick={() => { setEdit(!edit) }}>Edit  <Pencil className="inline" size={16}></Pencil></div>
                 </CardHeader>
                 <CardContent>

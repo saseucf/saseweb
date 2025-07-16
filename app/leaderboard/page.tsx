@@ -33,8 +33,8 @@ const getInitials = (name: string) => {
 
 const Page = () => {
     return (
-        <div className="flex justify-center items-center min-h-[80vh] bg-background">
-            <Card className="w-full max-w-md p-6 shadow-lg">
+        <div className="min-h-screen w-full overflow-x-hidden flex justify-center items-center bg-background">
+            <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg p-4 sm:p-6 md:p-10 shadow-lg">
                 <h2 className="text-2xl font-bold mb-6 text-center">Leaderboard</h2>
                 <div>
                     {leaderboardData.map((entry, idx) => (
