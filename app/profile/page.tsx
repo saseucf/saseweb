@@ -9,15 +9,35 @@ import {
 } from "@/components/ui/card"
 import supabase from "@/lib/auth"
 
+<<<<<<< HEAD
 
 export default function Page({
 
 }) {
+=======
+
+
+export default function Page({
+}) {
+    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
+    async function getUser() {
+        const {
+            data: { user },
+        } = await supabase.auth.getUser()
+
+        return user
+    }
+    getUser().then((e) => {
+        setUsername(e?.user_metadata.username)
+        setEmail(e?.user_metadata.email)
+    })
+>>>>>>> dc211a9 (added leaderboard, more mobile optimizations, implemented seperate profile table)
     async function fetchStars() {
         const { data, error } = await supabase
-            .from('saseuserstats')
+            .from('profiles')
             .select('stars')
-            .eq('id', '22b185cb-a3c6-4010-9cad-9b22b64f7b9f')
+            .eq('username', username)
         if (error) {
             console.error("Error fetching stars:", error)
             return 0 // Return a default value in case of error
@@ -38,15 +58,11 @@ export default function Page({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="font-bold">Username: </label>
-                            <input value="erido12" disabled />
+                            <input value={username} disabled />
                         </div>
                         <div>
                             <label className="font-bold">Email: </label>
                             {edit ? <input /> : <input value={"ericgeo324@gmail.com"} disabled />}
-                        </div>
-                        <div>
-                            <label className="font-bold">Password: </label>
-                            {edit ? <input value="••••••••" type="password" /> : <input value="••••••••" type="password" disabled />}
                         </div>
                         <div>
                             <label className="font-bold">First Name: </label>

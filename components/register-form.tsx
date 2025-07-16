@@ -25,6 +25,7 @@ export function RegisterForm({
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [username, setUsername] = useState("")
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
         // Handle form submission logic here
@@ -32,6 +33,12 @@ export function RegisterForm({
         const { data, error } = await supabase.auth.signUp({
             email: email,
             password: password,
+            options: {
+                data: {
+                    username: username
+                }
+
+            }
         });
         if (error) {
             console.error("Error signing up:", error.message);
@@ -59,7 +66,21 @@ export function RegisterForm({
                                     placeholder="m@example.com"
                                     onChange={(e) => {
                                         setEmail(e.target.value)
-                                        console.log(email)
+                                    }
+                                    }
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-3 mt-3">
+                            <div className="grid gap-3">
+                                <Label htmlFor="username">Username</Label>
+                                <Input
+                                    id="username"
+                                    type="username"
+                                    placeholder="Username"
+                                    onChange={(e) => {
+                                        setUsername(e.target.value)
                                     }
                                     }
                                     required
@@ -71,7 +92,6 @@ export function RegisterForm({
                                 </div>
                                 <Input id="password" type="password" onChange={(e) => {
                                     setPassword(e.target.value)
-                                    console.log(password)
                                 }} required />
                             </div>
                             <div className="flex flex-col gap-3">

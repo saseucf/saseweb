@@ -28,7 +28,31 @@ export default function Home() {
         <div className="h-screen w-screen">
             <div className="flex h-full relative" >
                 <Image src={hero} alt="hero" className="object-cover grayscale-75 blur-sm" />
-                <p className={`${montfont.className} absolute translate-y-[50%] top-[30%] sm:text-4xl md:text-5xl lg:text-9xl font-bold spacing -tracking-[0.25rem] text-saseblue`} data-aos="fade-up" data-aos-duration="1000">UCF Society of Asian ​Scientists & Engineers</p>
+                <p
+                    className={`
+    ${montfont.className}
+    absolute
+    w-full
+    px-4
+    text-center
+    break-words
+    top-1/4
+    sm:top-1/3
+    md:top-[30%]
+    -translate-y-1/2
+    text-2xl
+    sm:text-4xl
+    md:text-6xl
+    lg:text-8xl
+    font-bold
+    -tracking-[0.25rem]
+    text-saseblue
+  `}
+                    data-aos="fade-up"
+                    data-aos-duration="1000"
+                >
+                    UCF Society of Asian ​Scientists & Engineers
+                </p>
             </div>
             <div className="flex flex-col items-center space-y-4 p-10" >
                 <p className={`${montfont.className} text-4xl font-bold text-saseblue pb-10`} data-aos="fade-up" data-aos-duration="1000">Welcome to the UCF <span className="text-sasegreen">SASE</span> Website</p>
@@ -40,46 +64,49 @@ export default function Home() {
             <div className="flex flex-col grow items-center space-y-4 p-40">
                 <p className={'${montfont.className} text-5xl font-bold text-saseblue pb-10'} data-aos="fade-up" data-aos-duration="1000">3 Core Values</p>
 
-                <div className="flex gap-x-4" data-aos="fade-up" data-aos-duration="1000">
-                    <div className="rounded-2xl bg-linear-65 from-sasegreen to-saseblue transition-transform duration-200 transform hover:scale-110">
-                        <Card className="m-1 border-0">
+                <div className="flex flex-wrap justify-center gap-6" data-aos="fade-up" data-aos-duration="1000">
+                    <div className="rounded-2xl bg-linear-65 from-sasegreen to-saseblue transition-transform duration-200 transform hover:scale-105 w-full sm:w-80 md:w-96 lg:w-[28rem] max-w-full p-1">
+                        <Card className="border border-saseblue shadow-lg rounded-2xl h-full">
                             <CardHeader>
-                                <CardTitle className="text-2xl text-center ">Professional Development </CardTitle>
+                                <CardTitle className="text-2xl text-center">Professional Development</CardTitle>
                                 <div className="flex justify-center">
-                                    <Briefcase size={32} className=""></Briefcase>
+                                    <Briefcase size={32} />
                                 </div>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-xl">
-                                    We encourage members to ​leverage the experiences, ​knowledge, and skills gained ​through our organization to pursue ​their goals and aspirations.                        </p>
+                                    We encourage members to ​leverage the experiences, ​knowledge, and skills gained ​through our organization to pursue ​their goals and aspirations.
+                                </p>
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="rounded-2xl bg-linear-65 from-sasegreen to-saseblue transition-transform duration-200 transform hover:scale-110">
-                        <Card className="m-1 border-0">
+                    <div className="rounded-2xl bg-linear-65 from-sasegreen to-saseblue transition-transform duration-200 transform hover:scale-105 w-full sm:w-80 md:w-96 lg:w-[28rem] max-w-full p-1">
+                        <Card className="border border-saseblue shadow-lg rounded-2xl h-full">
                             <CardHeader>
                                 <CardTitle className="text-2xl text-center">Service</CardTitle>
                                 <div className="flex justify-center">
-                                    <HandHeart size={32} className=""></HandHeart>
+                                    <HandHeart size={32} />
                                 </div>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-lg">
-                                    We commit ourselves to ​promoting service opportunities ​that enable our members to give ​back to the community and ​make a meaningful impact.</p>
+                                    We commit ourselves to ​promoting service opportunities ​that enable our members to give ​back to the community and ​make a meaningful impact.
+                                </p>
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="rounded-2xl bg-linear-65 from-sasegreen to-saseblue transition-transform duration-200 transform hover:scale-110">
-                        <Card className="m-1 border-0">
+                    <div className="rounded-2xl bg-linear-65 from-sasegreen to-saseblue transition-transform duration-200 transform hover:scale-105 w-full sm:w-80 md:w-96 lg:w-[28rem] max-w-full p-1">
+                        <Card className="border border-saseblue shadow-lg rounded-2xl h-full">
                             <CardHeader>
                                 <CardTitle className="text-2xl text-center">Diversity</CardTitle>
                                 <div className="flex justify-center">
-                                    <HeartHandshake size={32} className=""></HeartHandshake>
+                                    <HeartHandshake size={32} />
                                 </div>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-lg">
-                                    We aim to empower our ​members by showcasing how ​their diverse backgrounds can ​broaden perspectives and ​inspire collaborative efforts.</p>
+                                    We aim to empower our ​members by showcasing how ​their diverse backgrounds can ​broaden perspectives and ​inspire collaborative efforts.
+                                </p>
                             </CardContent>
                         </Card>
                     </div>
