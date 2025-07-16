@@ -9,12 +9,6 @@ import {
 } from "@/components/ui/card"
 import supabase from "@/lib/auth"
 
-<<<<<<< HEAD
-
-export default function Page({
-
-}) {
-=======
 
 
 export default function Page({
@@ -32,7 +26,6 @@ export default function Page({
         setUsername(e?.user_metadata.username)
         setEmail(e?.user_metadata.email)
     })
->>>>>>> dc211a9 (added leaderboard, more mobile optimizations, implemented seperate profile table)
     async function fetchStars() {
         const { data, error } = await supabase
             .from('profiles')
