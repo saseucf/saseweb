@@ -55,7 +55,7 @@ export default function Page({
                         </div>
                         <div>
                             <label className="font-bold">Email: </label>
-                            {edit ? <input /> : <input value={"ericgeo324@gmail.com"} disabled />}
+                            {edit ? <input /> : <input value={email} disabled />}
                         </div>
                         <div>
                             <label className="font-bold">First Name: </label>
