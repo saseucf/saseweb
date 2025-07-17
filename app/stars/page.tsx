@@ -33,7 +33,7 @@ export default function Page() {
     }, []);
 
     return (
-        <main className="min-h-screen w-full overflow-x-hidden flex items-center justify-center bg-background">
+        <main className="min-h-screen w-full overflow-x-clip flex items-center justify-center bg-background">
             <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg p-4 sm:p-6 md:p-10">
                 <CardHeader>
                     <CardTitle className="text-2xl sm:text-3xl font-bold text-center">Hold on while we add your stars!</CardTitle>

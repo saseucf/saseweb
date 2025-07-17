@@ -3,7 +3,7 @@
 const Page = () => {
 
     return (
-        <div className="min-h-screen w-full overflow-x-hidden flex flex-col items-center">
+        <div className="min-h-screen w-full overflow-x-clip flex flex-col items-center">
             <h1 className="font-bold text-4xl sm:text-6xl py-4 sm:py-10 text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">UPCOMING EVENTS</h1>
             <div className="flex justify-center items-center w-full px-2 sm:px-10 py-4 sm:py-10" data-aos="fade-up" data-aos-duration="1000">
                 <div className="w-full max-w-3xl aspect-video">

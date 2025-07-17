@@ -73,8 +73,8 @@ export default function RootLayout({
                             <Image
                                 src={saselogo}
                                 alt="saselogo"
-                                height={48}
-                                width={48}
+                                height={100}
+                                width={100}
                                 className="flex-none"
                             />
                         </Link>

@@ -80,7 +80,7 @@ const chartConfig = {
 
 const Page = () => {
     return (
-        <div className="min-h-screen w-full overflow-x-hidden flex flex-col items-center">
+        <div className="min-h-screen w-full overflow-x-clip flex flex-col items-center">
             <h1 className="text-4xl sm:text-6xl font-bold text-center py-4 sm:py-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">
                 ABOUT
             </h1>
@@ -110,7 +110,7 @@ const Page = () => {
                 </PieChart>
             </ChartContainer>
             <p className="text-4xl font-semibold text-center p-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">Awards & Accomplishments</p>
-            <p className="text-2xl pr-60 pl-60" data-aos="fade-up" data-aos-duration="1000">In 2023, UCF SASE received the distinguished honor to host one of National SASE’s annual ​regional conferences, the SASE Southeast Regional Conference (SERC).</p>
+            <p className="text-xl sm:text-2xl px-4 sm:px-10 md:px-20 lg:px-60 text-center" data-aos="fade-up" data-aos-duration="1000">In 2023, UCF SASE received the distinguished honor to host one of National SASE’s annual ​regional conferences, the SASE Southeast Regional Conference (SERC).</p>
             <div className="flex justify-center items-center p-10 w-full" data-aos="fade-up" data-aos-duration="1000">
                 <div className='w-full max-w-2xl' data-aos="fade-up" data-aos-duration="1000">
                     <Card className="bg-awardyellow text-black transition-transform duration-200 transform hover:scale-110">

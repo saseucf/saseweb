@@ -25,7 +25,7 @@ const montfont = Montserrat({
 export default function Home() {
 
     return (
-        <div className="min-h-screen w-full overflow-x-hidden">
+        <div className="w-full overflow-x-clip">
             <div className="flex h-full relative w-full" >
                 <Image src={hero} alt="hero" className="object-cover grayscale-75 blur-sm" />
                 <p
@@ -126,7 +126,7 @@ export default function Home() {
                     Contact our External Vice President, Christian De Mesa, at
                     ucfsase.evp@gmail.com for any questions.</p>
 
-                <div className="flex flex-row " data-aos="fade-up" data-aos-duration="1000">
+                <div className="flex flex-wrap justify-center align-middle max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg " data-aos="fade-up" data-aos-duration="1000">
                     <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={lockheed} alt="sponsorlogo" width={300}></Image>
                     <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={northrop} alt="sponsorlogo" width={200}></Image>
                     <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={blueorigin} alt="sponsorlogo" width={200}></Image>
