@@ -45,7 +45,7 @@ export default function Home() {
     md:text-6xl
     lg:text-8xl
     font-bold
-    -tracking-[0.25rem]
+    lg:-tracking-[0.25rem]
     text-saseblue
   `}
                     data-aos="fade-up"
@@ -55,8 +55,8 @@ export default function Home() {
                 </p>
             </div>
             <div className="flex flex-col items-center space-y-4 p-10" >
-                <p className={`${montfont.className} text-4xl font-bold text-saseblue pb-10`} data-aos="fade-up" data-aos-duration="1000">Welcome to the UCF <span className="text-sasegreen">SASE</span> Website</p>
-                <p className="text-2xl text-center lg:pr-70 lg:pl-70" data-aos="fade-up" data-aos-duration="1000">
+                <p className={`${montfont.className} text-4xl text-center font-bold text-saseblue pb-10`} data-aos="fade-up" data-aos-duration="1000">Welcome to the UCF <span className="text-sasegreen">SASE</span> Website</p>
+                <p className="text-2xl sm:text-2xl px-4 sm:px-10 md:px-20 lg:px-60 text-center" data-aos="fade-up" data-aos-duration="1000">
                     Since its founding in 2007, the Society of Asian Scientists and Engineers ​(SASE) has grown to a nationally recognized organization with 20,000 ​members worldwide, striving to help Asian heritage scientific and ​engineering professionals achieve their full potential. The University of ​Central Florida SASE Chapter was founded in 2020, shortly before the ​pandemic. With only 4 years under our belt, we have made tremendous ​strides towards the development of our members centered around core ​values of career, diversity, and service. Our events and programs not only ​advance professional pursuits, but also foster a supportive community that ​celebrates each and every member’s story.
                 </p>
 
@@ -115,8 +115,8 @@ export default function Home() {
 
             </div>
             <div className="flex flex-col grow items-center space-y-4 p-10">
-                <p className="text-5xl font-bold text-saseblue pb-10 " data-aos="fade-up" data-aos-duration="1000 pb-10">SPONSORS</p>
-                <p className="text-2xl pr-70 pl-70 text-center" data-aos="fade-up" data-aos-duration="1000">The University of Central Florida SASE Chapter works to
+                <p className="text-5xl font-bold text-saseblue pb-10 " data-aos="fade-up" data-aos-duration="1000 pb-10">Sponsors</p>
+                <p className="text-2xl sm:text-2xl px-4 sm:px-10 md:px-20 lg:px-60 text-center" data-aos="fade-up" data-aos-duration="1000">The University of Central Florida SASE Chapter works to
                     maintain and grow a safe and inclusive environment for
                     our members while also creating various opportunities for
                     the advancement of member technical and interpersonal
