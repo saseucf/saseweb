@@ -26,6 +26,8 @@ export function RegisterForm({
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [username, setUsername] = useState("")
+    const [error, setError] = useState(false)
+    const [message, setMessage] = useState("")
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
         // Handle form submission logic here
@@ -42,8 +44,13 @@ export function RegisterForm({
         });
         if (error) {
             console.error("Error signing up:", error.message);
+            setMessage(error.message)
+            setError(true)
         } else {
+            setError(false)
+            setMessage("Check your email for a confirmation link to complete your registration.")
             console.log("User signed up:", data.user);
+
         }
     }
     return (
@@ -90,7 +97,7 @@ export function RegisterForm({
                                 <div className="flex items-center">
                                     <Label htmlFor="password">Password</Label>
                                 </div>
-                                <Input id="password" type="password" onChange={(e) => {
+                                <Input id="password" type="password" placeholder="Password" onChange={(e) => {
                                     setPassword(e.target.value)
                                 }} required />
                             </div>
@@ -104,6 +111,8 @@ export function RegisterForm({
                     </form>
                 </CardContent>
             </Card>
+            {error && <div className="text-red-500 text-center mt-4">{message}</div>}
+            {!error && <div className="text-green-500 text-center mt-4">{message}</div>}
         </div>
     )
 }
