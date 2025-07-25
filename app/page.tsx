@@ -16,6 +16,7 @@ import lockheed from "../public/lockheed.png";
 import northrop from "../public/northrop.svg";
 import blueorigin from "../public/blueorigin.png";
 import Image from "next/image";
+import ucfsase from "../public/ucfsaselogo.png"
 
 
 const montfont = Montserrat({
@@ -27,8 +28,20 @@ export default function Home() {
     return (
         <div className="w-full overflow-x-clip">
             <div className="flex h-full relative w-full" >
-                <Image src={hero} alt="hero" className="object-cover grayscale-75 blur-sm" />
-                <p
+                <Image src={hero} alt="hero" className="object-cover grayscale-60 blur-xs w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px]" />
+                <div className="absolute inset-0 flex flex-row justify-center items-center gap-6 px-4">
+                    <Image
+                        src={ucfsase}
+                        alt="saselogo"
+                        className="w-full max-w-xs sm:max-w-md md:max-w-lg h-auto"
+                        sizes="(max-width: 768px) 80vw, (max-width: 1200px) 50vw, 33vw"
+                        priority
+                    />
+                    <span className="hidden md:inline text-white drop-shadow-lg text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold text-center">
+                        Society of Asian Scientists and Engineers
+                    </span>
+                </div>
+                {/* <p
                     className={`
     ${montfont.className}
     absolute
@@ -52,7 +65,7 @@ export default function Home() {
                     data-aos-duration="1000"
                 >
                     UCF Society of Asian ​Scientists & Engineers
-                </p>
+                </p> */}
             </div>
             <div className="flex flex-col items-center space-y-4 p-10" >
                 <p className={`${montfont.className} text-4xl text-center font-bold text-saseblue pb-10`} data-aos="fade-up" data-aos-duration="1000">Welcome to the UCF <span className="text-sasegreen">SASE</span> Website</p>

@@ -99,9 +99,9 @@ export default function RootLayout({
                                                         <Info className="inline" size={16} /> About
                                                     </p>
                                                 </NavigationMenuTrigger>
-                                                <NavigationMenuContent>
+                                                {/* <NavigationMenuContent>
                                                     <NavigationMenuLink>Info</NavigationMenuLink>
-                                                </NavigationMenuContent>
+                                                </NavigationMenuContent> */}
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
@@ -113,9 +113,9 @@ export default function RootLayout({
                                                         <Calendar className="inline" size={16} /> Events
                                                     </p>
                                                 </NavigationMenuTrigger>
-                                                <NavigationMenuContent>
+                                                {/* <NavigationMenuContent>
                                                     <NavigationMenuLink>Link</NavigationMenuLink>
-                                                </NavigationMenuContent>
+                                                </NavigationMenuContent> */}
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
@@ -127,9 +127,9 @@ export default function RootLayout({
                                                         <File className="inline" size={16} /> Programs
                                                     </p>
                                                 </NavigationMenuTrigger>
-                                                <NavigationMenuContent>
+                                                {/* <NavigationMenuContent>
                                                     <NavigationMenuLink>Link</NavigationMenuLink>
-                                                </NavigationMenuContent>
+                                                </NavigationMenuContent> */}
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
