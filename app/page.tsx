@@ -29,6 +29,9 @@ export default function Home() {
         <div className="w-full overflow-x-clip">
             <div className="flex h-full relative w-full" >
                 <Image src={hero} alt="hero" className="object-cover grayscale-60 blur-xs w-full h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px]" />
+                <div className="absolute inset-0">
+                    <div className="absolute inset-0 bg-black/40 z-0"></div>
+                </div>
                 <div className="absolute inset-0 flex flex-row justify-center items-center gap-6 px-4">
                     <Image
                         src={ucfsase}
@@ -37,9 +40,11 @@ export default function Home() {
                         sizes="(max-width: 768px) 80vw, (max-width: 1200px) 50vw, 33vw"
                         priority
                     />
-                    <span className="hidden md:inline text-white drop-shadow-lg text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold text-center">
-                        Society of Asian Scientists and Engineers
-                    </span>
+                    <div className="hidden md:flex flex-col items-center justify-center relative z-10">
+                        <span className="bg-gradient-to-r from-saseblue to-sasegreen bg-clip-text text-transparent drop-shadow-[0_4px_12px_rgba(0,0,0,0.7)] text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-tight text-center px-4 py-2 rounded-xl backdrop-blur-md bg-white/20">
+                            Society of Asian Scientists and Engineers
+                        </span>
+                    </div>
                 </div>
                 {/* <p
                     className={`
@@ -68,7 +73,9 @@ export default function Home() {
                 </p> */}
             </div>
             <div className="flex flex-col items-center space-y-4 p-10" >
-                <p className={`${montfont.className} text-4xl text-center font-bold text-saseblue pb-10`} data-aos="fade-up" data-aos-duration="1000">Welcome to the UCF <span className="text-sasegreen">SASE</span> Website</p>
+                <p className={`${montfont.className} text-4xl text-center font-black pb-10`} data-aos="fade-up" data-aos-duration="1000">
+                    Welcome to the UCF <span className="bg-gradient-to-r from-saseblue to-sasegreen bg-clip-text text-transparent font-black">SASE</span> Website
+                </p>
                 <p className="text-2xl sm:text-2xl px-4 sm:px-10 md:px-20 lg:px-60 text-center" data-aos="fade-up" data-aos-duration="1000">
                     Since its founding in 2007, the Society of Asian Scientists and Engineers ​(SASE) has grown to a nationally recognized organization with 20,000 ​members worldwide, striving to help Asian heritage scientific and ​engineering professionals achieve their full potential. The University of ​Central Florida SASE Chapter was founded in 2020, shortly before the ​pandemic. With only 4 years under our belt, we have made tremendous ​strides towards the development of our members centered around core ​values of career, diversity, and service. Our events and programs not only ​advance professional pursuits, but also foster a supportive community that ​celebrates each and every member’s story.
                 </p>

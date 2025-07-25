@@ -14,6 +14,7 @@ const Page = () => {
                     ></iframe>
                 </div>
             </div>
+            <h1 className="font-bold text-4xl sm:text-6xl py-4 sm:py-10 text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">PAST EVENTS</h1>
         </div>
     )
 }

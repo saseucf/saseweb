@@ -4,7 +4,6 @@ import { ModeToggle } from "@/components/modechanger";
 import { Geist } from 'next/font/google'
 import {
     NavigationMenu,
-    NavigationMenuContent,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
