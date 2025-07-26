@@ -149,7 +149,6 @@ const Page = () => {
         </div>
     )
 }
-//https://iwimnudodmiijqhnkrcr.supabase.co/storage/v1/object/public/gbm1/public/DSC00015.JPG
-//https://iwimnudodmiijqhnkrcr.supabase.co/storage/v1/object/public/gbm1/DSC00019.JPG
+
 
 export default Page
