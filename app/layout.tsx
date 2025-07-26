@@ -16,7 +16,7 @@ import saselogo from "@/public/saselogo.png";
 import { Home } from "lucide-react";
 import { Calendar } from "lucide-react";
 import { Info } from "lucide-react";
-import { Book } from "lucide-react";
+import { Phone } from "lucide-react";
 import { File } from "lucide-react";
 import { Trophy } from "lucide-react";
 import AOS from "aos";
@@ -134,10 +134,10 @@ export default function RootLayout({
                                     </NavigationMenu>
                                     <NavigationMenu>
                                         <NavigationMenuItem>
-                                            <Link href={"/resources"}>
+                                            <Link href={"https://form.jotform.com/242067609723156"}>
                                                 <NavigationMenuLink>
                                                     <p>
-                                                        <Book className="inline" /> Resources
+                                                        <Phone className="inline" /> Contact
                                                     </p>
                                                 </NavigationMenuLink>
                                             </Link>
