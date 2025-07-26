@@ -231,9 +231,9 @@ export default function RootLayout({
                                         <File className="inline" size={16} /> Programs
                                     </div>
                                 </Link>
-                                <Link href={'/resources'} onClick={() => setMobileMenuOpen(false)}>
+                                <Link href={'/https://form.jotform.com/242067609723156'} onClick={() => setMobileMenuOpen(false)}>
                                     <div className="flex items-center gap-2 py-2">
-                                        <Book className="inline" size={16} /> Resources
+                                        <Phone className="inline" size={16} /> Contact
                                     </div>
                                 </Link>
                                 <Link href={'/leaderboard'} onClick={() => setMobileMenuOpen(false)}>
