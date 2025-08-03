@@ -12,20 +12,26 @@ const imageFetch = async () => {
         offset: 0,
         sortBy: { column: 'name', order: 'asc' }
     })
-    console.log("Data fetched from Supabase:", data)
     if (error) {
         console.error("Error fetching images:", error)
         return []
     }
-    console.log("Fetched images:", data)
-    return data.map(file => (supabase.storage.from('gbm1/public').getPublicUrl(file.name).data.publicUrl))
+    // Map to ImageData objects: { name, url }
+    return data.map(file => ({
+        name: file.name,
+        url: supabase.storage.from('gbm1/public').getPublicUrl(file.name).data.publicUrl
+    }))
+}
+
+type ImageData = {
+    name: string
+    url: string
 }
 
 const Page = () => {
-    const [images, setimages] = useState<string[]>([])
+    const [images, setimages] = useState<ImageData[]>([])
     const fetchImages = async () => {
         const fetchedImages = await imageFetch()
-        console.log("Fetched images in component:", fetchedImages)
         setimages(fetchedImages)
     }
 
@@ -52,9 +58,10 @@ const Page = () => {
             <Carousel className="w-full max-w-7xl">
                 <CarouselContent className="">
                     {images.map((image, index) => (
-                        <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                            <img src={image} alt={"test"} className="object-cover w-full h-full rounded-md" />
-                        </CarouselItem>
+                        image.name.includes("gbm1") ?
+                            <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
+                                <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
+                            </CarouselItem> : null
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
@@ -65,9 +72,10 @@ const Page = () => {
             <Carousel className="w-full max-w-7xl">
                 <CarouselContent className="">
                     {images.map((image, index) => (
-                        <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                            <img src={image} alt={"test"} className="object-cover w-full h-full rounded-md" />
-                        </CarouselItem>
+                        image.name.includes("menmet") ?
+                            <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
+                                <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
+                            </CarouselItem> : null
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
@@ -77,21 +85,23 @@ const Page = () => {
             <Carousel className="w-full max-w-7xl">
                 <CarouselContent className="">
                     {images.map((image, index) => (
-                        <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                            <img src={image} alt={"test"} className="object-cover w-full h-full rounded-md" />
-                        </CarouselItem>
+                        image.name.includes("gbm2") ?
+                            <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
+                                <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
+                            </CarouselItem> : null
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
             </Carousel>
-            <h2 className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">IEEE x SASE Breadboarding workshop</h2>
+            {/* <h2 className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">IEEE x SASE Breadboarding workshop</h2>
             <Carousel className="w-full max-w-7xl">
                 <CarouselContent className="">
                     {images.map((image, index) => (
-                        <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                            <img src={image} alt={"test"} className="object-cover w-full h-full rounded-md" />
-                        </CarouselItem>
+                        image.name.includes("breadboard") ?
+                            <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
+                                <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
+                            </CarouselItem> : null
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
@@ -101,9 +111,10 @@ const Page = () => {
             <Carousel className="w-full max-w-7xl" data-aos="fade-up" data-aos-duration="1000">
                 <CarouselContent className="">
                     {images.map((image, index) => (
-                        <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                            <img src={image} alt={"test"} className="object-cover w-full h-full rounded-md" />
-                        </CarouselItem>
+                        image.name.includes("lakelily") ?
+                            <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
+                                <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
+                            </CarouselItem> : null
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
@@ -114,9 +125,10 @@ const Page = () => {
             <Carousel className="w-full max-w-7xl" data-aos="fade-up" data-aos-duration="1000">
                 <CarouselContent className="">
                     {images.map((image, index) => (
-                        <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                            <img src={image} alt={"test"} className="object-cover w-full h-full rounded-md" />
-                        </CarouselItem>
+                        image.name.includes("gbm2") ?
+                            <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
+                                <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
+                            </CarouselItem> : null
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
@@ -126,9 +138,10 @@ const Page = () => {
             <Carousel className="w-full max-w-7xl" data-aos="fade-up" data-aos-duration="1000">
                 <CarouselContent className="">
                     {images.map((image, index) => (
-                        <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                            <img src={image} alt={"test"} className="object-cover w-full h-full rounded-md" />
-                        </CarouselItem>
+                        image.name.includes("gbm2") ?
+                            <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
+                                <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
+                            </CarouselItem> : null
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
@@ -138,14 +151,15 @@ const Page = () => {
             <Carousel className="w-full max-w-7xl" data-aos="fade-up" data-aos-duration="1000">
                 <CarouselContent className="">
                     {images.map((image, index) => (
-                        <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                            <img src={image} alt={"test"} className="object-cover w-full h-full rounded-md" />
-                        </CarouselItem>
+                        image.name.includes("gbm2") ?
+                            <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
+                                <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
+                            </CarouselItem> : null
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
-            </Carousel>
+            </Carousel> */}
         </div>
     )
 }

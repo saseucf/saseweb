@@ -17,6 +17,7 @@ import northrop from "../public/northrop.svg";
 import blueorigin from "../public/blueorigin.png";
 import Image from "next/image";
 import ucfsase from "../public/ucfsaselogo.png"
+import patel from "../public/patel.png"
 
 
 const montfont = Montserrat({
@@ -146,10 +147,23 @@ export default function Home() {
                     Contact our External Vice President, Christian De Mesa, at
                     ucfsase.evp@gmail.com for any questions.</p>
 
-                <div className="flex flex-wrap justify-center align-middle max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg " data-aos="fade-up" data-aos-duration="1000">
-                    <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={lockheed} alt="sponsorlogo" width={300}></Image>
-                    <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={northrop} alt="sponsorlogo" width={200}></Image>
-                    <Image className="m-10 transition-transform duration-200 transform hover:scale-110" src={blueorigin} alt="sponsorlogo" width={200}></Image>
+                <div className="flex flex-wrap justify-center items-center gap-8 max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg" data-aos="fade-up" data-aos-duration="1000">
+                    <Image
+                        className="m-4 transition-transform duration-200 transform hover:scale-110"
+                        src={blueorigin}
+                        alt="sponsorlogo"
+                        width={180}
+                        height={80}
+                        style={{ objectFit: "contain" }}
+                    />
+                    <Image
+                        className="m-4 transition-transform duration-200 transform hover:scale-110"
+                        src={patel}
+                        alt="sponsorlogo"
+                        width={180}
+                        height={80}
+                        style={{ objectFit: "contain" }}
+                    />
                 </div>
             </div>
 
