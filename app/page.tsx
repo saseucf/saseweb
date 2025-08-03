@@ -12,8 +12,6 @@ import { Briefcase } from "lucide-react";
 import { HandHeart } from "lucide-react";
 import { HeartHandshake } from "lucide-react";
 import hero from "../public/hero.jpg";
-import lockheed from "../public/lockheed.png";
-import northrop from "../public/northrop.svg";
 import blueorigin from "../public/blueorigin.png";
 import Image from "next/image";
 import ucfsase from "../public/ucfsaselogo.png"
