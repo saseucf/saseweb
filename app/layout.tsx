@@ -8,6 +8,7 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
     NavigationMenuTrigger,
+    NavigationMenuContent
 } from "@/components/ui/navigation-menu"
 import { ThemeProvider } from "@/components/themeprovider";
 import Link from "next/link";
@@ -19,6 +20,7 @@ import { Info } from "lucide-react";
 import { Phone } from "lucide-react";
 import { File } from "lucide-react";
 import { Trophy } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect, useState } from "react";
@@ -57,6 +59,7 @@ export default function RootLayout({
     }, []);
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [aboutMenuOpen, setAboutMenuOpen] = useState(false);
 
     return (
         <html lang="en" className={geist.className}>
@@ -97,10 +100,11 @@ export default function RootLayout({
                                                     <p>
                                                         <Info className="inline" size={16} /> About
                                                     </p>
+
                                                 </NavigationMenuTrigger>
-                                                {/* <NavigationMenuContent>
-                                                    <NavigationMenuLink>Info</NavigationMenuLink>
-                                                </NavigationMenuContent> */}
+                                                <NavigationMenuContent>
+                                                    <NavigationMenuLink asChild><Link href="/about/board">Board</Link></NavigationMenuLink>
+                                                </NavigationMenuContent>
                                             </Link>
                                         </NavigationMenuItem>
                                     </NavigationMenu>
@@ -216,11 +220,22 @@ export default function RootLayout({
                                         <Home className="inline" size={16} /> Home
                                     </div>
                                 </Link>
-                                <Link href={'/about'} onClick={() => setMobileMenuOpen(false)}>
-                                    <div className="flex items-center gap-2 py-2">
-                                        <Info className="inline" size={16} /> About
+
+                                <div className="flex items-center gap-2 py-2">
+                                    <Link href={'/about'} onClick={() => setMobileMenuOpen(false)}><Info className="inline" size={16} /> About</Link>
+                                    <ArrowDown className="inline" size={12} onClick={() => setAboutMenuOpen(!aboutMenuOpen)} />
+
+                                </div>
+                                {aboutMenuOpen && (
+                                    <div className="">
+                                        <Link href={'/about/board'} onClick={() => setMobileMenuOpen(false)}>
+                                            <div className="flex items-center gap-2 py-2">
+                                                Board
+                                            </div>
+                                        </Link>
                                     </div>
-                                </Link>
+                                )}
+
                                 <Link href={'/events'} onClick={() => setMobileMenuOpen(false)}>
                                     <div className="flex items-center gap-2 py-2">
                                         <Calendar className="inline" size={16} /> Events
