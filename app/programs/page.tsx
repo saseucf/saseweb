@@ -65,7 +65,7 @@ const Page = () => {
                         <Card className="border border-saseblue shadow-lg rounded-2xl h-full">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-xl">
-                                    <Rocket className="text-saseblue" /> What You'll Do
+                                    <Rocket className="text-saseblue" /> What You&apos;ll Do
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -143,7 +143,7 @@ const Page = () => {
                 >
                     Our Mentor–Mentee Program pairs members for peer guidance, academic
                     support, and career growth. Whether you want to share experience as a
-                    mentor or get tailored advice as a mentee, you'll join a network
+                    mentor or get tailored advice as a mentee, you&apos;ll join a network
                     that empowers you to set goals and stay accountable.
                 </p>
 
@@ -191,7 +191,7 @@ const Page = () => {
                             </CardHeader>
                             <CardContent>
                                 <ul className="list-disc pl-6 space-y-2 text-base">
-                                    <li>Academic and career guidance from peers who've been there.</li>
+                                    <li>Academic and career guidance from peers who&apos;ve been there.</li>
                                     <li>Accountability, confidence, and stronger study habits.</li>
                                     <li>Community and friendships that last beyond the semester.</li>
                                 </ul>
