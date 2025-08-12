@@ -8,14 +8,10 @@ import {
 
 import { Montserrat } from "next/font/google";
 
-import { Briefcase } from "lucide-react";
-import { HandHeart } from "lucide-react";
-import { HeartHandshake } from "lucide-react";
+import { Briefcase, HandHeart, HeartHandshake } from "lucide-react";
 import hero from "../public/hero.jpg";
-import blueorigin from "../public/blueorigin.png";
 import Image from "next/image";
 import ucfsase from "../public/ucfsaselogo.png"
-import patel from "../public/patel.png"
 
 
 const montfont = Montserrat({
@@ -133,38 +129,6 @@ export default function Home() {
 
 
             </div>
-            <div className="flex flex-col grow items-center space-y-4 p-10">
-                <p className="text-5xl font-bold text-saseblue pb-10 " data-aos="fade-up" data-aos-duration="1000 pb-10">Sponsors</p>
-                <p className="text-2xl sm:text-2xl px-4 sm:px-10 md:px-20 lg:px-60 text-center" data-aos="fade-up" data-aos-duration="1000">The University of Central Florida SASE Chapter works to
-                    maintain and grow a safe and inclusive environment for
-                    our members while also creating various opportunities for
-                    the advancement of member technical and interpersonal
-                    skills in preparation for the global business world.
-                    If you would like to help further our goals, please consider
-                    becoming a sponsor today!
-                    Contact our External Vice President, Christian De Mesa, at
-                    ucfsase.evp@gmail.com for any questions.</p>
-
-                <div className="flex flex-wrap justify-center items-center gap-8 max-w-screen-sm sm:max-w-screen-md md:max-w-screen-lg" data-aos="fade-up" data-aos-duration="1000">
-                    <Image
-                        className="m-4 transition-transform duration-200 transform hover:scale-110"
-                        src={blueorigin}
-                        alt="sponsorlogo"
-                        width={180}
-                        height={80}
-                        style={{ objectFit: "contain" }}
-                    />
-                    <Image
-                        className="m-4 transition-transform duration-200 transform hover:scale-110"
-                        src={patel}
-                        alt="sponsorlogo"
-                        width={180}
-                        height={80}
-                        style={{ objectFit: "contain" }}
-                    />
-                </div>
-            </div>
-
         </div >
     );
 }
