@@ -1,5 +1,5 @@
 "use client";
-import { Pie, PieChart, LabelList } from 'recharts';
+import { Pie, PieChart } from 'recharts';
 
 import {
     ChartConfig,
