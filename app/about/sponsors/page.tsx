@@ -24,7 +24,7 @@ const Page = () => {
                         <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-500 text-white shadow">
                             <Crown className="h-5 w-5" />
                         </span>
-                        <CardTitle className="text-3xl text-white text-center">Platinum</CardTitle>
+                        <CardTitle className="text-3xl text-center">Platinum</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="flex flex-wrap justify-center items-center gap-8">

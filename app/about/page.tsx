@@ -115,7 +115,14 @@ const Page = () => {
                 <div className='w-full max-w-2xl' data-aos="fade-up" data-aos-duration="1000">
                     <Card className="bg-awardyellow text-black transition-transform duration-200 transform hover:scale-110">
                         <CardContent>
-                            <p className='font-bold text-xl text-center'>2023-2024</p>
+                            <p className='pt-3 font-bold text-xl text-center'>2024-2025</p>
+                            <p><Flower className="inline-block"></Flower> SASE Inspire Awards: Honorable Mention for Most Improved Chapter</p>
+                            <p><Flower className="inline-block"></Flower> APAC Hidden Lotus Award: Organization of Distinction</p>
+                            <p><Flower className="inline-block"></Flower> APAC Hidden Lotus Award: Most Improved Organization</p>
+                            <p><Flower className="inline-block"></Flower> APAC Hidden Lotus Award: Best New Media Initiative</p>
+
+
+                            <p className='font-bold text-xl text-center pt-3'>2023-2024</p>
 
                             <p className='pt-3'>
 

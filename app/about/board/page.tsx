@@ -50,6 +50,11 @@ const internalGBoard = [
         img: "https://randomuser.me/api/portraits/men/85.jpg",
     },
     {
+        name: "Brandon Phan",
+        role: "Event Coordinator",
+        img: "https://randomuser.me/api/portraits/men/85.jpg",
+    },
+    {
         name: "Thanish Vijayashanker",
         role: "Event Coordinator",
         img: "https://randomuser.me/api/portraits/men/44.jpg",
