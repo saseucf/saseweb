@@ -1,5 +1,5 @@
 "use client";
-import { Pie, PieChart } from 'recharts';
+import { Pie, PieChart, LabelList } from 'recharts';
 
 import {
     ChartConfig,
@@ -78,6 +78,24 @@ const chartConfig = {
 
 } satisfies ChartConfig
 
+const renderMajorLabel = (props: any) => {
+    const { cx, cy, midAngle, innerRadius, outerRadius, payload } = props;
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) / 2;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    const key = payload?.major as keyof typeof chartConfig;
+    const label = chartConfig[key]?.label || payload?.major;
+
+    return (
+        <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central" style={{ fontSize: 10 }}>
+            {label}
+        </text>
+    );
+}
+
+
 const Page = () => {
     return (
         <div className="min-h-screen w-full overflow-x-clip flex flex-col items-center">
@@ -106,7 +124,17 @@ const Page = () => {
                         cursor={false}
                         content={<ChartTooltipContent hideLabel />}
                     />
-                    <Pie data={chartData} dataKey="percent" nameKey="major" />
+                    <Pie data={chartData} dataKey="percent" nameKey="major" labelLine>
+                        <LabelList dataKey="major" position="inside" content={renderMajorLabel} />
+                        <LabelList
+                            dataKey="percent"
+                            position="outside"
+                            offset={8}
+                            formatter={(value: number) =>
+                                `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`
+                            }
+                        />
+                    </Pie>
                 </PieChart>
             </ChartContainer>
             <p className="text-4xl font-semibold text-center p-10 text-saseblue" data-aos="fade-up" data-aos-duration="1000">Awards & Accomplishments</p>

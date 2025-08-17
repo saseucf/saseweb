@@ -12,8 +12,8 @@ type LeaderboardEntry = {
 };
 
 
-const data = await supabase.from("saseuserstats").select("*")
-console.log(data)
+const data = await supabase.from("profiles").select("*")
+console.log("hello" + data)
 
 const leaderboardData: LeaderboardEntry[] = [
     { id: 1, name: "Alice Johnson", score: 1500, imageUrl: undefined },
@@ -41,11 +41,11 @@ const Page = () => {
                         <div
                             key={entry.id}
                             className={`flex items-center justify-between py-3 px-2 rounded-md ${idx === 0
-                                ? "bg-yellow-100 dark:bg-yellow-900"
+                                ? "bg-awardyellow"
                                 : idx === 1
-                                    ? "bg-gray-100 dark:bg-gray-800"
+                                    ? "bg-gray-700"
                                     : idx === 2
-                                        ? "bg-orange-100 dark:bg-orange-900"
+                                        ? "bg-orange-900"
                                         : ""
                                 } mb-2`}
                         >

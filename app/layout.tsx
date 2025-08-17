@@ -112,11 +112,11 @@ export default function RootLayout({
                                     <NavigationMenu>
                                         <NavigationMenuItem>
                                             <Link href={"/events"}>
-                                                <NavigationMenuTrigger className="font-extrabold">
+                                                <NavigationMenuLink className="font-extrabold">
                                                     <p>
                                                         <Calendar className="inline" size={16} /> Events
                                                     </p>
-                                                </NavigationMenuTrigger>
+                                                </NavigationMenuLink>
                                                 {/* <NavigationMenuContent>
                                                     <NavigationMenuLink>Link</NavigationMenuLink>
                                                 </NavigationMenuContent> */}
@@ -126,11 +126,11 @@ export default function RootLayout({
                                     <NavigationMenu>
                                         <NavigationMenuItem>
                                             <Link href={"/programs"}>
-                                                <NavigationMenuTrigger className="font-extrabold">
+                                                <NavigationMenuLink className="font-extrabold">
                                                     <p>
                                                         <File className="inline" size={16} /> Programs
                                                     </p>
-                                                </NavigationMenuTrigger>
+                                                </NavigationMenuLink>
                                                 {/* <NavigationMenuContent>
                                                     <NavigationMenuLink>Link</NavigationMenuLink>
                                                 </NavigationMenuContent> */}
@@ -179,7 +179,7 @@ export default function RootLayout({
                                             {isLoggedIn ? (
                                                 <Link href={`/profile`}>
                                                     <Avatar>
-                                                        <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                        <AvatarImage src="avatar.png" alt="@shadcn" />
                                                         <AvatarFallback>CN</AvatarFallback>
                                                     </Avatar>
                                                 </Link>
@@ -304,7 +304,7 @@ export default function RootLayout({
                                     <Link href={`/profile`} onClick={() => setMobileMenuOpen(false)}>
                                         <div className="flex items-center gap-2 py-2">
                                             <Avatar>
-                                                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                <AvatarImage src="avatar.png" alt="@shadcn" />
                                                 <AvatarFallback>CN</AvatarFallback>
                                             </Avatar>
                                             Profile
