@@ -48,7 +48,7 @@ const Page = () => {
             >
                 <div className="w-full max-w-3xl aspect-video">
                     <iframe
-                        src="https://calendar.google.com/calendar/embed?src=c_909abfda70bf7ddf91f64eda3c41fab321b06962ec46fdbb1708645c54b8928a%40group.calendar.google.com&ctz=America%2FNew_York"
+                        src="https://calendar.google.com/calendar/embed?src=cbdda5359c7179063608f9aeacb5122649b722539f5c65174b688816d9988e80%40group.calendar.google.com&ctz=America%2FNew_York"
                         className="w-full h-full rounded-md border-0"
                         allowFullScreen
                     ></iframe>
