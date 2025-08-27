@@ -151,7 +151,7 @@ export default function RootLayout({
                                                 <NavigationMenuLink asChild><Link href="https://www.linkedin.com/company/ucf-sase/"><p>
                                                     <FaLinkedin className="inline"></FaLinkedin>  Linkedin
                                                 </p></Link></NavigationMenuLink>
-                                                <NavigationMenuLink asChild><Link href="https://discord.gg/qAEjCtuM"><p>
+                                                <NavigationMenuLink asChild><Link href="https://discord.gg/PK8e6KwAQS"><p>
                                                     <FaDiscord className="inline"></FaDiscord>  Discord
                                                 </p></Link></NavigationMenuLink>
                                                 <NavigationMenuLink asChild><Link href="https://knightconnect.campuslabs.com/engage/organization/saseucf"><p>
@@ -285,7 +285,7 @@ export default function RootLayout({
                                             </p>
                                             <p>
                                                 <FaDiscord className="inline" size={24} />
-                                                <Link href="https://discord.gg/qAEjCtuM">   Discord</Link>
+                                                <Link href="https://discord.gg/PK8e6KwAQS">   Discord</Link>
                                             </p>
                                             <p>
                                                 <FaChessKnight className="inline" size={24} />
