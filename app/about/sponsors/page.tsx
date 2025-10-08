@@ -1,4 +1,9 @@
 import Image from "next/image"
+
+export const metadata = {
+    title: "Sponsors",
+    description: "Our sponsors and partners supporting SASE UCF.",
+} as const;
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Crown, Medal } from "lucide-react"
 // import patel from "../../public/patel.png"

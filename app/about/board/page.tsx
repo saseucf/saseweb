@@ -1,5 +1,10 @@
 import Image from "next/image";
 
+export const metadata = {
+    title: "Executive Board",
+    description: "Meet the executive and general board members of SASE UCF.",
+} as const;
+
 const executiveBoard = [
     {
         name: "Kathy Nguyen",

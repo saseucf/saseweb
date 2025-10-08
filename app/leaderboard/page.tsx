@@ -1,5 +1,10 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
+
+export const metadata = {
+    title: "Leaderboard",
+    description: "Leaderboard — top contributors and member standings for SASE UCF.",
+} as const;
 import { Avatar } from "@/components/ui/avatar";
 import supabase from "@/lib/auth";
 import Image from "next/image";

@@ -29,17 +29,23 @@ export function LoginForm({
     const [password, setPassword] = useState("")
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        // Handle form submission logic here
-        // For example, you can call supabase.auth.signUp() to register a new user
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        });
-        if (error) {
-            console.error("Error signing up:", error.message);
-        } else {
-            console.log("User signed up:", data.user);
-            router.push("/")
+        try {
+            const res = await fetch("/api/auth/signin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+            const result = await res.json();
+            if (!res.ok) {
+                console.error("Login error:", result);
+                return;
+            }
+            // on successful sign in the server will set cookies; refresh client routing
+            router.push("/");
+        } catch (err) {
+            console.error("Unexpected error:", err);
         }
     }
     return (

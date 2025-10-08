@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label"
 import { FormEvent, useState } from "react"
 
 
-import supabase from "@/lib/auth"
 
 
 
@@ -30,27 +29,24 @@ export function RegisterForm({
     const [message, setMessage] = useState("")
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        // Handle form submission logic here
-        // For example, you can call supabase.auth.signUp() to register a new user
-        const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: {
-                    username: username
-                }
-
+        try {
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password, username }),
+            });
+            const result = await res.json();
+            if (!res.ok) {
+                setError(true);
+                setMessage(result?.error?.message || "Registration failed");
+                return;
             }
-        });
-        if (error) {
-            console.error("Error signing up:", error.message);
-            setMessage(error.message)
-            setError(true)
-        } else {
-            setError(false)
-            setMessage("Check your email for a confirmation link to complete your registration.")
-            console.log("User signed up:", data.user);
-
+            setError(false);
+            setMessage("Check your email for a confirmation link to complete your registration.");
+            console.log("Registration result:", result);
+        } catch (err: any) {
+            setError(true);
+            setMessage(String(err));
         }
     }
     return (
