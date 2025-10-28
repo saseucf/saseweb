@@ -11,16 +11,28 @@ export function createServerSupabase() {
   > => {
     // Next's cookies() typing can vary across versions; ensure we await cookies() to avoid
     // the "cookies().getAll() should be awaited" runtime error in newer Next versions.
-    const raw = await (cookies as any)();
-    const all = raw && typeof raw.getAll === "function" ? raw.getAll() : [];
-    return all.map((c: any) => ({
-      name: String(c.name),
-      value: String(c.value),
-    }));
+    // Use unknown and runtime guards instead of `any` to satisfy the linter.
+    const raw = await cookies();
+    const maybeAll =
+      raw &&
+      typeof (raw as unknown as { getAll?: unknown }).getAll === "function"
+        ? (raw as unknown as { getAll: () => unknown }).getAll()
+        : [];
+    if (!Array.isArray(maybeAll)) return [];
+    return maybeAll
+      .filter(
+        (c): c is { name?: unknown; value?: unknown } =>
+          typeof c === "object" && c !== null
+      )
+      .map((c) => ({
+        name: String((c as { name?: unknown }).name ?? ""),
+        value: String((c as { value?: unknown }).value ?? ""),
+      }));
   };
 
-  const cookieSetAll = (_: Array<{ name: string; value: string }>) => {
-    // no-op in server component context
+  const cookieSetAll = (_cookies: Array<{ name: string; value: string }>) => {
+    // no-op in server component context; reference the param to avoid unused-var lint warnings
+    void _cookies;
     return;
   };
 

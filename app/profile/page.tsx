@@ -41,6 +41,20 @@ export default function Page({
     const [edit, setEdit] = useState(false)
     const [stars, setStars] = useState(0)
     fetchStars().then(fetchedStars => setStars(fetchedStars))
+
+    async function handleSignOut() {
+        // Call server endpoint to clear server-side auth cookies first so server-rendered session is cleared.
+        await fetch('/api/auth/signout', { method: 'POST' }).catch((e) => console.error(e))
+        // Also clear client session
+        try {
+            await supabase.auth.signOut()
+        } catch (err) {
+            console.error("Error signing out (client):", err)
+        }
+        // Force a full reload so RootLayout (which reads session server-side) updates immediately.
+        window.location.href = '/login'
+    }
+
     return (
         <div className="min-h-screen w-full overflow-x-clip flex items-center justify-center">
             <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg p-4 sm:p-6 md:p-10">
@@ -76,6 +90,14 @@ export default function Page({
                         </div>
                     </div>
                 </CardContent>
+                <div className="mt-6 flex justify-center">
+                    <button
+                        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+                        onClick={() => handleSignOut()}
+                    >
+                        Log out
+                    </button>
+                </div>
             </Card>
         </div>
     )

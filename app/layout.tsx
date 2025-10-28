@@ -2,8 +2,6 @@ import "./globals.css";
 import NavBar from "@/components/navbar";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "@/components/themeprovider";
-import Image from "next/image";
-import saselogo from "@/public/saselogo.png";
 import { createServerSupabase } from "@/lib/supabase-server";
 
 const geist = Geist({

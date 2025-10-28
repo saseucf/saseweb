@@ -19,15 +19,18 @@ import { FaInstagram, FaLinkedin, FaChessKnight, FaDiscord } from "react-icons/f
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect, useState } from "react";
+import supabase from "@/lib/auth";
 
 const geist = Geist({
     subsets: ["latin"],
     display: "swap",
 });
 
+type User = { id?: string };
+type Session = { user?: User } | null;
+
 type NavBarProps = {
-    // session object from supabase.server getSession(); keep as any to avoid tight coupling
-    session: any | null;
+    session: Session;
     children?: React.ReactNode;
 };
 
@@ -36,10 +39,91 @@ export default function NavBar({ session }: NavBarProps) {
     const [aboutMenuOpen, setAboutMenuOpen] = useState(false);
     const [socialsubmenuOpen, setSocialSubmenuOpen] = useState(false);
 
-    const isLoggedIn = !!session?.user;
+    const [sessionState, setSessionState] = useState<Session>(session as Session);
+    const [verified, setVerified] = useState<boolean>(!!session);
+    const isLoggedIn = !!sessionState?.user;
+
+    useEffect(() => {
+        // Reduce flicker on client-side navigation after login:
+        // 1) If the login flow wrote an optimistic user into localStorage, use that immediately.
+        // 2) Then verify with supabase.auth.getUser() and reconcile the trusted value.
+        // Use the server-provided `session` as the initial render state to avoid UI flicker.
+        let mounted = true;
+
+        // 1) optimistic localStorage prefill (fast)
+        if (typeof window !== "undefined" && !session) {
+            try {
+                const cached = localStorage.getItem("sase:auth");
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.id) {
+                        setSessionState({ user: parsed });
+                        setVerified(true);
+                    }
+                }
+            } catch {
+                // ignore parse errors
+            }
+        }
+
+        // 2) authoritative verification with Supabase
+        async function verify() {
+            try {
+                const { data } = await supabase.auth.getUser();
+                if (!mounted) return;
+                if (data?.user) {
+                    setSessionState({ user: data.user });
+                } else if (!session) {
+                    // only clear client state if server did not provide a session
+                    setSessionState(null);
+                }
+            } catch (err) {
+                console.error("Error fetching user:", err);
+                if (!session) setSessionState(null);
+            } finally {
+                if (mounted) setVerified(true);
+            }
+        }
+
+        verify();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+            verify();
+        });
+
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+        };
+    }, [session]);
 
     useEffect(() => {
         AOS.init({});
+    }, []);
+
+    // Listen for optimistic signin events dispatched by the login form so the navbar can update
+    // immediately without waiting for Supabase's onAuthStateChange to propagate.
+    useEffect(() => {
+        function onSaseAuth(e: Event) {
+            try {
+                const ce = e as CustomEvent<{ user?: User }>;
+                const user = ce?.detail?.user;
+                if (user) {
+                    setSessionState({ user });
+                    setVerified(true);
+                }
+            } catch (err) {
+                console.error("Error handling sase:auth event:", err);
+            }
+        }
+        if (typeof window !== "undefined") {
+            window.addEventListener("sase:auth", onSaseAuth);
+        }
+        return () => {
+            if (typeof window !== "undefined") {
+                window.removeEventListener("sase:auth", onSaseAuth);
+            }
+        };
     }, []);
 
     return (
@@ -161,7 +245,10 @@ export default function NavBar({ session }: NavBarProps) {
 
                             <NavigationMenu>
                                 <NavigationMenuItem>
-                                    {isLoggedIn ? (
+                                    {(!verified && !session) ? (
+                                        // while verification is in progress and there's no server session, render nothing
+                                        <div className="w-10 h-10" />
+                                    ) : isLoggedIn ? (
                                         <Link href={`/profile`}>
                                             <Avatar>
                                                 <AvatarImage src="avatar.png" alt="@shadcn" />
@@ -275,7 +362,10 @@ export default function NavBar({ session }: NavBarProps) {
                             </div>
                         </Link>
 
-                        {isLoggedIn ? (
+                        {(!verified && !session) ? (
+                            // while verification is in progress and there's no server session, render a placeholder to avoid flicker
+                            <div className="h-10" />
+                        ) : isLoggedIn ? (
                             <Link href={`/profile`} onClick={() => setMobileMenuOpen(false)}>
                                 <div className="flex items-center gap-2 py-2">
                                     <Avatar>

@@ -42,8 +42,44 @@ export function LoginForm({
                 console.error("Login error:", result);
                 return;
             }
-            // on successful sign in the server will set cookies; refresh client routing
-            router.push("/");
+            // If the server returned a session object, configure the client-side Supabase session
+            // so supabase.auth.getUser() will immediately return the authenticated user.
+            if (result?.data?.session) {
+                try {
+                    await supabase.auth.setSession({
+                        access_token: result.data.session.access_token,
+                        refresh_token: result.data.session.refresh_token,
+                    });
+                    // Ensure the Supabase client has recognized the session before navigating.
+                    // This reduces the chance the navbar will render the unauthenticated UI briefly.
+                    try {
+                        await supabase.auth.getUser();
+                    } catch {
+                        // ignore; we'll still optimistically update below
+                    }
+                    // Optimistically notify other components that a user signed in so UI can update without flicker.
+                    try {
+                        const user = result.data.session?.user;
+                        if (typeof window !== "undefined" && user) {
+                            try {
+                                localStorage.setItem("sase:auth", JSON.stringify(user));
+                            } catch {
+                                // ignore localStorage errors
+                            }
+                            window.dispatchEvent(new CustomEvent("sase:auth", { detail: { user } }));
+                        }
+                    } catch (e) {
+                        console.error("Error dispatching auth event:", e);
+                    }
+                } catch (e) {
+                    console.error("Error setting client session:", e);
+                }
+                // Navigate client-side (avoid full reload) so navbar can update without flicker.
+                router.replace("/");
+            } else {
+                // fallback to full reload to let server-side cookies take effect
+                window.location.href = "/";
+            }
         } catch (err) {
             console.error("Unexpected error:", err);
         }
@@ -58,7 +94,7 @@ export function LoginForm({
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={(e) => handleSubmit(e)}>
+                    <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-6">
                             <div className="grid gap-3">
                                 <Label htmlFor="email">Email</Label>

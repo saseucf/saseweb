@@ -44,9 +44,10 @@ export function RegisterForm({
             setError(false);
             setMessage("Check your email for a confirmation link to complete your registration.");
             console.log("Registration result:", result);
-        } catch (err: any) {
+        } catch (err: unknown) {
             setError(true);
-            setMessage(String(err));
+            const message = err instanceof Error ? err.message : String(err);
+            setMessage(message);
         }
     }
     return (
@@ -59,7 +60,7 @@ export function RegisterForm({
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={(e) => handleSubmit(e)}>
+                    <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-6">
                             <div className="grid gap-3">
                                 <Label htmlFor="email">Email</Label>
