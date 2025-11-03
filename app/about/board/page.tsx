@@ -9,30 +9,32 @@ const executiveBoard = [
     {
         name: "Kathy Nguyen",
         role: "President",
-        img: "/officerheadshot/kathy.JPG",
+        img: "/officerheadshot/kathy.jpg",
     },
     {
         name: "William Douglass",
         role: "Internal Vice President",
+        img: "/officerheadshot/will.jpg",
     },
     {
         name: "Christian De Mesa",
         role: "External Vice President",
-        img: "/officerheadshot/christian.JPG",
+        img: "/officerheadshot/christian.jpg",
     },
     {
         name: "Janna Alba",
         role: "Treasurer",
-        img: "/officerheadshot/janna.JPG",
+        img: "/officerheadshot/janna.jpg",
     },
     {
         name: "Rohan Rana",
         role: "Secretary",
-        img: "/officerheadshot/rohan.JPG",
+        img: "/officerheadshot/rohan.jpg",
     },
     {
         name: "Kyan Nguyen",
         role: "Media Vice President",
+        img: "/officerheadshot/kyan.jpg",
     },
 ];
 
@@ -40,11 +42,12 @@ const internalGBoard = [
     {
         name: "Johnny Nguyen",
         role: "Member Engagement",
-        img: "/officerheadshot/johnny.JPG",
+        img: "/officerheadshot/johnny.jpg",
     },
     {
         name: "Jessica Do",
         role: "Member Engagement",
+        img: "/officerheadshot/jess.jpg",
     },
     {
         name: "Man Munoz",
@@ -54,15 +57,17 @@ const internalGBoard = [
     {
         name: "Brandon Phan",
         role: "Event Coordinator",
+        img: "/officerheadshot/brandon.jpg",
     },
     {
         name: "Thanish Vijayashanker",
         role: "Event Coordinator",
-        img: "/officerheadshot/thanish.JPG",
+        img: "/officerheadshot/thanish.jpg",
     },
     {
         name: "Greg Kwon",
         role: "Service Chair",
+        img: "/officerheadshot/greg.jpg",
     },
 
 ];
@@ -70,23 +75,27 @@ const externalGBoard = [
     {
         name: "Eric George",
         role: "CS Technical Chair",
+        img: "/officerheadshot/eric.jpg",
     },
     {
         name: "Adam Dinh",
         role: "Engineering Technical Chair",
+        img: "/officerheadshot/adam.jpg",
     },
     {
         name: "Ryan Hossain",
         role: "Science Chair",
-        img: "/officerheadshot/ryanh.JPG",
+        img: "/officerheadshot/ryanh.jpg",
     },
     {
         name: "Wesley Chou",
         role: "Professional Development Chair",
+        img: "/officerheadshot/wes.jpg",
     },
     {
         name: "Mai Nguyen",
         role: "Professional Development Chair",
+        img: "/officerheadshot/mai.jpg",
     },
 
 ];
@@ -95,24 +104,27 @@ const mediaGBoard = [
     {
         name: "Alyssa Xiong",
         role: "Creative Director",
+        img: "/officerheadshot/alyssa.jpg",
     },
     {
         name: "Lily Nguyen",
         role: "Creative Director",
+        img: "/officerheadshot/lily.jpg",
     },
     {
         name: "Allison Lunandy",
         role: "Historian",
-        img: "/officerheadshot/allison.JPG",
+        img: "/officerheadshot/allison.jpg",
     },
     {
         name: "Ryan Kreger",
         role: "Historian",
+        img: "/officerheadshot/ryan.jpg",
     },
     {
         name: "Tiffany Havo",
         role: "Public Relations",
-        img: "/officerheadshot/tiffany.jpeg",
+        img: "/officerheadshot/tiff.jpg",
     },
 
 ];
