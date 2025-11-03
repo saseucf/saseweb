@@ -9,7 +9,7 @@ const executiveBoard = [
     {
         name: "Kathy Nguyen",
         role: "President",
-        img: "/officerheadshot/kathy.jpg",
+        img: "/officerheadshot/kathy.JPG",
     },
     {
         name: "William Douglass",
@@ -19,17 +19,17 @@ const executiveBoard = [
     {
         name: "Christian De Mesa",
         role: "External Vice President",
-        img: "/officerheadshot/christian.jpg",
+        img: "/officerheadshot/christian.JPG",
     },
     {
         name: "Janna Alba",
         role: "Treasurer",
-        img: "/officerheadshot/janna.jpg",
+        img: "/officerheadshot/janna.JPG",
     },
     {
         name: "Rohan Rana",
         role: "Secretary",
-        img: "/officerheadshot/rohan.jpg",
+        img: "/officerheadshot/rohan.JPG",
     },
     {
         name: "Kyan Nguyen",
@@ -42,7 +42,7 @@ const internalGBoard = [
     {
         name: "Johnny Nguyen",
         role: "Member Engagement",
-        img: "/officerheadshot/johnny.jpg",
+        img: "/officerheadshot/johnny.JPG",
     },
     {
         name: "Jessica Do",
@@ -62,7 +62,7 @@ const internalGBoard = [
     {
         name: "Thanish Vijayashanker",
         role: "Event Coordinator",
-        img: "/officerheadshot/thanish.jpg",
+        img: "/officerheadshot/thanish.JPG",
     },
     {
         name: "Greg Kwon",
@@ -85,7 +85,7 @@ const externalGBoard = [
     {
         name: "Ryan Hossain",
         role: "Science Chair",
-        img: "/officerheadshot/ryanh.jpg",
+        img: "/officerheadshot/ryanh.JPG",
     },
     {
         name: "Wesley Chou",
@@ -114,7 +114,7 @@ const mediaGBoard = [
     {
         name: "Allison Lunandy",
         role: "Historian",
-        img: "/officerheadshot/allison.jpg",
+        img: "/officerheadshot/allison.JPG",
     },
     {
         name: "Ryan Kreger",
