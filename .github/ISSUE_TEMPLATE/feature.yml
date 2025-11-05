@@ -1,0 +1,23 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: What should be built? Why?
+  - type: textarea
+    attributes:
+      label: Acceptance Criteria
+      description: List steps or expected results
+  - type: input
+    attributes:
+      label: Figma / Reference Link
+  - type: dropdown
+    attributes:
+      label: Role
+      options:
+        - Frontend
+        - Backend
+        - UI-UX
