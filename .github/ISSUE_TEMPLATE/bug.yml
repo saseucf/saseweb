@@ -1,0 +1,14 @@
+name: Bug Report
+description: Report something that isn’t working
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+  - type: textarea
+    attributes:
+      label: Actual Behavior / Screenshot
