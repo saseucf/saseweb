@@ -1,0 +1,16 @@
+name: Design Task
+description: UI/UX task or design iteration
+title: "[Design] "
+labels: ["uiux"]
+body:
+  - type: textarea
+    attributes:
+      label: Objective
+      description: What are we designing or revising?
+  - type: textarea
+    attributes:
+      label: Deliverables
+      description: Wireframes, mockups, components, etc.
+  - type: input
+    attributes:
+      label: Figma Link
