@@ -21,11 +21,11 @@ const data = await supabase.from("profiles").select("*")
 console.log("hello" + data)
 
 const leaderboardData: LeaderboardEntry[] = [
-    { id: 1, name: "Alice Johnson", score: 1500, imageUrl: undefined },
-    { id: 2, name: "Bob Smith", score: 1200, imageUrl: undefined },
-    { id: 3, name: "Charlie Lee", score: 1100, imageUrl: undefined },
-    { id: 4, name: "Dana White", score: 950, imageUrl: undefined },
-    { id: 5, name: "Evan Green", score: 900, imageUrl: undefined },
+    { id: 1, name: "Aaditya Patel", score: 570, imageUrl: undefined },
+    { id: 2, name: "Mike Wong", score: 340, imageUrl: undefined },
+    { id: 3, name: "Jayden Sarmiento", score: 310, imageUrl: undefined },
+    { id: 4, name: "Rita Gau", score: 270, imageUrl: undefined },
+    { id: 5, name: "Bianca Rosendahl", score: 240, imageUrl: undefined },
 ];
 
 const getInitials = (name: string) => {
