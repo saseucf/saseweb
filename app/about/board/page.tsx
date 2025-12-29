@@ -65,6 +65,11 @@ const internalGBoard = [
         img: "/officerheadshot/thanish.JPG",
     },
     {
+        name: "Man Munoz",
+        role: "Event Coordinator",
+        img: "/officerheadshot/man.jpeg"
+    },
+    {
         name: "Greg Kwon",
         role: "Service Chair",
         img: "/officerheadshot/greg.jpg",
