@@ -79,7 +79,7 @@ const internalGBoard = [
 const externalGBoard = [
     {
         name: "Eric George",
-        role: "CS Technical Chair",
+        role: "Computer Science Technical Chair",
         img: "/officerheadshot/eric.jpg",
     },
     {
