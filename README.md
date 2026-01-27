@@ -2,7 +2,7 @@
 
 Welcome to the official repository for the UCF SASE (Society of Asian Scientists and Engineers) website! This project is a modern web application built to serve the UCF SASE community.
 
-## � Table of Contents
+## Table of Contents
 - [Tech Stack](#-tech-stack)
 - [Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
@@ -16,7 +16,7 @@ Welcome to the official repository for the UCF SASE (Society of Asian Scientists
 - [Project Structure](#-project-structure)
 - [Deployment](#-deployment)
 
-## �🚀 Tech Stack
+## 🚀 Tech Stack
 
 - **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
