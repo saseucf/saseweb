@@ -1,43 +1,34 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NavBar from "@/components/navbar";
-import { Geist } from "next/font/google";
-import { ThemeProvider } from "@/components/themeprovider";
-import { createServerSupabase } from "@/lib/supabase-server";
 
-const geist = Geist({
-    subsets: ["latin"],
-    display: "swap",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
-export const metadata = {
-    title: "Home",
-    description:
-        "Welcome to SASE UCF — events, programs, and resources for the Society of Asian Scientists and Engineers at UCF.",
-} as const;
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
-export default async function RootLayout({
-    children,
+export const metadata: Metadata = {
+  title: "SASE Web Dev - Fresh Start",
+  description: "A clean slate for the SASE UCF Web Dev team.",
+};
+
+export default function RootLayout({
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    const supabase = createServerSupabase();
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
-
-    return (
-        <html lang="en" className={geist.className}>
-            <body>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="dark"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <NavBar session={session} />
-                    {children}
-                </ThemeProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
+      </body>
+    </html>
+  );
 }
