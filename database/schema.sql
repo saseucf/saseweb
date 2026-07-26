@@ -9,8 +9,12 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 DROP TABLE IF EXISTS public.profiles CASCADE;
 CREATE TABLE public.profiles (
     id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-    first_name TEXT NOT NULL CHECK (first_name <> ''),
-    last_name TEXT NOT NULL CHECK (last_name <> ''),
+    -- No "<> ''" check here: OAuth providers (Discord, etc.) often only give a
+    -- single display name, which can split into an empty last_name (e.g. a
+    -- one-word Discord username). handle_new_user() below always fills these
+    -- in with something, but we don't want the insert to hard-fail if it can't.
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE CHECK (email <> ''),
     major TEXT NOT NULL,
     year TEXT NOT NULL,
@@ -38,15 +42,59 @@ CREATE POLICY "Users can update their own profile"
     ON public.profiles FOR UPDATE
     USING (auth.uid() = id);
 
--- Function to automatically create a profile when a new user signs up
+-- Function to automatically create a profile when a new user signs up.
+--
+-- Different signup paths give us different pieces of a name, and none of
+-- them currently give us first_name/last_name directly:
+--   - Email/password (register-form.tsx)      -> only a "username"
+--   - Discord OAuth (login-form.tsx)           -> a single display name,
+--                                                  exposed by Supabase as
+--                                                  full_name / name / user_name
+-- So we pick the best available signal, auto-fill first/last name from it,
+-- and let the user correct it later on /profile.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+    display_name TEXT;
+    derived_first_name TEXT;
+    derived_last_name TEXT;
+    space_pos INT;
 BEGIN
+    -- 1. Pick a display name from whatever metadata is actually available,
+    --    in priority order, falling back to a generic placeholder.
+    display_name := COALESCE(
+        NULLIF(TRIM(NEW.raw_user_meta_data->>'first_name'), ''),
+        NULLIF(TRIM(NEW.raw_user_meta_data->>'full_name'), ''),
+        NULLIF(TRIM(NEW.raw_user_meta_data->>'name'), ''),
+        NULLIF(TRIM(NEW.raw_user_meta_data->>'username'), ''),
+        NULLIF(TRIM(NEW.raw_user_meta_data->>'user_name'), ''),
+        'New Member'
+    );
+
+    -- 2. If a real first_name/last_name pair was explicitly provided
+    --    (not currently true for either signup path, but kept for the
+    --    future), use it as-is instead of splitting anything.
+    IF NEW.raw_user_meta_data ? 'first_name' AND NEW.raw_user_meta_data ? 'last_name' THEN
+        derived_first_name := NEW.raw_user_meta_data->>'first_name';
+        derived_last_name := NEW.raw_user_meta_data->>'last_name';
+    ELSE
+        -- 3. Otherwise split the single display name on its first space.
+        --    "Jane Doe" -> "Jane" / "Doe". "kevin" -> "kevin" / "".
+        space_pos := POSITION(' ' IN display_name);
+        IF space_pos > 0 THEN
+            derived_first_name := SUBSTRING(display_name FROM 1 FOR space_pos - 1);
+            derived_last_name := SUBSTRING(display_name FROM space_pos + 1);
+        ELSE
+            derived_first_name := display_name;
+            derived_last_name := '';
+        END IF;
+    END IF;
+
     INSERT INTO public.profiles (id, first_name, last_name, email, major, year, school)
     VALUES (
         NEW.id,
-        COALESCE(NEW.raw_user_meta_data->>'first_name', ''),
-        COALESCE(NEW.raw_user_meta_data->>'last_name', ''),
+        derived_first_name,
+        derived_last_name,
         NEW.email,
         COALESCE(NEW.raw_user_meta_data->>'major', ''),
         COALESCE(NEW.raw_user_meta_data->>'year', ''),
