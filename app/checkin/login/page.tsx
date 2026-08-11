@@ -1,17 +1,19 @@
 "use client"
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { createClient } from "@/lib/checkin-supabase";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-export default function MemberLoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
   const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -42,7 +44,11 @@ export default function MemberLoginPage() {
       router.push('/checkin/admin');
     } else {
       // Normal member
-      router.push('/checkin/member');
+      if (redirectUrl) {
+        router.push(redirectUrl);
+      } else {
+        router.push('/checkin/member');
+      }
     }
   };
 
@@ -103,4 +109,12 @@ export default function MemberLoginPage() {
       </form>
     </div>
   );
+}
+
+export default function MemberLoginPage() {
+  return (
+    <Suspense fallback={<div className="flex h-[70vh] items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <LoginForm />
+    </Suspense>
+  )
 }

@@ -156,16 +156,16 @@ export default function AdminDashboard() {
         </select>
       </div>
 
-      {/* Scanner Toggle */}
-      <div className="w-full">
+      {/* Scanner Toggle and QR Generator */}
+      <div className="w-full flex space-x-2">
         {!scanning ? (
           <button
             onClick={() => setScanning(true)}
-            className="w-full flex items-center justify-center space-x-2 bg-primary text-primary-foreground p-4 rounded-xl font-bold shadow-md hover:bg-primary/90 transition-all active:scale-[0.98]"
+            className="flex-1 flex items-center justify-center space-x-2 bg-primary text-primary-foreground p-4 rounded-xl font-bold shadow-md hover:bg-primary/90 transition-all active:scale-[0.98]"
             disabled={!selectedEvent}
           >
-            <Camera className="w-6 h-6" />
-            <span>Open Camera to Scan</span>
+            <Camera className="w-5 h-5" />
+            <span>Scan Members</span>
           </button>
         ) : (
           <div className="w-full space-y-4 animate-in fade-in zoom-in-95">
@@ -177,6 +177,20 @@ export default function AdminDashboard() {
               Cancel Scan
             </button>
           </div>
+        )}
+
+        {!scanning && (
+          <button
+            onClick={() => {
+              if (selectedEvent) {
+                window.open(`/checkin/admin/event/${selectedEvent}/qr`, '_blank');
+              }
+            }}
+            disabled={!selectedEvent}
+            className="flex items-center justify-center space-x-2 bg-secondary text-secondary-foreground p-4 rounded-xl font-bold shadow-md hover:bg-secondary/90 transition-all active:scale-[0.98] disabled:opacity-50"
+          >
+            <span>Show Event QR</span>
+          </button>
         )}
       </div>
 
