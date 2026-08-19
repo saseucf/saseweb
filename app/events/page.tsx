@@ -12,14 +12,18 @@ type Event = {
     points: number;
     host: string | null;
     created_at: string;
+    status: "draft" | "published" | "cancelled";
 };
 
 export default async function EventsPage() {
     const supabase = createServerSupabase();
 
+    // Fetch published events from Supabase in chronological order.
+    // Draft and cancelled events should not be visible on the public events page.
     const { data, error } = await supabase
         .from("events")
         .select("*")
+        .eq("status", "published")
         .order("start_time", { ascending: true });
 
     if (error) {
