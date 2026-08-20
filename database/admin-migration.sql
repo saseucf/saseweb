@@ -47,3 +47,43 @@ CREATE POLICY "Admins can update events"
 CREATE POLICY "Admins can delete events" 
     ON public.events FOR DELETE 
     USING (public.is_admin());
+
+-- 5. Update Forms Policies
+ALTER TABLE public.forms ENABLE ROW LEVEL SECURITY;
+
+-- Allow all authenticated users to view forms so they can fill them out
+DROP POLICY IF EXISTS "Anyone can view forms" ON public.forms;
+DROP POLICY IF EXISTS "Only admins can view forms" ON public.forms;
+CREATE POLICY "Anyone can view forms"
+    ON public.forms
+    FOR SELECT
+    TO authenticated
+    USING (true);
+
+-- Only admins can create forms
+DROP POLICY IF EXISTS "Only admins can create forms" ON public.forms;
+CREATE POLICY "Only admins can create forms"
+    ON public.forms
+    FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        created_by = auth.uid()
+        AND public.is_admin()
+    );
+
+-- Only admins can update forms
+DROP POLICY IF EXISTS "Only admins can update forms" ON public.forms;
+CREATE POLICY "Only admins can update forms"
+    ON public.forms
+    FOR UPDATE
+    TO authenticated
+    USING (public.is_admin())
+    WITH CHECK (public.is_admin());
+
+-- Only admins can delete forms
+DROP POLICY IF EXISTS "Only admins can delete forms" ON public.forms;
+CREATE POLICY "Only admins can delete forms"
+    ON public.forms
+    FOR DELETE
+    TO authenticated
+    USING (public.is_admin());
