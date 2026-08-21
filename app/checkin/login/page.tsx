@@ -35,11 +35,11 @@ function LoginForm() {
     // Check if the user is an admin
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('role')
       .eq('id', data.user.id)
       .single();
 
-    if (profileData?.is_admin) {
+    if (profileData?.role === 'admin') {
       // If admin, redirect to admin page
       router.push('/checkin/admin');
     } else {

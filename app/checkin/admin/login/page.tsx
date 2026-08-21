@@ -33,11 +33,11 @@ export default function AdminLoginPage() {
     // Verify admin privileges
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('role')
       .eq('id', data.user.id)
       .single();
 
-    if (!profileData?.is_admin) {
+    if (profileData?.role !== 'admin') {
       setError("Access denied. You do not have administrator privileges.");
       await supabase.auth.signOut();
       setLoading(false);
