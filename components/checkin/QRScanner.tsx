@@ -19,7 +19,6 @@ export default function QRScanner({ onScan, onError }: QRScannerProps) {
           else console.error(error);
         }}
         components={{
-          audio: false,
           finder: true
         }}
       />
