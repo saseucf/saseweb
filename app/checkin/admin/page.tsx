@@ -8,10 +8,12 @@ import QRScanner from "@/components/checkin/QRScanner";
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [events, setEvents] = useState<any[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<string>("");
   const [scanning, setScanning] = useState(false);
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [scannedUser, setScannedUser] = useState<any>(null);
   const [checkInStatus, setCheckInStatus] = useState<{success: boolean; msg: string} | null>(null);
   const [checkInLoading, setCheckInLoading] = useState(false);

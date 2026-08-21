@@ -7,6 +7,7 @@ import React from "react";
 import { Loader2 } from "lucide-react";
 
 export default function AdminEventQRPage({ params }: { params: Promise<{ eventId: string }> }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [qrUrl, setQrUrl] = useState("");

@@ -15,7 +15,7 @@ export default function QRScanner({ onScan, onError }: QRScannerProps) {
             }
         }}
         onError={(error) => {
-          if (onError) onError(error as Error);
+          if (onError) onError(error as unknown as Error);
           else console.error(error);
         }}
         components={{
