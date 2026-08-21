@@ -8,6 +8,7 @@ import { QRCodeSVG } from 'qrcode.react';
 
 export default function MemberDashboard() {
   const [userId, setUserId] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();

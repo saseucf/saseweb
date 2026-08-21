@@ -8,6 +8,7 @@ import React from "react";
 
 export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventId: string }> }) {
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [event, setEvent] = useState<any>(null);
   const [status, setStatus] = useState<{success: boolean; msg: string} | null>(null);
   const [checkingIn, setCheckingIn] = useState(false);

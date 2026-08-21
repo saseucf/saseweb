@@ -17,7 +17,7 @@ export default function CheckinLandingPage() {
               <User className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold">I'm a Member</h2>
+              <h2 className="text-lg font-semibold">I&apos;m a Member</h2>
               <p className="text-sm text-muted-foreground">Show QR to get points</p>
             </div>
           </div>
@@ -29,7 +29,7 @@ export default function CheckinLandingPage() {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold">I'm an Admin</h2>
+              <h2 className="text-lg font-semibold">I&apos;m an Admin</h2>
               <p className="text-sm text-muted-foreground">Scan members into events</p>
             </div>
           </div>
