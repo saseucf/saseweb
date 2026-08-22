@@ -19,6 +19,7 @@ CREATE TABLE public.profiles (
     major TEXT NOT NULL,
     year TEXT NOT NULL,
     school TEXT NOT NULL,
+    role TEXT DEFAULT 'member' NOT NULL,
     grad_date DATE,
     shirt_size TEXT,
     resume_url TEXT,
