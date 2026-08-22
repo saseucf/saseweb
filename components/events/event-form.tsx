@@ -4,7 +4,41 @@ import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function EventForm() {
+type EventData = {
+    id: string;
+    title: string;
+    description: string | null;
+    event_type: string;
+    location: string | null;
+    start_time: string;
+    end_time: string;
+    capacity: number | null;
+    points: number;
+    host: string | null;
+    status: "draft" | "published" | "cancelled";
+};
+
+type EventFormProps = {
+    event?: EventData;
+};
+
+function toDateTimeLocal(timestamp?: string) {
+    if (!timestamp) return "";
+
+    const date = new Date(timestamp);
+
+    // Convert the stored UTC timestamp back into local time
+    // for the datetime-local input.
+    const offset = date.getTimezoneOffset() * 60_000;
+
+    return new Date(date.getTime() - offset)
+        .toISOString()
+        .slice(0, 16);
+}
+
+export default function EventForm({
+    event: existingEvent,
+}: EventFormProps) {
     const router = useRouter();
 
     // Track submission errors and prevent duplicate submissions.
@@ -12,9 +46,9 @@ export default function EventForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     async function handleSubmit(
-        event: React.FormEvent<HTMLFormElement>
+        submitEvent: React.FormEvent<HTMLFormElement>
     ) {
-        event.preventDefault();
+        submitEvent.preventDefault();
 
         setErrorMessage(null);
         setIsSubmitting(true);
@@ -23,37 +57,48 @@ export default function EventForm() {
         // Publishing and saving as a draft use the same form,
         // but result in different event statuses.
         const submitter = (
-            event.nativeEvent as SubmitEvent
+            submitEvent.nativeEvent as SubmitEvent
         ).submitter as HTMLButtonElement | null;
 
         const action = submitter?.value;
+
         const status =
             action === "publish" ? "published" : "draft";
 
-        const formData = new FormData(event.currentTarget);
+        const formData = new FormData(submitEvent.currentTarget);
 
         // Read the event information from the submitted form.
-        const title = String(formData.get("title") ?? "").trim();
+        const title = String(
+            formData.get("title") ?? ""
+        ).trim();
+
         const description = String(
             formData.get("description") ?? ""
         ).trim();
+
         const eventType = String(
             formData.get("event_type") ?? ""
         ).trim();
+
         const location = String(
             formData.get("location") ?? ""
         ).trim();
+
         const startTime = String(
             formData.get("start_time") ?? ""
         );
+
         const endTime = String(
             formData.get("end_time") ?? ""
         );
+
         const host = String(
             formData.get("host") ?? ""
         ).trim();
 
-        const points = Number(formData.get("points") ?? 1);
+        const points = Number(
+            formData.get("points") ?? 1
+        );
 
         // Capacity is optional. Store an empty field as NULL
         // instead of an empty string because the database expects an integer.
@@ -68,7 +113,9 @@ export default function EventForm() {
 
         // Validate required fields before sending anything to Supabase.
         if (!title || !eventType || !startTime || !endTime) {
-            setErrorMessage("Please fill out all required fields.");
+            setErrorMessage(
+                "Please fill out all required fields."
+            );
             setIsSubmitting(false);
             return;
         }
@@ -87,37 +134,66 @@ export default function EventForm() {
         const startTimeISO = new Date(startTime).toISOString();
         const endTimeISO = new Date(endTime).toISOString();
 
-        // Insert the new event using the authenticated browser Supabase client.
-        // RLS verifies that the current user has permission to create events.
-        const { error } = await supabase
-            .from("events")
-            .insert({
-                title,
-                description: description || null,
-                event_type: eventType,
-                location: location || null,
-                start_time: startTimeISO,
-                end_time: endTimeISO,
-                capacity,
-                points,
-                host: host || null,
-                status,
-            });
+        const eventData = {
+            title,
+            description: description || null,
+            event_type: eventType,
+            location: location || null,
+            start_time: startTimeISO,
+            end_time: endTimeISO,
+            capacity,
+            points,
+            host: host || null,
+            status,
+        };
+
+        let error;
+
+        if (existingEvent) {
+            // Existing event: update the matching database row.
+            const result = await supabase
+                .from("events")
+                .update(eventData)
+                .eq("id", existingEvent.id);
+
+            error = result.error;
+        } else {
+            // New event: create a new database row.
+            const result = await supabase
+                .from("events")
+                .insert(eventData);
+
+            error = result.error;
+        }
 
         if (error) {
-            console.error("Could not create event:", error);
-            setErrorMessage("Could not create event.");
+            console.error(
+                existingEvent
+                    ? "Could not update event:"
+                    : "Could not create event:",
+                error
+            );
+
+            setErrorMessage(
+                existingEvent
+                    ? "Could not update event."
+                    : "Could not create event."
+            );
+
             setIsSubmitting(false);
             return;
         }
 
-        // Return to the public events page after successful creation.
-        router.push("/events");
+        // After creating or editing, return to the admin event management page.
+        router.push("/admin/events");
         router.refresh();
-    }
+        }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form
+            onSubmit={handleSubmit}
+            className="space-y-6"
+        >
             {/* Basic event information */}
             <div>
                 <label
@@ -126,10 +202,12 @@ export default function EventForm() {
                 >
                     Title
                 </label>
+
                 <input
                     id="title"
                     name="title"
                     type="text"
+                    defaultValue={existingEvent?.title ?? ""}
                     required
                     className="w-full rounded-md border px-3 py-2"
                 />
@@ -142,10 +220,12 @@ export default function EventForm() {
                 >
                     Description
                 </label>
+
                 <textarea
                     id="description"
                     name="description"
                     rows={4}
+                    defaultValue={existingEvent?.description ?? ""}
                     className="w-full rounded-md border px-3 py-2"
                 />
             </div>
@@ -157,10 +237,12 @@ export default function EventForm() {
                 >
                     Event Type
                 </label>
+
                 <input
                     id="event_type"
                     name="event_type"
                     type="text"
+                    defaultValue={existingEvent?.event_type ?? ""}
                     required
                     className="w-full rounded-md border px-3 py-2"
                 />
@@ -173,10 +255,12 @@ export default function EventForm() {
                 >
                     Location
                 </label>
+
                 <input
                     id="location"
                     name="location"
                     type="text"
+                    defaultValue={existingEvent?.location ?? ""}
                     className="w-full rounded-md border px-3 py-2"
                 />
             </div>
@@ -190,10 +274,14 @@ export default function EventForm() {
                     >
                         Start
                     </label>
+
                     <input
                         id="start_time"
                         name="start_time"
                         type="datetime-local"
+                        defaultValue={toDateTimeLocal(
+                            existingEvent?.start_time
+                        )}
                         required
                         className="w-full rounded-md border px-3 py-2"
                     />
@@ -206,10 +294,14 @@ export default function EventForm() {
                     >
                         End
                     </label>
+
                     <input
                         id="end_time"
                         name="end_time"
                         type="datetime-local"
+                        defaultValue={toDateTimeLocal(
+                            existingEvent?.end_time
+                        )}
                         required
                         className="w-full rounded-md border px-3 py-2"
                     />
@@ -225,12 +317,13 @@ export default function EventForm() {
                     >
                         Points
                     </label>
+
                     <input
                         id="points"
                         name="points"
                         type="number"
                         min="0"
-                        defaultValue="1"
+                        defaultValue={existingEvent?.points ?? 1}
                         required
                         className="w-full rounded-md border px-3 py-2"
                     />
@@ -243,11 +336,13 @@ export default function EventForm() {
                     >
                         Capacity
                     </label>
+
                     <input
                         id="capacity"
                         name="capacity"
                         type="number"
                         min="1"
+                        defaultValue={existingEvent?.capacity ?? ""}
                         className="w-full rounded-md border px-3 py-2"
                     />
                 </div>
@@ -260,10 +355,12 @@ export default function EventForm() {
                 >
                     Host
                 </label>
+
                 <input
                     id="host"
                     name="host"
                     type="text"
+                    defaultValue={existingEvent?.host ?? ""}
                     className="w-full rounded-md border px-3 py-2"
                 />
             </div>
@@ -282,7 +379,7 @@ export default function EventForm() {
                     name="action"
                     value="draft"
                     disabled={isSubmitting}
-                    className="rounded-md border px-4 py-2 font-medium"
+                    className="rounded-md border px-4 py-2 font-medium disabled:opacity-50"
                 >
                     Save as Draft
                 </button>
@@ -292,9 +389,11 @@ export default function EventForm() {
                     name="action"
                     value="publish"
                     disabled={isSubmitting}
-                    className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground"
+                    className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground disabled:opacity-50"
                 >
-                    Publish Event
+                    {existingEvent
+                        ? "Save & Publish"
+                        : "Publish Event"}
                 </button>
             </div>
         </form>

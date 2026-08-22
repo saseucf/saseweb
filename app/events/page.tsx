@@ -1,4 +1,5 @@
 import { createServerSupabase } from "@/lib/supabase-server";
+import AdminEventControls from "@/components/events/admin-event-controls";
 
 type Event = {
     id: string;
@@ -51,10 +52,14 @@ export default async function EventsPage() {
     return (
         <main className="min-h-screen p-8">
         <div className="mx-auto max-w-4xl">
-            <h1 className="text-3xl font-bold">Events</h1>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <h1 className="text-3xl font-bold">Events</h1>
+
+                <AdminEventControls />
+            </div>
 
             <p className="mt-2 text-muted-foreground">
-            Temporary event list for testing the Supabase connection.
+            Temporary public event list.
             </p>
 
             {events.length === 0 ? (
