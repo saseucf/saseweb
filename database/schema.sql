@@ -24,6 +24,7 @@ CREATE TABLE public.profiles (
     resume_url TEXT,
     github_url TEXT,
     linkedin_url TEXT,
+    role TEXT DEFAULT 'user' NOT NULL,
     total_points INTEGER DEFAULT 0 NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
@@ -110,6 +111,34 @@ CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+-- Function to check if current user is an admin
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'
+  );
+$$ LANGUAGE sql SECURITY DEFINER;
+
+-- Protect the role column with a trigger
+CREATE OR REPLACE FUNCTION public.protect_profile_role()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- If someone tries to update their role
+    IF NEW.role IS DISTINCT FROM OLD.role THEN
+        -- Allow role changes only if the user is an admin, or if this is the service_role/dashboard (auth.uid() is null)
+        IF auth.uid() IS NOT NULL AND NOT public.is_admin() THEN
+            NEW.role = OLD.role;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS ensure_role_unchanged ON public.profiles;
+CREATE TRIGGER ensure_role_unchanged
+    BEFORE UPDATE ON public.profiles
+    FOR EACH ROW EXECUTE FUNCTION public.protect_profile_role();
+
 
 -- ==========================================
 -- 2. EVENTS TABLE
@@ -132,7 +161,11 @@ CREATE TABLE public.events (
 ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
 -- Everyone can read events
 CREATE POLICY "Events are viewable by everyone" ON public.events FOR SELECT USING (true);
--- (Optional) Only admins can insert/update events. You'd set up an admin role or check for specific user IDs here.
+
+-- Admins can insert/update/delete events
+CREATE POLICY "Admins can insert events" ON public.events FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can update events" ON public.events FOR UPDATE USING (public.is_admin());
+CREATE POLICY "Admins can delete events" ON public.events FOR DELETE USING (public.is_admin());
 
 
 -- ==========================================
