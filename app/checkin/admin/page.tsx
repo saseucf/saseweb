@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/checkin-supabase";
 import { useRouter } from "next/navigation";
-import { Loader2, LogOut, CheckCircle, XCircle, Camera } from "lucide-react";
+import { Loader2, LogOut, CheckCircle, XCircle, Camera, QrCode } from "lucide-react";
 import QRScanner from "@/components/checkin/QRScanner";
 
 export default function AdminDashboard() {
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#171d52]" />
       </div>
     );
   }
@@ -125,14 +125,14 @@ export default function AdminDashboard() {
     <div className="flex flex-col items-center space-y-6 pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500 w-full">
       
       {/* Header */}
-      <div className="w-full flex items-center justify-between bg-card p-4 rounded-xl border border-border shadow-sm">
+      <div className="w-full flex items-center justify-between bg-white p-4 rounded-xl border border-[#cbd5e8] shadow-sm">
         <div>
-          <h2 className="font-bold text-lg text-primary">Admin Portal</h2>
-          <p className="text-sm text-muted-foreground">Manage Event Check-Ins</p>
+          <h2 className="font-bold text-lg text-[#171d52]">Admin Portal</h2>
+          <p className="text-sm text-[#64708c] font-medium">Manage Event Check-Ins</p>
         </div>
         <button
           onClick={handleLogout}
-          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+          className="p-2 text-[#64708c] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
         >
           <LogOut className="w-5 h-5" />
         </button>
@@ -140,11 +140,11 @@ export default function AdminDashboard() {
 
       {/* Event Selector */}
       <div className="w-full space-y-2">
-        <label className="text-sm font-semibold ml-1">Select Event to Check Into:</label>
+        <label className="text-sm font-bold text-[#171d52] ml-1">Check-in Destination:</label>
         <select
           value={selectedEvent}
           onChange={(e) => setSelectedEvent(e.target.value)}
-          className="flex h-12 w-full rounded-md border border-input bg-card px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex h-12 w-full rounded-lg border border-[#cbd5e8] bg-white px-3 py-2 text-sm font-medium text-[#171d52] outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
         >
           {events.length === 0 ? (
             <option value="" disabled>No events available</option>
@@ -159,22 +159,22 @@ export default function AdminDashboard() {
       </div>
 
       {/* Scanner Toggle and QR Generator */}
-      <div className="w-full flex space-x-2">
+      <div className="w-full flex space-x-3">
         {!scanning ? (
           <button
             onClick={() => setScanning(true)}
-            className="flex-1 flex items-center justify-center space-x-2 bg-primary text-primary-foreground p-4 rounded-xl font-bold shadow-md hover:bg-primary/90 transition-all active:scale-[0.98]"
+            className="flex-1 flex flex-col items-center justify-center space-y-2 bg-[#171d52] text-white p-4 rounded-xl font-bold shadow-md hover:bg-[#26355f] transition-all active:scale-[0.98] disabled:opacity-50 h-28"
             disabled={!selectedEvent}
           >
-            <Camera className="w-5 h-5" />
-            <span>Scan Members</span>
+            <Camera className="w-8 h-8" />
+            <span className="text-sm tracking-wide">Scan Members</span>
           </button>
         ) : (
           <div className="w-full space-y-4 animate-in fade-in zoom-in-95">
             <QRScanner onScan={handleScan} />
             <button
               onClick={() => setScanning(false)}
-              className="w-full p-3 text-center text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors"
+              className="w-full p-3 text-center text-sm font-bold uppercase tracking-wider text-[#64708c] hover:text-[#171d52] hover:bg-[#e9eef8] rounded-xl transition-colors border border-[#cbd5e8]"
             >
               Cancel Scan
             </button>
@@ -189,47 +189,48 @@ export default function AdminDashboard() {
               }
             }}
             disabled={!selectedEvent}
-            className="flex items-center justify-center space-x-2 bg-secondary text-secondary-foreground p-4 rounded-xl font-bold shadow-md hover:bg-secondary/90 transition-all active:scale-[0.98] disabled:opacity-50"
+            className="flex-1 flex flex-col items-center justify-center space-y-2 bg-white text-[#5579bd] border-2 border-[#5579bd] p-4 rounded-xl font-bold shadow-sm hover:bg-[#e9eef8] transition-all active:scale-[0.98] disabled:opacity-50 h-28"
           >
-            <span>Show Event QR</span>
+            <QrCode className="w-8 h-8" />
+            <span className="text-sm tracking-wide text-center">Show Event QR</span>
           </button>
         )}
       </div>
 
       {/* Results / Status Card */}
       {checkInLoading && (
-        <div className="w-full p-8 bg-card border border-border rounded-xl shadow-sm flex flex-col items-center justify-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-sm font-medium animate-pulse">Processing check-in...</p>
+        <div className="w-full p-8 bg-white border border-[#cbd5e8] rounded-xl shadow-sm flex flex-col items-center justify-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin text-[#5579bd]" />
+          <p className="text-sm font-bold text-[#171d52] animate-pulse uppercase tracking-wider">Processing check-in...</p>
         </div>
       )}
 
       {scannedUser && !checkInLoading && (
-        <div className="w-full bg-card border border-border rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2">
-          <div className={`p-4 flex items-center space-x-3 text-white ${checkInStatus?.success ? 'bg-green-600' : 'bg-destructive'}`}>
+        <div className="w-full bg-white border border-[#cbd5e8] rounded-xl shadow-md overflow-hidden animate-in fade-in slide-in-from-bottom-2">
+          <div className={`p-4 flex items-center space-x-3 text-white ${checkInStatus?.success ? 'bg-green-600' : 'bg-red-600'}`}>
             {checkInStatus?.success ? <CheckCircle className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
-            <span className="font-bold">{checkInStatus?.msg}</span>
+            <span className="font-bold tracking-wide">{checkInStatus?.msg}</span>
           </div>
-          <div className="p-4 space-y-4">
-            <div className="flex justify-between items-start">
+          <div className="p-5 space-y-4">
+            <div className="flex justify-between items-start border-b border-[#e9eef8] pb-4">
               <div>
-                <h3 className="text-xl font-bold">{scannedUser.first_name} {scannedUser.last_name}</h3>
-                <p className="text-sm text-muted-foreground">{scannedUser.email}</p>
+                <h3 className="text-xl font-bold text-[#171d52]">{scannedUser.first_name} {scannedUser.last_name}</h3>
+                <p className="text-sm text-[#64708c] font-medium">{scannedUser.email}</p>
               </div>
-              <div className="text-right">
-                <div className="text-xl font-bold text-primary">{scannedUser.total_points}</div>
-                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Total Pts</div>
+              <div className="text-right bg-[#fbfcff] p-2 rounded-lg border border-[#e9eef8]">
+                <div className="text-xl font-bold text-[#5579bd] leading-none">{scannedUser.total_points}</div>
+                <div className="text-[9px] text-[#64708c] uppercase font-bold tracking-widest mt-1">Total Pts</div>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="bg-muted/50 p-2 rounded-lg border border-border/50">
-                <span className="text-muted-foreground block text-xs mb-1">Major</span>
-                <span className="font-medium">{scannedUser.major || "N/A"}</span>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="bg-[#fbfcff] p-3 rounded-lg border border-[#e9eef8]">
+                <span className="text-[#64708c] font-semibold block text-[10px] uppercase tracking-wider mb-1">Major</span>
+                <span className="font-bold text-[#171d52]">{scannedUser.major || "N/A"}</span>
               </div>
-              <div className="bg-muted/50 p-2 rounded-lg border border-border/50">
-                <span className="text-muted-foreground block text-xs mb-1">Year</span>
-                <span className="font-medium">{scannedUser.year || "N/A"}</span>
+              <div className="bg-[#fbfcff] p-3 rounded-lg border border-[#e9eef8]">
+                <span className="text-[#64708c] font-semibold block text-[10px] uppercase tracking-wider mb-1">Year</span>
+                <span className="font-bold text-[#171d52]">{scannedUser.year || "N/A"}</span>
               </div>
             </div>
           </div>

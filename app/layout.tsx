@@ -25,6 +25,8 @@ export const viewport = {
   maximumScale: 1,
 };
 
+import GlobalNav from "@/components/GlobalNav";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,9 +35,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[78px]`}
         suppressHydrationWarning
       >
+        <GlobalNav />
         {children}
       </body>
     </html>

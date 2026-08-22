@@ -87,3 +87,7 @@ CREATE POLICY "Only admins can delete forms"
     FOR DELETE
     TO authenticated
     USING (public.is_admin());
+
+-- 6. Add event_id to forms
+ALTER TABLE public.forms ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.events(id) ON DELETE SET NULL;
+

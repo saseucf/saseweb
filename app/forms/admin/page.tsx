@@ -98,23 +98,32 @@ export default function Admin() {
   }
 
   return (
-    <main className="sase-page sase-admin-page">
+    <main className="sase-page sase-admin-page pt-[120px]">
       <div className="sase-page-header">
         <p className="sase-eyebrow">UCF SASE / Admin workspace</p>
         <h1>Admin Panel</h1>
         <p>Publish forms, manage the response flow, and review submissions.</p>
       </div>
 
-      <button className="sase-secondary-button" onClick={backToForms}>
-        Back to Forms
-      </button>
+      <div className="flex flex-wrap gap-3 mt-4">
+        <button className="sase-secondary-button" onClick={backToForms}>
+          Back to Forms
+        </button>
 
-      <button
-        className="sase-primary-button sase-add-button"
-        onClick={handleAddForm}
-      >
-        Add Form
-      </button>
+        <button
+          className="sase-secondary-button"
+          onClick={() => router.push("/admin/events")}
+        >
+          Events Dashboard
+        </button>
+
+        <button
+          className="sase-primary-button sase-add-button sm:ml-auto"
+          onClick={handleAddForm}
+        >
+          Add Form
+        </button>
+      </div>
 
       <div className="sase-form-grid sase-admin-grid">
         {forms.map((form) => (

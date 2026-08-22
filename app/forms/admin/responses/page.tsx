@@ -108,12 +108,12 @@ function Responses() {
     }
 
     return (
-        <main className="sase-page sase-responses-page">
+        <main className="sase-page sase-responses-page pt-[120px]">
             <button
-                className="mb-6 rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
+                className="sase-secondary-button mb-6"
                 onClick={() => router.push("/forms/admin")}
             >
-                Back to Admin Panel
+                &larr; Back to Admin Panel
             </button>
             <div className="sase-page-header">
                 <p className="sase-eyebrow">UCF SASE / Response archive</p>

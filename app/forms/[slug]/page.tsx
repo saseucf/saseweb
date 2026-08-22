@@ -19,6 +19,7 @@ type FormRecord = {
   schema: Question[];
   requires_login: boolean;
   is_open: boolean;
+  event_id: string | null;
 };
 
 type Answers = Record<string, string | string[]>;
@@ -35,7 +36,7 @@ export default function FormResponsePage() {
     async function loadForm() {
       const { data, error } = await supabase
         .from("forms")
-        .select("id, title, description, schema, requires_login, is_open")
+        .select("id, title, description, schema, requires_login, is_open, event_id")
         .eq("slug", params.slug)
         .eq("is_open", true)
         .single();
@@ -92,50 +93,80 @@ export default function FormResponsePage() {
     setMessage("");
     const { data: { user } } = await supabase.auth.getUser();
 
-    const { error } = await supabase.from("form_submissions").insert({
+    const { error: submissionError } = await supabase.from("form_submissions").insert({
       form_id: form.id,
       user_id: user?.id ?? null,
       responses: answers,
     });
 
-    if (error) {
-      console.error("Error submitting form:", error);
+    if (submissionError) {
+      console.error("Error submitting form:", submissionError);
       setMessage("There was an error submitting your response. Please try again.");
       setIsSubmitting(false);
       return;
     }
 
-    setMessage("Your form was submitted successfully.");
+    // Auto-RSVP if the form is linked to an event and the user is logged in
+    let rsvpMessage = "";
+    if (form.event_id && user?.id) {
+      const { error: rsvpError } = await supabase.from("event_rsvps").insert({
+        event_id: form.event_id,
+        user_id: user.id,
+        status: "Going"
+      });
+      
+      if (!rsvpError) {
+         rsvpMessage = " You have also been RSVP'd to the associated event!";
+      } else if (rsvpError.code !== '23505') {
+         // 23505 is unique violation, meaning they are already RSVP'd
+         console.error("Error auto-RSVPing user:", rsvpError);
+      }
+    }
+
+    setMessage(`Your form was submitted successfully.${rsvpMessage}`);
     setIsSubmitting(false);
   }
 
   if (!form) {
-    return <main className="p-8">{message}</main>;
+    return (
+        <main className="sase-page">
+            <div className="sase-content-section text-center text-gray-500 font-medium">
+                {message}
+            </div>
+        </main>
+    );
   }
 
   return (
-    <main className="min-h-screen p-8">
-      <button
-        className="mb-6 rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
-        onClick={() => router.push("/forms")}
-      >
-        Back to Forms
-      </button>
-      <div className="mx-auto max-w-2xl">
-        <h1 className="text-4xl font-bold">{form.title}</h1>
-        {form.description && <p className="mt-3 text-gray-600">{form.description}</p>}
+    <main className="sase-page">
+      <div className="sase-page-header">
+        <p className="sase-eyebrow">UCF SASE / Form</p>
+        <h1>{form.title}</h1>
+        {form.description && <p>{form.description}</p>}
+      </div>
 
-        <form className="mt-8 flex flex-col gap-5" onSubmit={submitForm}>
+      <Link
+        href="/forms"
+        className="sase-secondary-button mb-6 mx-auto block max-w-2xl text-center"
+      >
+        &larr; Back to Forms
+      </Link>
+      
+      <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#171d52] via-[#5579bd] to-[#171d52]"></div>
+        
+        <form className="flex flex-col gap-10 mt-4" onSubmit={submitForm}>
           {form.schema.map((question, index) => (
-            <fieldset key={question.id} className="rounded-xl border border-gray-300 p-5">
-              <legend className="px-2 text-lg font-bold">
-                {index + 1}. {question.label || "Untitled question"}
-                {question.required && <span className="ml-1 text-red-600">*</span>}
+            <fieldset key={question.id} className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
+              <legend className="text-xl font-black text-[#171d52] mb-4 w-full leading-snug">
+                {question.label || "Untitled question"}
+                {question.required && <span className="ml-1 text-red-500">*</span>}
               </legend>
 
               {question.type === "short_text" && (
                 <input
-                  className="mt-2 w-full rounded border border-gray-300 p-2"
+                  className="w-full rounded-xl border border-[#cbd5e8] bg-gray-50 p-4 outline-none focus:bg-white focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
+                  placeholder="Your answer"
                   value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
                   onChange={(event) => updateAnswer(question.id, event.target.value)}
                   required={question.required}
@@ -144,7 +175,8 @@ export default function FormResponsePage() {
 
               {question.type === "paragraph" && (
                 <textarea
-                  className="mt-2 min-h-28 w-full rounded border border-gray-300 p-2"
+                  className="min-h-32 w-full rounded-xl border border-[#cbd5e8] bg-gray-50 p-4 outline-none focus:bg-white focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium resize-y"
+                  placeholder="Your answer"
                   value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
                   onChange={(event) => updateAnswer(question.id, event.target.value)}
                   required={question.required}
@@ -152,33 +184,45 @@ export default function FormResponsePage() {
               )}
 
               {question.type === "multiple_choice" && (
-                <div className="mt-2 flex flex-col gap-2">
+                <div className="flex flex-col gap-4">
                   {question.options?.map((option) => (
-                    <label key={option} className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name={question.id}
-                        value={option}
-                        checked={answers[question.id] === option}
-                        onChange={(event) => updateAnswer(question.id, event.target.value)}
-                        required={question.required}
-                      />
-                      {option}
+                    <label key={option} className="flex items-center gap-4 cursor-pointer group p-2 -ml-2 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="relative flex items-center">
+                        <input
+                          type="radio"
+                          name={question.id}
+                          value={option}
+                          checked={answers[question.id] === option}
+                          onChange={(event) => updateAnswer(question.id, event.target.value)}
+                          required={question.required}
+                          className="peer sr-only"
+                        />
+                        <div className="w-5 h-5 rounded-full border-2 border-[#cbd5e8] peer-checked:border-[#5579bd] transition-colors flex items-center justify-center">
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#5579bd] opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                        </div>
+                      </div>
+                      <span className="text-[#171d52] font-medium group-hover:text-[#5579bd] transition-colors text-lg">{option}</span>
                     </label>
                   ))}
                 </div>
               )}
 
               {question.type === "checkbox" && (
-                <div className="mt-2 flex flex-col gap-2">
+                <div className="flex flex-col gap-4">
                   {question.options?.map((option) => (
-                    <label key={option} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={Array.isArray(answers[question.id]) && answers[question.id].includes(option)}
-                        onChange={(event) => toggleCheckbox(question.id, option, event.target.checked)}
-                      />
-                      {option}
+                    <label key={option} className="flex items-center gap-4 cursor-pointer group p-2 -ml-2 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="relative flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={Array.isArray(answers[question.id]) && answers[question.id].includes(option)}
+                          onChange={(event) => toggleCheckbox(question.id, option, event.target.checked)}
+                          className="peer sr-only"
+                        />
+                        <div className="w-5 h-5 rounded border-2 border-[#cbd5e8] peer-checked:border-[#5579bd] peer-checked:bg-[#5579bd] transition-all flex items-center justify-center">
+                          <svg className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                      </div>
+                      <span className="text-[#171d52] font-medium group-hover:text-[#5579bd] transition-colors text-lg">{option}</span>
                     </label>
                   ))}
                 </div>
@@ -186,9 +230,14 @@ export default function FormResponsePage() {
             </fieldset>
           ))}
 
-          {message && <p className={message.includes("successfully") ? "text-green-700" : "text-red-600"}>{message}</p>}
+          {message && (
+             <div className={`p-4 rounded-xl font-medium ${message.includes("successfully") ? "bg-[#e6f4ea] text-[#137333] border border-[#ceead6]" : "bg-[#fce8e6] text-[#c5221f] border border-[#fad2cf]"}`}>
+                 {message}
+             </div>
+          )}
+          
           <button
-            className="w-fit rounded bg-blue-600 px-5 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+            className="w-full bg-[#171d52] hover:bg-[#26355f] text-white py-4 rounded-xl font-bold uppercase tracking-wider text-sm transition-all shadow-md mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
             disabled={isSubmitting}
           >

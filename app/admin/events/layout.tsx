@@ -49,11 +49,11 @@ export default function AdminEventsLayout({
     // before the user's permissions are checked.
     if (isChecking) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <p className="text-sm text-muted-foreground">
+            <main className="sase-page sase-admin-page flex items-center justify-center">
+                <p className="text-gray-500 font-medium text-lg">
                     Checking permissions...
                 </p>
-            </div>
+            </main>
         );
     }
 

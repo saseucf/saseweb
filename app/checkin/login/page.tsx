@@ -40,10 +40,8 @@ function LoginForm() {
       .single();
 
     if (profileData?.role === 'admin') {
-      // If admin, redirect to admin page
       router.push('/checkin/admin');
     } else {
-      // Normal member
       if (redirectUrl) {
         router.push(redirectUrl);
       } else {
@@ -53,67 +51,67 @@ function LoginForm() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-sm mx-auto w-full">
-      <div className="w-full mb-6">
-        <Link href="/checkin" className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Selection
+    <main className="sase-login-page">
+      <div className="sase-login-card p-8 md:p-12 relative">
+        <Link href="/checkin" className="absolute top-6 left-6 text-sm text-[#5579bd] hover:text-[#171d52] transition-colors flex items-center font-semibold">
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Back
         </Link>
-      </div>
+        
+        <div className="text-center mt-6 mb-8">
+          <h1 className="text-3xl font-bold">Member Login</h1>
+          <p className="mt-2 text-sm text-[#64708c]">Sign in to access your QR code</p>
+        </div>
 
-      <div className="w-full text-center space-y-2 mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-primary">Member Login</h1>
-        <p className="text-muted-foreground">Sign in to access your QR code</p>
-      </div>
-
-      <form onSubmit={handleLogin} className="w-full space-y-4">
-        {error && (
-          <div className="p-3 text-sm text-destructive-foreground bg-destructive/10 rounded-lg border border-destructive/20">
-            {error}
+        <form onSubmit={handleLogin} className="space-y-5">
+          {error && (
+            <div className="p-3 text-sm text-red-800 bg-red-50 rounded-lg border border-red-200">
+              {error}
+            </div>
+          )}
+          
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-[#171d52]" htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+              placeholder="knight@ucf.edu"
+              required
+            />
           </div>
-        )}
-        
-        <div className="space-y-2">
-          <label className="text-sm font-medium leading-none" htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            placeholder="knight@ucf.edu"
-            required
-          />
-        </div>
-        
-        <div className="space-y-2">
-          <label className="text-sm font-medium leading-none" htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            required
-          />
-        </div>
+          
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-[#171d52]" htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full mt-4"
-        >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-          Sign In
-        </button>
-      </form>
-    </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded bg-[#5579bd] text-white p-3 font-bold uppercase tracking-wider text-sm mt-4 hover:bg-[#171d52] transition-colors flex items-center justify-center disabled:opacity-50"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            Sign In
+          </button>
+        </form>
+      </div>
+    </main>
   );
 }
 
 export default function MemberLoginPage() {
   return (
-    <Suspense fallback={<div className="flex h-[70vh] items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+    <Suspense fallback={<div className="sase-login-page"><Loader2 className="w-8 h-8 animate-spin text-white" /></div>}>
       <LoginForm />
     </Suspense>
   )

@@ -3,6 +3,7 @@
 import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 type EventData = {
     id: string;
@@ -192,13 +193,13 @@ export default function EventForm({
     return (
         <form
             onSubmit={handleSubmit}
-            className="space-y-6"
+            className="flex flex-col gap-5 sase-creator-page"
         >
             {/* Basic event information */}
-            <div>
+            <div className="flex flex-col gap-1">
                 <label
                     htmlFor="title"
-                    className="mb-2 block text-sm font-medium"
+                    className="text-sm font-semibold text-[#171d52]"
                 >
                     Title
                 </label>
@@ -209,14 +210,14 @@ export default function EventForm({
                     type="text"
                     defaultValue={existingEvent?.title ?? ""}
                     required
-                    className="w-full rounded-md border px-3 py-2"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                 />
             </div>
 
-            <div>
+            <div className="flex flex-col gap-1">
                 <label
                     htmlFor="description"
-                    className="mb-2 block text-sm font-medium"
+                    className="text-sm font-semibold text-[#171d52]"
                 >
                     Description
                 </label>
@@ -226,14 +227,14 @@ export default function EventForm({
                     name="description"
                     rows={4}
                     defaultValue={existingEvent?.description ?? ""}
-                    className="w-full rounded-md border px-3 py-2"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa] resize-y"
                 />
             </div>
 
-            <div>
+            <div className="flex flex-col gap-1">
                 <label
                     htmlFor="event_type"
-                    className="mb-2 block text-sm font-medium"
+                    className="text-sm font-semibold text-[#171d52]"
                 >
                     Event Type
                 </label>
@@ -242,16 +243,17 @@ export default function EventForm({
                     id="event_type"
                     name="event_type"
                     type="text"
+                    placeholder="e.g. Workshop, Social, GBM"
                     defaultValue={existingEvent?.event_type ?? ""}
                     required
-                    className="w-full rounded-md border px-3 py-2"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                 />
             </div>
 
-            <div>
+            <div className="flex flex-col gap-1">
                 <label
                     htmlFor="location"
-                    className="mb-2 block text-sm font-medium"
+                    className="text-sm font-semibold text-[#171d52]"
                 >
                     Location
                 </label>
@@ -261,18 +263,18 @@ export default function EventForm({
                     name="location"
                     type="text"
                     defaultValue={existingEvent?.location ?? ""}
-                    className="w-full rounded-md border px-3 py-2"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                 />
             </div>
 
             {/* Event schedule */}
             <div className="grid gap-6 sm:grid-cols-2">
-                <div>
+                <div className="flex flex-col gap-1">
                     <label
                         htmlFor="start_time"
-                        className="mb-2 block text-sm font-medium"
+                        className="text-sm font-semibold text-[#171d52]"
                     >
-                        Start
+                        Start Time
                     </label>
 
                     <input
@@ -283,16 +285,16 @@ export default function EventForm({
                             existingEvent?.start_time
                         )}
                         required
-                        className="w-full rounded-md border px-3 py-2"
+                        className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
 
-                <div>
+                <div className="flex flex-col gap-1">
                     <label
                         htmlFor="end_time"
-                        className="mb-2 block text-sm font-medium"
+                        className="text-sm font-semibold text-[#171d52]"
                     >
-                        End
+                        End Time
                     </label>
 
                     <input
@@ -303,17 +305,17 @@ export default function EventForm({
                             existingEvent?.end_time
                         )}
                         required
-                        className="w-full rounded-md border px-3 py-2"
+                        className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
             </div>
 
             {/* Attendance-related event details */}
             <div className="grid gap-6 sm:grid-cols-2">
-                <div>
+                <div className="flex flex-col gap-1">
                     <label
                         htmlFor="points"
-                        className="mb-2 block text-sm font-medium"
+                        className="text-sm font-semibold text-[#171d52]"
                     >
                         Points
                     </label>
@@ -325,16 +327,16 @@ export default function EventForm({
                         min="0"
                         defaultValue={existingEvent?.points ?? 1}
                         required
-                        className="w-full rounded-md border px-3 py-2"
+                        className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
 
-                <div>
+                <div className="flex flex-col gap-1">
                     <label
                         htmlFor="capacity"
-                        className="mb-2 block text-sm font-medium"
+                        className="text-sm font-semibold text-[#171d52]"
                     >
-                        Capacity
+                        Capacity (Optional)
                     </label>
 
                     <input
@@ -343,17 +345,17 @@ export default function EventForm({
                         type="number"
                         min="1"
                         defaultValue={existingEvent?.capacity ?? ""}
-                        className="w-full rounded-md border px-3 py-2"
+                        className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
             </div>
 
-            <div>
+            <div className="flex flex-col gap-1">
                 <label
                     htmlFor="host"
-                    className="mb-2 block text-sm font-medium"
+                    className="text-sm font-semibold text-[#171d52]"
                 >
-                    Host
+                    Host (Optional)
                 </label>
 
                 <input
@@ -361,25 +363,31 @@ export default function EventForm({
                     name="host"
                     type="text"
                     defaultValue={existingEvent?.host ?? ""}
-                    className="w-full rounded-md border px-3 py-2"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                 />
             </div>
 
             {/* Display submission errors without leaving the form. */}
             {errorMessage && (
-                <p className="text-sm text-destructive">
+                <div className="p-3 bg-red-50 text-red-800 border border-red-200 rounded-md text-sm">
                     {errorMessage}
-                </p>
+                </div>
             )}
 
-            {/* The selected action determines the event's stored status. */}
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-100">
+                <Link
+                    href="/admin/events"
+                    className="sase-secondary-button text-center w-full sm:w-auto sm:mr-auto"
+                >
+                    Cancel
+                </Link>
+                
                 <button
                     type="submit"
                     name="action"
                     value="draft"
                     disabled={isSubmitting}
-                    className="rounded-md border px-4 py-2 font-medium disabled:opacity-50"
+                    className="sase-secondary-button w-full sm:w-auto disabled:opacity-50"
                 >
                     Save as Draft
                 </button>
@@ -389,7 +397,7 @@ export default function EventForm({
                     name="action"
                     value="publish"
                     disabled={isSubmitting}
-                    className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground disabled:opacity-50"
+                    className="sase-primary-button w-full sm:w-auto disabled:opacity-50"
                 >
                     {existingEvent
                         ? "Save & Publish"
