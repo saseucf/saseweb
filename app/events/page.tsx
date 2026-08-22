@@ -31,18 +31,15 @@ export default async function EventsPage() {
         console.error("Could not load events:", error);
 
         return (
-            <main className="min-h-screen p-8">
-            <h1 className="text-3xl font-bold">Events</h1>
-
-            <div className="mt-6 rounded-lg border border-destructive p-4">
-                <p className="font-medium text-destructive">
-                Could not load events
-                </p>
-
-                <p className="mt-2 text-sm">
-                {error instanceof Error ? error.message : String(error)}
-                </p>
-            </div>
+            <main className="sase-page sase-member-page">
+                <div className="sase-page-header">
+                    <p className="sase-eyebrow">UCF SASE / Events</p>
+                    <h1>Events</h1>
+                </div>
+                <section className="sase-content-section">
+                    <p className="text-red-600 font-medium">Could not load events</p>
+                    <p className="mt-2 text-sm text-gray-500">{error instanceof Error ? error.message : String(error)}</p>
+                </section>
             </main>
         );
     }
@@ -50,83 +47,69 @@ export default async function EventsPage() {
     const events = (data ?? []) as Event[];
 
     return (
-        <main className="min-h-screen p-8">
-        <div className="mx-auto max-w-4xl">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-                <h1 className="text-3xl font-bold">Events</h1>
-
+        <main className="sase-page sase-member-page">
+            <div className="sase-page-header flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <p className="sase-eyebrow">UCF SASE / Events</p>
+                    <h1>Upcoming Events</h1>
+                    <p className="mt-2 text-gray-500">See what&apos;s happening and get involved.</p>
+                </div>
                 <AdminEventControls />
             </div>
 
-            <p className="mt-2 text-muted-foreground">
-            Temporary public event list.
-            </p>
-
-            {events.length === 0 ? (
-            <div className="mt-8 rounded-lg border p-6">
-                <p>No events were found in Supabase.</p>
-            </div>
-            ) : (
-            <div className="mt-8 grid gap-4">
-                {events.map((event) => (
-                <article
-                    key={event.id}
-                    className="rounded-lg border bg-card p-5 text-card-foreground"
-                >
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
-                        <h2 className="text-xl font-semibold">
-                        {event.title}
-                        </h2>
-
-                        <p className="mt-1 text-sm text-muted-foreground">
-                        {event.event_type}
-                        </p>
+            <section className="sase-content-section">
+                {events.length === 0 ? (
+                    <div className="sase-form-card">
+                        <p className="text-gray-500 font-medium text-center">No upcoming events right now. Check back soon!</p>
                     </div>
+                ) : (
+                    <div className="sase-form-grid">
+                        {events.map((event) => (
+                            <div key={event.id} className="sase-form-card flex flex-col justify-between">
+                                <div>
+                                    <div className="flex justify-between items-start gap-2 mb-2">
+                                        <h2 className="text-[#171d52] font-bold text-xl">{event.title}</h2>
+                                        <span className="bg-[#e9eef8] text-[#344674] text-xs font-bold px-2 py-1 rounded whitespace-nowrap">
+                                            {event.points} pt{event.points === 1 ? "" : "s"}
+                                        </span>
+                                    </div>
+                                    <p className="sase-eyebrow mb-3">{event.event_type}</p>
+                                    
+                                    {event.description && (
+                                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{event.description}</p>
+                                    )}
 
-                    <span className="rounded-full bg-secondary px-3 py-1 text-sm">
-                        {event.points} point{event.points === 1 ? "" : "s"}
-                    </span>
+                                    <div className="flex flex-col gap-2 mt-4 border-t border-gray-100 pt-4">
+                                        <div className="flex items-start gap-2 text-sm">
+                                            <span className="font-semibold text-[#344674] min-w-[70px]">When:</span>
+                                            <span className="text-gray-600">
+                                                {new Date(event.start_time).toLocaleString(undefined, {
+                                                    weekday: 'short', month: 'short', day: 'numeric',
+                                                    hour: 'numeric', minute: '2-digit'
+                                                })}
+                                                {" - "}
+                                                {new Date(event.end_time).toLocaleTimeString(undefined, {
+                                                    hour: 'numeric', minute: '2-digit'
+                                                })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-start gap-2 text-sm">
+                                            <span className="font-semibold text-[#344674] min-w-[70px]">Where:</span>
+                                            <span className="text-gray-600">{event.location ?? "TBA"}</span>
+                                        </div>
+                                        {event.host && (
+                                            <div className="flex items-start gap-2 text-sm">
+                                                <span className="font-semibold text-[#344674] min-w-[70px]">Host:</span>
+                                                <span className="text-gray-600">{event.host}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-
-                    {event.description && (
-                    <p className="mt-4">{event.description}</p>
-                    )}
-
-                    <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
-                    <div>
-                        <dt className="font-medium">Starts</dt>
-                        <dd className="text-muted-foreground">
-                        {new Date(event.start_time).toLocaleString()}
-                        </dd>
-                    </div>
-
-                    <div>
-                        <dt className="font-medium">Ends</dt>
-                        <dd className="text-muted-foreground">
-                        {new Date(event.end_time).toLocaleString()}
-                        </dd>
-                    </div>
-
-                    <div>
-                        <dt className="font-medium">Location</dt>
-                        <dd className="text-muted-foreground">
-                        {event.location ?? "Not specified"}
-                        </dd>
-                    </div>
-
-                    <div>
-                        <dt className="font-medium">Host</dt>
-                        <dd className="text-muted-foreground">
-                        {event.host ?? "Not specified"}
-                        </dd>
-                    </div>
-                    </dl>
-                </article>
-                ))}
-            </div>
-            )}
-        </div>
+                )}
+            </section>
         </main>
     );
 }

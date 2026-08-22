@@ -8,11 +8,12 @@ type EditEventPageProps = {
     }>;
 };
 
+import Link from "next/link";
+
 export default async function EditEventPage({
     params,
 }: EditEventPageProps) {
     const { id } = await params;
-
     const supabase = createServerSupabase();
 
     // Load the event being edited.
@@ -28,15 +29,17 @@ export default async function EditEventPage({
     }
 
     return (
-        <main className="min-h-screen p-8">
-            <div className="mx-auto max-w-2xl">
-                <h1 className="text-3xl font-bold">
-                    Edit Event
-                </h1>
+        <main className="sase-page sase-admin-page pt-[120px]">
+            <Link href="/admin/events" className="sase-secondary-button mb-6 inline-block">
+                &larr; Back to Events
+            </Link>
+            <div className="sase-page-header">
+                <p className="sase-eyebrow">UCF SASE / Admin workspace</p>
+                <h1>Edit Event</h1>
+            </div>
 
-                <div className="mt-8">
-                    <EventForm event={event} />
-                </div>
+            <div className="sase-creator-panel mt-8">
+                <EventForm event={event} />
             </div>
         </main>
     );

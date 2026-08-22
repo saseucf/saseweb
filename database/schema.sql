@@ -231,3 +231,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_event_attendance_created
     AFTER INSERT ON public.event_attendances
     FOR EACH ROW EXECUTE FUNCTION public.update_user_points();
+
+-- ==========================================
+-- 6. FORMS TABLE (snippet)
+-- ==========================================
+-- Note: forms table definition might already exist in Supabase, but adding event_id here for tracking:
+-- ALTER TABLE public.forms ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.events(id) ON DELETE SET NULL;
+

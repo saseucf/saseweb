@@ -1,26 +1,26 @@
-import BottomNav from "@/components/checkin/BottomNav";
-import TopNav from "@/components/checkin/TopNav";
+"use client";
+
 import InstallPrompt from "@/components/checkin/InstallPrompt";
+import { usePathname } from "next/navigation";
 
 export default function CheckinLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="min-h-screen bg-background relative pb-20 md:pb-0 md:pt-20">
-      {/* TopNav is hidden on mobile, visible on desktop */}
-      <TopNav />
+  const pathname = usePathname();
+  const isLoginPage = pathname?.includes('/login');
 
-      {/* Main content area */}
-      <main className="max-w-md mx-auto min-h-[calc(100vh-5rem)] relative px-4 pt-6">
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div className="min-h-[calc(100vh-78px)] bg-[#f6f8fc] text-[#171d52] relative">
+      <main className="max-w-md mx-auto relative px-4 pt-6">
         {children}
       </main>
-
       <InstallPrompt />
-      
-      {/* BottomNav is hidden on desktop, visible on mobile */}
-      <BottomNav />
     </div>
   );
 }
