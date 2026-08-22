@@ -1,25 +1,52 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-background text-foreground">
-      <main className="flex flex-col items-center max-w-2xl text-center space-y-6">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-primary">
-          SASE UCF
-        </h1>
-        <p className="text-xl text-muted-foreground">
-          Welcome to the new SASE Web Dev workspace. This is a clean slate to build our new member portal!
-        </p>
-        <div className="flex gap-4 pt-4">
-          <div className="px-6 py-3 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
-            Next.js 15
-          </div>
-          <div className="px-6 py-3 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
-            Tailwind CSS
-          </div>
-          <div className="px-6 py-3 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
-            Supabase
+    <main className="sase-home">
+      <div className="sase-sun" aria-hidden="true" />
+      <div className="sase-cloud sase-cloud-top" aria-hidden="true" />
+      <div className="sase-cloud sase-cloud-middle" aria-hidden="true" />
+
+      <nav className="sase-nav" aria-label="Main navigation">
+        <Link href="/" className="sase-mark" aria-label="SASE home">
+          <Image
+            src="/UCF SASE LOGO 26-27.png"
+            alt="UCF SASE"
+            width={355}
+            height={149}
+            priority
+          />
+        </Link>
+        <div className="sase-nav-links">
+          <Link className="sase-nav-active" href="/">Home</Link>
+          <Link href="/forms">Forms</Link>
+          <Link className="sase-login" href="/login">Log in</Link>
+        </div>
+      </nav>
+
+      <section className="sase-hero">
+        <div className="sase-hero-copy">
+          <p className="sase-eyebrow">University of Central Florida</p>
+          <h1>Build your<br /><span>future together.</span></h1>
+          <p className="sase-intro">
+            Connect with a community of Asian scientists and engineers through
+            events, opportunities, and shared momentum.
+          </p>
+          <div className="sase-actions">
+            <Link href="/forms" className="sase-primary-button">Explore forms</Link>
+            <Link href="/forms" className="sase-secondary-button">See forms <span aria-hidden="true">-&gt;</span></Link>
           </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <div className="sase-wave sase-wave-back" aria-hidden="true" />
+      <div className="sase-wave sase-wave-front" aria-hidden="true" />
+      <section className="sase-bottom-note">
+        <p>01 <span /> A place to grow, lead, and belong.</p>
+      </section>
+    </main>
   );
 }

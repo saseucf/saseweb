@@ -22,8 +22,11 @@ export default function AuthCallbackPage() {
                     // ignore localStorage errors
                 }
                 window.dispatchEvent(new CustomEvent("sase:auth", { detail: { user } }))
+
+                router.replace("/")
+                return
             }
-            router.replace("/")
+            router.replace("/login")
         })
     }, [router])
 

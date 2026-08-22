@@ -127,3 +127,125 @@
     @apply bg-background text-foreground;
   }
 }
+
+.sase-home {
+  --sase-navy: #171d52;
+  --sase-blue: #8eafe3;
+  --sase-cream: #fffde9;
+  --sase-yellow: #ffd15d;
+  background: var(--sase-navy);
+  color: var(--sase-cream);
+  min-height: 100svh;
+  overflow: hidden;
+  position: relative;
+}
+
+.sase-nav {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 28px 5vw;
+  position: relative;
+  z-index: 4;
+}
+
+.sase-mark img { height: auto; width: 112px; }
+.sase-nav-links { align-items: center; display: flex; gap: clamp(18px, 3vw, 48px); }
+.sase-nav-links a { color: var(--sase-cream); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+.sase-nav-links a:hover, .sase-nav-active { color: var(--sase-blue) !important; }
+.sase-login { border: 1px solid var(--sase-blue); border-radius: 999px; padding: 11px 20px; }
+
+.sase-hero { margin: 0 auto; max-width: 1280px; min-height: min(650px, 72svh); padding: clamp(80px, 12vh, 150px) 5vw 160px; position: relative; z-index: 2; }
+.sase-hero-copy { max-width: 560px; }
+.sase-eyebrow { color: var(--sase-blue); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+.sase-hero h1 { font-size: clamp(3.8rem, 8vw, 7.5rem); letter-spacing: -0.04em; line-height: 0.88; margin: 22px 0 30px; }
+.sase-hero h1 span { color: var(--sase-blue); }
+.sase-intro { color: #dce5fa; font-size: 1rem; line-height: 1.7; max-width: 420px; }
+.sase-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 16px; margin-top: 35px; }
+.sase-primary-button, .sase-secondary-button { border-radius: 5px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; padding: 15px 22px; text-transform: uppercase; }
+.sase-primary-button { background: var(--sase-blue); color: var(--sase-navy); }
+.sase-primary-button:hover { background: var(--sase-cream); }
+.sase-secondary-button { border: 1px solid #6072bd; color: var(--sase-cream); }
+.sase-secondary-button:hover { border-color: var(--sase-yellow); color: var(--sase-yellow); }
+
+.sase-sun { background: linear-gradient(180deg, #e50000 0%, #8b182f 48%, #0e4059 100%); border-radius: 50%; height: min(42vw, 540px); position: absolute; right: 4%; top: 18%; width: min(42vw, 540px); }
+.sase-cloud { background: var(--sase-yellow); border-radius: 999px; height: 15px; position: absolute; width: 240px; z-index: 1; }
+.sase-cloud::before, .sase-cloud::after { background: inherit; border-radius: inherit; content: ""; height: 15px; position: absolute; }
+.sase-cloud::before { right: 80%; top: 30px; width: 150px; }
+.sase-cloud::after { left: 65%; top: -32px; width: 90px; }
+.sase-cloud-top { right: 0; top: 29%; }
+.sase-cloud-middle { right: 38%; top: 57%; transform: scale(0.72); }
+.sase-wave { bottom: -2px; height: 230px; left: -5%; position: absolute; width: 110%; }
+.sase-wave-back { background: linear-gradient(165deg, #e9edf9 0%, #9cb9eb 45%, #5b80c0 100%); clip-path: polygon(0 48%, 13% 20%, 26% 48%, 38% 18%, 51% 51%, 64% 22%, 78% 53%, 90% 26%, 100% 45%, 100% 100%, 0 100%); }
+.sase-wave-front { background: linear-gradient(165deg, #dce5fa 0%, #85a9df 50%, #334b85 100%); clip-path: polygon(0 65%, 15% 37%, 28% 63%, 42% 27%, 55% 75%, 69% 44%, 82% 70%, 93% 42%, 100% 60%, 100% 100%, 0 100%); opacity: 0.92; }
+.sase-bottom-note { bottom: 24px; left: 5vw; position: absolute; z-index: 3; }
+.sase-bottom-note p { color: var(--sase-navy); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.sase-bottom-note span { background: var(--sase-navy); display: inline-block; height: 1px; margin: 0 12px 3px; width: 45px; }
+
+@media (max-width: 700px) {
+  .sase-nav { align-items: flex-start; padding-top: 22px; }
+  .sase-mark img { width: 90px; }
+  .sase-nav-links { gap: 12px; }
+  .sase-nav-links a { font-size: 0.58rem; letter-spacing: 0.08em; }
+  .sase-nav-links a:nth-child(2) { display: none; }
+  .sase-login { padding: 9px 12px; }
+  .sase-hero { min-height: 700px; padding-top: 110px; }
+  .sase-sun { height: 300px; right: -95px; top: 34%; width: 300px; }
+  .sase-cloud-top { top: 39%; }
+  .sase-cloud-middle { right: 24%; top: 57%; }
+  .sase-wave { height: 180px; }
+  .sase-bottom-note { bottom: 14px; }
+}
+
+.sase-page {
+  background: #f6f8fc;
+  color: #171d52;
+  min-height: 100svh;
+  padding: 48px 5vw 80px;
+}
+.sase-page-header { margin: 0 auto 34px; max-width: 1180px; }
+.sase-page-header h1 { font-size: clamp(2.5rem, 6vw, 4.8rem); letter-spacing: -0.04em; line-height: 0.95; margin: 12px 0 14px; }
+.sase-page-header > p:last-child { color: #5f6b89; max-width: 560px; }
+.sase-page .sase-eyebrow { color: #5579bd; }
+.sase-secondary-button, .sase-primary-button, .sase-danger-button { border-radius: 4px; display: inline-block; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.09em; padding: 13px 18px; text-transform: uppercase; }
+.sase-page .sase-secondary-button { background: transparent; border: 1px solid #aab8d3; color: #344674; }
+.sase-page .sase-secondary-button:hover { background: #e9eef8; border-color: #5579bd; }
+.sase-page .sase-primary-button { background: #5579bd; color: #fffde9; }
+.sase-page .sase-primary-button:hover { background: #171d52; }
+.sase-danger-button { background: #fff1f0; border: 1px solid #ebada7; color: #a33d3a; }
+.sase-danger-button:hover { background: #a33d3a; color: white; }
+.sase-content-section { margin: 48px auto 0; max-width: 1180px; }
+.sase-content-section h2 { font-size: 1.7rem; letter-spacing: -0.03em; }
+.sase-form-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 18px; }
+.sase-form-card { background: #fff; border: 1px solid #dbe2f0; border-radius: 5px; box-shadow: 0 12px 30px rgba(23, 29, 82, 0.06); padding: 22px; }
+.sase-form-card h2, .sase-form-card h3 { font-size: 1.25rem; letter-spacing: -0.02em; }
+.sase-form-card p { color: #68738f; font-size: 0.9rem; line-height: 1.6; margin-top: 9px; }
+.sase-form-card .sase-primary-button { margin-top: 20px; }
+.sase-meta { color: #73809e; font-family: var(--font-geist-mono); font-size: 0.72rem; margin-top: 12px; }
+.sase-status { color: #5579bd; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; margin-top: 12px; text-transform: uppercase; }
+.sase-admin-grid { max-width: 1180px; margin-left: auto; margin-right: auto; }
+.sase-add-button { margin-left: auto; }
+.sase-creator-panel { background: #fff; border: 1px solid #dbe2f0; border-radius: 5px; box-shadow: 0 12px 30px rgba(23, 29, 82, 0.06); display: flex; flex-direction: column; gap: 16px; margin: 0 auto; max-width: 680px; padding: 26px; }
+.sase-creator-page > div:not(.sase-page-header) { max-width: 680px; }
+.sase-creator-page textarea, .sase-creator-page input, .sase-creator-page select { background: #fbfcff; border: 1px solid #cbd5e8; border-radius: 3px; color: #171d52; padding: 11px; }
+.sase-creator-page textarea:focus, .sase-creator-page input:focus, .sase-creator-page select:focus { border-color: #5579bd; outline: 2px solid #dbe5fa; }
+.sase-responses-page { overflow-x: hidden; }
+.sase-table-wrap { background: white; border: 1px solid #dbe2f0; border-radius: 5px; box-shadow: 0 12px 30px rgba(23, 29, 82, 0.06); margin: 34px auto 0; max-width: 1180px; overflow-x: auto; }
+.sase-table-wrap table { color: #26355f; }
+.sase-table-wrap thead { background: #171d52; color: #fffde9; }
+.sase-table-wrap th { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.sase-table-wrap tbody tr:nth-child(even) { background: #f5f7fc; }
+.sase-login-page { align-items: center; background: linear-gradient(135deg, #171d52 0%, #24336e 60%, #5579bd 100%); display: flex; justify-content: center; min-height: 100svh; padding: 24px; }
+.sase-login-card { background: #fffde9; border: 0; border-radius: 5px; box-shadow: 0 24px 70px rgba(4, 8, 34, 0.3); max-width: 430px; width: 100%; }
+.sase-login-card h1 { color: #171d52; letter-spacing: -0.03em; }
+.sase-login-card p { color: #64708c; }
+.sase-login-card input { background: #fff; border-color: #cbd5e8; }
+
+@media (max-width: 700px) {
+  .sase-page { padding: 32px 20px 60px; }
+  .sase-add-button { margin-left: 0; margin-top: 14px; }
+  .sase-creator-panel { padding: 18px; }
+  .sase-page-header h1 { font-size: 3.2rem; }
+}
