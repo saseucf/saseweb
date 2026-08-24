@@ -1,5 +1,10 @@
-import { createServerSupabase } from "@/lib/supabase-server";
+import { createPublicSupabase } from "@/lib/supabase-public";
 import AdminEventControls from "@/components/events/admin-event-controls";
+
+// Public, publicly-readable data (see "Events are viewable by everyone" RLS
+// policy) — safe to cache and revalidate periodically instead of refetching
+// on every single request.
+export const revalidate = 60;
 
 type Event = {
     id: string;
@@ -17,7 +22,7 @@ type Event = {
 };
 
 export default async function EventsPage() {
-    const supabase = createServerSupabase();
+    const supabase = createPublicSupabase();
 
     // Fetch published events from Supabase in chronological order.
     // Draft and cancelled events should not be visible on the public events page.

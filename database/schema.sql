@@ -25,7 +25,6 @@ CREATE TABLE public.profiles (
     resume_url TEXT,
     github_url TEXT,
     linkedin_url TEXT,
-    role TEXT DEFAULT 'user' NOT NULL,
     total_points INTEGER DEFAULT 0 NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL

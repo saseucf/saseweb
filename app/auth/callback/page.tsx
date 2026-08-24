@@ -1,12 +1,14 @@
 "use client"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { Suspense, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import supabase from "@/lib/auth"
 
-export default function AuthCallbackPage() {
+function AuthCallback() {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const redirectUrl = searchParams.get("redirect") || "/"
 
     useEffect(() => {
         // supabase-js uses the "implicit" flow by default, so by the time this
@@ -23,16 +25,24 @@ export default function AuthCallbackPage() {
                 }
                 window.dispatchEvent(new CustomEvent("sase:auth", { detail: { user } }))
 
-                router.replace("/")
+                router.replace(redirectUrl)
                 return
             }
             router.replace("/login")
         })
-    }, [router])
+    }, [router, redirectUrl])
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-6">
             <p className="text-sm text-muted-foreground">Signing you in...</p>
         </div>
+    )
+}
+
+export default function AuthCallbackPage() {
+    return (
+        <Suspense>
+            <AuthCallback />
+        </Suspense>
     )
 }
