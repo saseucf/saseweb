@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import supabase from "@/lib/auth";
 
 type Question = {
@@ -156,7 +157,7 @@ export default function FormResponsePage() {
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#171d52] via-[#5579bd] to-[#171d52]"></div>
         
         <form className="flex flex-col gap-10 mt-4" onSubmit={submitForm}>
-          {form.schema.map((question, index) => (
+          {form.schema.map((question) => (
             <fieldset key={question.id} className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
               <legend className="text-xl font-black text-[#171d52] mb-4 w-full leading-snug">
                 {question.label || "Untitled question"}
