@@ -4,6 +4,7 @@ import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { PRESET_EVENT_TYPES, getEventTypeColor } from "@/lib/event-type-colors";
 
 type EventData = {
     id: string;
@@ -46,6 +47,14 @@ export default function EventForm({
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Event type logic
+    const initialType = existingEvent?.event_type ?? "";
+    const isPreset = initialType === "" ? false : PRESET_EVENT_TYPES.some(p => p.label === initialType);
+    const [eventTypeSelection, setEventTypeSelection] = useState(
+        initialType === "" ? PRESET_EVENT_TYPES[0].label : (isPreset ? initialType : "custom")
+    );
+    const [customEventType, setCustomEventType] = useState(isPreset ? "" : initialType);
+
     async function handleSubmit(
         submitEvent: React.FormEvent<HTMLFormElement>
     ) {
@@ -77,9 +86,10 @@ export default function EventForm({
             formData.get("description") ?? ""
         ).trim();
 
-        const eventType = String(
-            formData.get("event_type") ?? ""
-        ).trim();
+        let eventType = eventTypeSelection;
+        if (eventType === "custom") {
+            eventType = customEventType.trim();
+        }
 
         const location = String(
             formData.get("location") ?? ""
@@ -233,21 +243,48 @@ export default function EventForm({
 
             <div className="flex flex-col gap-1">
                 <label
-                    htmlFor="event_type"
-                    className="text-sm font-semibold text-[#171d52]"
+                    htmlFor="event_type_select"
+                    className="text-sm font-semibold text-[#141b4d]"
                 >
                     Event Type
                 </label>
 
-                <input
-                    id="event_type"
-                    name="event_type"
-                    type="text"
-                    placeholder="e.g. Workshop, Social, GBM"
-                    defaultValue={existingEvent?.event_type ?? ""}
-                    required
-                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
-                />
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                        <select
+                            id="event_type_select"
+                            value={eventTypeSelection}
+                            onChange={(e) => setEventTypeSelection(e.target.value)}
+                            className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa] flex-1"
+                        >
+                            {PRESET_EVENT_TYPES.map(preset => (
+                                <option key={preset.label} value={preset.label}>
+                                    {preset.label}
+                                </option>
+                            ))}
+                            <option value="custom">+ Custom Type...</option>
+                        </select>
+                        <div 
+                            className="w-4 h-4 rounded-full flex-shrink-0" 
+                            style={{ 
+                                backgroundColor: getEventTypeColor(
+                                    eventTypeSelection === 'custom' ? customEventType : eventTypeSelection
+                                ) 
+                            }} 
+                        />
+                    </div>
+                    
+                    {eventTypeSelection === "custom" && (
+                        <input
+                            type="text"
+                            placeholder="Enter custom event type..."
+                            value={customEventType}
+                            onChange={(e) => setCustomEventType(e.target.value)}
+                            required
+                            className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa] w-full"
+                        />
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-col gap-1">

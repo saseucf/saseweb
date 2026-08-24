@@ -132,10 +132,10 @@
 }
 
 .sase-home {
-  --sase-navy: #171d52;
-  --sase-blue: #8eafe3;
-  --sase-cream: #fffde9;
-  --sase-yellow: #ffd15d;
+  --sase-navy: #141b4d;
+  --sase-blue: #89abe3;
+  --sase-cream: #e9e8e8;
+  --sase-yellow: #dbc8b6;
   background: var(--sase-navy);
   color: var(--sase-cream);
   min-height: 100svh;

@@ -1,5 +1,6 @@
 import { createPublicSupabase } from "@/lib/supabase-public";
 import AdminEventControls from "@/components/events/admin-event-controls";
+import EventsClient from "@/components/events/events-client";
 
 // Public, publicly-readable data (see "Events are viewable by everyone" RLS
 // policy) — safe to cache and revalidate periodically instead of refetching
@@ -63,71 +64,9 @@ export default async function EventsPage() {
             </div>
 
             <section className="sase-content-section">
-                {events.length === 0 ? (
-                    <div className="sase-form-card">
-                        <p className="text-gray-500 font-medium text-center">No upcoming events right now. Check back soon!</p>
-                    </div>
-                ) : (
-                    <div className="sase-form-grid">
-                        {events.map((event) => (
-                            <div key={event.id} className="sase-form-card flex flex-col justify-between">
-                                <div>
-                                    <div className="flex justify-between items-start gap-2 mb-2">
-                                        <h2 className="text-[#171d52] font-bold text-xl">{event.title}</h2>
-                                        <span className="bg-[#e9eef8] text-[#344674] text-xs font-bold px-2 py-1 rounded whitespace-nowrap">
-                                            {event.points} pt{event.points === 1 ? "" : "s"}
-                                        </span>
-                                    </div>
-                                    <p className="sase-eyebrow mb-3">{event.event_type}</p>
-                                    
-                                    {event.description && (
-                                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{event.description}</p>
-                                    )}
-
-                                    <div className="flex flex-col gap-2 mt-4 border-t border-gray-100 pt-4">
-                                        <div className="flex items-start gap-2 text-sm">
-                                            <span className="font-semibold text-[#344674] min-w-[70px]">When:</span>
-                                            <span className="text-gray-600">
-                                                {new Date(event.start_time).toLocaleString(undefined, {
-                                                    weekday: 'short', month: 'short', day: 'numeric',
-                                                    hour: 'numeric', minute: '2-digit'
-                                                })}
-                                                {" - "}
-                                                {new Date(event.end_time).toLocaleTimeString(undefined, {
-                                                    hour: 'numeric', minute: '2-digit'
-                                                })}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-start gap-2 text-sm">
-                                            <span className="font-semibold text-[#344674] min-w-[70px]">Where:</span>
-                                            <span className="text-gray-600">{event.location ?? "TBA"}</span>
-                                        </div>
-                                        {event.host && (
-                                            <div className="flex items-start gap-2 text-sm">
-                                                <span className="font-semibold text-[#344674] min-w-[70px]">Host:</span>
-                                                <span className="text-gray-600">{event.host}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <EventsClient events={events} />
             </section>
 
-            {/* Google Calendar */}
-            <section className="sase-content-section">
-                <h2 className="text-[#171d52] font-black mb-6">Calendar</h2>
-                <div className="w-full aspect-video rounded-2xl overflow-hidden border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)]">
-                    <iframe
-                        src="https://calendar.google.com/calendar/embed?src=cbdda5359c7179063608f9aeacb5122649b722539f5c65174b688816d9988e80%40group.calendar.google.com&ctz=America%2FNew_York"
-                        className="w-full h-full border-0"
-                        allowFullScreen
-                        title="SASE UCF Google Calendar"
-                    />
-                </div>
-            </section>
 
             {/* Past Events */}
             <PastEvents />
