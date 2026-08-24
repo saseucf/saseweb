@@ -115,6 +115,80 @@ export default async function EventsPage() {
                     </div>
                 )}
             </section>
+
+            {/* Google Calendar */}
+            <section className="sase-content-section">
+                <h2 className="text-[#171d52] font-black mb-6">Calendar</h2>
+                <div className="w-full aspect-video rounded-2xl overflow-hidden border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)]">
+                    <iframe
+                        src="https://calendar.google.com/calendar/embed?src=cbdda5359c7179063608f9aeacb5122649b722539f5c65174b688816d9988e80%40group.calendar.google.com&ctz=America%2FNew_York"
+                        className="w-full h-full border-0"
+                        allowFullScreen
+                        title="SASE UCF Google Calendar"
+                    />
+                </div>
+            </section>
+
+            {/* Past Events */}
+            <PastEvents />
         </main>
+    );
+}
+
+function PastEvents() {
+    const gbm1Images = [
+        "/events/gbm1-1.JPG",
+        "/events/gbm1-2.JPG",
+        "/events/gbm1-3.JPG",
+        "/events/gbm1-4.JPG",
+        "/events/gbm1-5.JPG",
+        "/events/gbm1-6.JPG",
+    ];
+    const menmetImages = [
+        "/events/menmet-1.png",
+        "/events/menmet-2.png",
+        "/events/menmet-3.png",
+        "/events/menmet-4.png",
+        "/events/menmet-6.png",
+    ];
+    const gbm2Images = [
+        "/events/gbm2-1.JPG",
+        "/events/gbm2-2.JPG",
+        "/events/gbm2-3.JPG",
+        "/events/gbm2-4.JPG",
+        "/events/gbm2-5.JPG",
+        "/events/gbm2-6.JPG",
+        "/events/gbm2-7.JPG",
+    ];
+
+    return (
+        <section className="sase-content-section pb-16">
+            <h2 className="text-[#171d52] font-black mb-2">Past Events</h2>
+            <p className="sase-eyebrow mb-8">2024–2025</p>
+
+            <EventGallery title="GBM #1: Despicable SASE" images={gbm1Images} alt="GBM1" />
+            <EventGallery title="Mentor-Mentee Speed Friending" images={menmetImages} alt="Mentor-Mentee" />
+            <EventGallery title="GBM #2: SASE Crossing" images={gbm2Images} alt="GBM2" />
+        </section>
+    );
+}
+
+function EventGallery({ title, images, alt }: { title: string; images: string[]; alt: string }) {
+    return (
+        <div className="mb-12">
+            <h3 className="text-[#5579bd] font-black text-xl uppercase tracking-wide mb-4">{title}</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {images.map((src, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        key={i}
+                        src={src}
+                        alt={`${alt} ${i + 1}`}
+                        className="w-full aspect-square object-cover rounded-xl border border-[#dbe2f0] hover:scale-105 transition-transform duration-200"
+                        loading="lazy"
+                    />
+                ))}
+            </div>
+        </div>
     );
 }
