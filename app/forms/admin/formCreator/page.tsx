@@ -320,7 +320,7 @@ function FormCreator() {
         {!formId && (
           <button 
             onClick={applyRsvpTemplate}
-            className="flex items-center gap-2 bg-[#e9eef8] text-[#5579bd] border border-[#5579bd] hover:bg-[#5579bd] hover:text-[#fffde9] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-[#e9eef8] text-[#89abe3] border border-[#89abe3] hover:bg-[#89abe3] hover:text-[#e9e8e8] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
           >
             <CheckCircle2 className="w-4 h-4" />
             Use RSVP Template
@@ -331,7 +331,7 @@ function FormCreator() {
       {/* Form information */}
       <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 max-w-3xl mx-auto flex flex-col gap-5 mt-8">
         <input
-          className="text-3xl font-black text-[#171d52] border-b-2 border-transparent hover:border-gray-200 focus:border-[#5579bd] focus:outline-none transition-colors w-full pb-2 placeholder-gray-300"
+          className="text-3xl font-black text-[#141b4d] border-b-2 border-transparent hover:border-gray-200 focus:border-[#89abe3] focus:outline-none transition-colors w-full pb-2 placeholder-gray-300"
           placeholder="Form Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -339,7 +339,7 @@ function FormCreator() {
 
         <textarea
           placeholder="Form Description"
-          className="text-[#64708c] border-b-2 border-transparent hover:border-gray-200 focus:border-[#5579bd] focus:outline-none transition-colors w-full pb-2 resize-none placeholder-gray-300"
+          className="text-[#64708c] border-b-2 border-transparent hover:border-gray-200 focus:border-[#89abe3] focus:outline-none transition-colors w-full pb-2 resize-none placeholder-gray-300"
           value={description}
           rows={2}
           onChange={(e) => setDescription(e.target.value)}
@@ -353,14 +353,14 @@ function FormCreator() {
               placeholder="e.g. spring-kickoff-rsvp"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
-              className="border border-[#cbd5e8] rounded-xl px-4 py-3 text-sm focus:border-[#5579bd] focus:ring-2 focus:ring-[#e9eef8] outline-none transition-all"
+              className="border border-[#cbd5e8] rounded-xl px-4 py-3 text-sm focus:border-[#89abe3] focus:ring-2 focus:ring-[#e9eef8] outline-none transition-all"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] uppercase font-bold tracking-wider text-[#64708c]">Link to Event (Optional)</label>
             <select
-              className="border border-[#cbd5e8] rounded-xl px-4 py-3 text-sm focus:border-[#5579bd] focus:ring-2 focus:ring-[#e9eef8] outline-none transition-all appearance-none bg-white"
+              className="border border-[#cbd5e8] rounded-xl px-4 py-3 text-sm focus:border-[#89abe3] focus:ring-2 focus:ring-[#e9eef8] outline-none transition-all appearance-none bg-white"
               value={eventId || ""}
               onChange={(e) => setEventId(e.target.value || null)}
             >
@@ -383,11 +383,11 @@ function FormCreator() {
                 onChange={(e) => setRequiresLogin(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="w-5 h-5 rounded-md border-2 border-[#cbd5e8] peer-checked:border-[#5579bd] peer-checked:bg-[#5579bd] transition-all flex items-center justify-center">
+              <div className="w-5 h-5 rounded-md border-2 border-[#cbd5e8] peer-checked:border-[#89abe3] peer-checked:bg-[#89abe3] transition-all flex items-center justify-center">
                 <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
               </div>
             </div>
-            <span className="text-sm font-semibold text-[#171d52] group-hover:text-[#5579bd] transition-colors">Require Login</span>
+            <span className="text-sm font-semibold text-[#141b4d] group-hover:text-[#89abe3] transition-colors">Require Login</span>
           </label>
 
           <label className="flex items-center gap-3 cursor-pointer group">
@@ -398,11 +398,11 @@ function FormCreator() {
                 onChange={(e) => setIsOpen(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="w-5 h-5 rounded-md border-2 border-[#cbd5e8] peer-checked:border-[#5579bd] peer-checked:bg-[#5579bd] transition-all flex items-center justify-center">
+              <div className="w-5 h-5 rounded-md border-2 border-[#cbd5e8] peer-checked:border-[#89abe3] peer-checked:bg-[#89abe3] transition-all flex items-center justify-center">
                 <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
               </div>
             </div>
-            <span className="text-sm font-semibold text-[#171d52] group-hover:text-[#5579bd] transition-colors">Accepting Responses</span>
+            <span className="text-sm font-semibold text-[#141b4d] group-hover:text-[#89abe3] transition-colors">Accepting Responses</span>
           </label>
         </div>
       </div>
@@ -414,17 +414,17 @@ function FormCreator() {
             key={question.id}
             className="bg-white rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-[#e2e8f0] p-6 md:p-8 flex flex-col gap-4 relative group hover:border-[#cbd5e8] transition-colors"
           >
-            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#5579bd] rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#89abe3] rounded-l-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
             
             <div className="flex justify-between items-start mb-2 gap-4">
               <input
                 placeholder="Question..."
-                className="text-lg font-bold text-[#171d52] bg-gray-50 border border-transparent rounded-xl px-4 py-3 w-full focus:bg-white focus:border-[#5579bd] focus:ring-2 focus:ring-[#e9eef8] outline-none transition-all placeholder-gray-400"
+                className="text-lg font-bold text-[#141b4d] bg-gray-50 border border-transparent rounded-xl px-4 py-3 w-full focus:bg-white focus:border-[#89abe3] focus:ring-2 focus:ring-[#e9eef8] outline-none transition-all placeholder-gray-400"
                 value={question.label}
                 onChange={(e) => changeQuestionLabel(question.id, e.target.value)}
               />
               <select
-                className="border border-[#cbd5e8] bg-white rounded-xl px-4 py-3 text-sm font-medium focus:border-[#5579bd] outline-none transition-all min-w-[160px]"
+                className="border border-[#cbd5e8] bg-white rounded-xl px-4 py-3 text-sm font-medium focus:border-[#89abe3] outline-none transition-all min-w-[160px]"
                 value={question.type}
                 onChange={(e) =>
                   changeQuestionType(question.id, e.target.value as Question["type"])
@@ -464,14 +464,14 @@ function FormCreator() {
                         onChange={(e) =>
                           changeOption(question.id, optionIndex, e.target.value)
                         }
-                        className="text-sm font-medium text-[#171d52] border-b border-transparent hover:border-gray-300 focus:border-[#5579bd] outline-none w-full max-w-md bg-transparent pb-1 transition-colors"
+                        className="text-sm font-medium text-[#141b4d] border-b border-transparent hover:border-gray-300 focus:border-[#89abe3] outline-none w-full max-w-md bg-transparent pb-1 transition-colors"
                       />
                     </div>
                   ))}
                   <button
                     type="button"
                     onClick={() => addOption(question.id)}
-                    className="flex items-center gap-1.5 w-fit text-[#5579bd] hover:text-[#171d52] text-sm font-bold uppercase tracking-wider mt-2 transition-colors"
+                    className="flex items-center gap-1.5 w-fit text-[#89abe3] hover:text-[#141b4d] text-sm font-bold uppercase tracking-wider mt-2 transition-colors"
                   >
                     <PlusCircle className="w-4 h-4" /> Add Option
                   </button>
@@ -488,7 +488,7 @@ function FormCreator() {
                     onChange={(e) => changeRequired(question.id, e.target.checked)}
                     className="peer sr-only"
                   />
-                  <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#5579bd]"></div>
+                  <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#89abe3]"></div>
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#64708c]">Required</span>
               </label>
@@ -507,14 +507,14 @@ function FormCreator() {
         <div className="flex flex-col sm:flex-row gap-4 mt-4 mb-24 justify-center items-center">
           <button
             onClick={addQuestion}
-            className="flex items-center gap-2 bg-white text-[#171d52] border-2 border-[#171d52] px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-[#171d52] hover:text-white transition-all shadow-sm w-full sm:w-auto justify-center"
+            className="flex items-center gap-2 bg-white text-[#141b4d] border-2 border-[#141b4d] px-6 py-3 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-[#141b4d] hover:text-white transition-all shadow-sm w-full sm:w-auto justify-center"
           >
             <PlusCircle className="w-5 h-5" /> Add Question
           </button>
 
           <button
             onClick={saveForm}
-            className="bg-[#5579bd] text-white px-8 py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-[#171d52] transition-all shadow-md w-full sm:w-auto text-center"
+            className="bg-[#89abe3] text-white px-8 py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-[#141b4d] transition-all shadow-md w-full sm:w-auto text-center"
           >
             {formId !== null ? "Save Changes" : "Save Form"}
           </button>

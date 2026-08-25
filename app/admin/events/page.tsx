@@ -96,7 +96,7 @@ export default async function AdminEventsPage() {
                             <div key={event.id} className="sase-form-card flex flex-col justify-between">
                                 <div>
                                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                                        <h2 className="text-[#171d52] font-bold text-xl">
+                                        <h2 className="text-[#141b4d] font-bold text-xl">
                                             {event.title}
                                         </h2>
                                         <span className={`px-2 py-1 text-[0.65rem] font-bold uppercase tracking-wider rounded ${

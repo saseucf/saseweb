@@ -31,7 +31,7 @@ export default function Home() {
           </p>
           <div className="sase-actions">
             <Link href="/forms" className="sase-primary-button">Explore forms</Link>
-            <Link href="/events" className="sase-secondary-button border-[#5579bd] hover:border-[#ffd15d] hover:text-[#ffd15d]">See events <span aria-hidden="true">-&gt;</span></Link>
+            <Link href="/events" className="sase-secondary-button border-[#89abe3] hover:border-[#dbc8b6] hover:text-[#dbc8b6]">See events <span aria-hidden="true">-&gt;</span></Link>
           </div>
         </div>
       </section>
@@ -41,10 +41,10 @@ export default function Home() {
       <div className="sase-wave sase-wave-front" aria-hidden="true" />
 
       {/* About Section */}
-      <section id="about" className="relative z-10 bg-[#f6f8fc] text-[#171d52] py-24 px-6 md:px-12 mt-32">
+      <section id="about" className="relative z-10 bg-[#f6f8fc] text-[#141b4d] py-24 px-6 md:px-12 mt-32">
         <div className="max-w-4xl mx-auto text-center space-y-8" data-aos="fade-up">
           <h2 className="text-3xl md:text-5xl font-black tracking-tight">
-            Welcome to the UCF <span className="text-[#5579bd]">SASE</span> Website
+            Welcome to the UCF <span className="text-[#89abe3]">SASE</span> Website
           </h2>
           <p className="text-lg md:text-xl text-[#64708c] leading-relaxed">
             Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage scientific and engineering professionals achieve their full potential. The University of Central Florida SASE Chapter was founded in 2020, shortly before the pandemic. With only 4 years under our belt, we have made tremendous strides towards the development of our members centered around core values of career, diversity, and service. Our events and programs not only advance professional pursuits, but also foster a supportive community that celebrates each and every member’s story.
@@ -53,16 +53,16 @@ export default function Home() {
       </section>
 
       {/* Core Values Section */}
-      <section className="relative z-10 bg-[#f6f8fc] text-[#171d52] pb-32 px-6 md:px-12">
+      <section className="relative z-10 bg-[#f6f8fc] text-[#141b4d] pb-32 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-center text-[#5579bd] font-black text-4xl mb-16 tracking-tight" data-aos="fade-up">
+          <h3 className="text-center text-[#89abe3] font-black text-4xl mb-16 tracking-tight" data-aos="fade-up">
             3 Core Values
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="200">
             {/* Value 1 */}
             <div className="bg-white rounded-2xl p-8 border border-[#cbd5e8] shadow-[0_12px_30px_rgba(23,29,82,0.06)] hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
-              <div className="bg-[#e9eef8] text-[#5579bd] p-4 rounded-full mb-6">
+              <div className="bg-[#e9eef8] text-[#89abe3] p-4 rounded-full mb-6">
                 <Briefcase className="w-8 h-8" />
               </div>
               <h4 className="text-xl font-bold mb-4">Professional Development</h4>
@@ -73,7 +73,7 @@ export default function Home() {
 
             {/* Value 2 */}
             <div className="bg-white rounded-2xl p-8 border border-[#cbd5e8] shadow-[0_12px_30px_rgba(23,29,82,0.06)] hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
-              <div className="bg-[#e9eef8] text-[#5579bd] p-4 rounded-full mb-6">
+              <div className="bg-[#e9eef8] text-[#89abe3] p-4 rounded-full mb-6">
                 <HandHeart className="w-8 h-8" />
               </div>
               <h4 className="text-xl font-bold mb-4">Service</h4>
@@ -84,7 +84,7 @@ export default function Home() {
 
             {/* Value 3 */}
             <div className="bg-white rounded-2xl p-8 border border-[#cbd5e8] shadow-[0_12px_30px_rgba(23,29,82,0.06)] hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
-              <div className="bg-[#e9eef8] text-[#5579bd] p-4 rounded-full mb-6">
+              <div className="bg-[#e9eef8] text-[#89abe3] p-4 rounded-full mb-6">
                 <HeartHandshake className="w-8 h-8" />
               </div>
               <h4 className="text-xl font-bold mb-4">Diversity</h4>

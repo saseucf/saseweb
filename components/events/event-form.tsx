@@ -209,7 +209,7 @@ export default function EventForm({
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="title"
-                    className="text-sm font-semibold text-[#171d52]"
+                    className="text-sm font-semibold text-[#141b4d]"
                 >
                     Title
                 </label>
@@ -220,14 +220,14 @@ export default function EventForm({
                     type="text"
                     defaultValue={existingEvent?.title ?? ""}
                     required
-                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                 />
             </div>
 
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="description"
-                    className="text-sm font-semibold text-[#171d52]"
+                    className="text-sm font-semibold text-[#141b4d]"
                 >
                     Description
                 </label>
@@ -237,7 +237,7 @@ export default function EventForm({
                     name="description"
                     rows={4}
                     defaultValue={existingEvent?.description ?? ""}
-                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa] resize-y"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa] resize-y"
                 />
             </div>
 
@@ -290,7 +290,7 @@ export default function EventForm({
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="location"
-                    className="text-sm font-semibold text-[#171d52]"
+                    className="text-sm font-semibold text-[#141b4d]"
                 >
                     Location
                 </label>
@@ -300,7 +300,7 @@ export default function EventForm({
                     name="location"
                     type="text"
                     defaultValue={existingEvent?.location ?? ""}
-                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                 />
             </div>
 
@@ -309,7 +309,7 @@ export default function EventForm({
                 <div className="flex flex-col gap-1">
                     <label
                         htmlFor="start_time"
-                        className="text-sm font-semibold text-[#171d52]"
+                        className="text-sm font-semibold text-[#141b4d]"
                     >
                         Start Time
                     </label>
@@ -322,14 +322,14 @@ export default function EventForm({
                             existingEvent?.start_time
                         )}
                         required
-                        className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                        className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
 
                 <div className="flex flex-col gap-1">
                     <label
                         htmlFor="end_time"
-                        className="text-sm font-semibold text-[#171d52]"
+                        className="text-sm font-semibold text-[#141b4d]"
                     >
                         End Time
                     </label>
@@ -342,7 +342,7 @@ export default function EventForm({
                             existingEvent?.end_time
                         )}
                         required
-                        className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                        className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
             </div>
@@ -352,7 +352,7 @@ export default function EventForm({
                 <div className="flex flex-col gap-1">
                     <label
                         htmlFor="points"
-                        className="text-sm font-semibold text-[#171d52]"
+                        className="text-sm font-semibold text-[#141b4d]"
                     >
                         Points
                     </label>
@@ -364,14 +364,14 @@ export default function EventForm({
                         min="0"
                         defaultValue={existingEvent?.points ?? 1}
                         required
-                        className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                        className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
 
                 <div className="flex flex-col gap-1">
                     <label
                         htmlFor="capacity"
-                        className="text-sm font-semibold text-[#171d52]"
+                        className="text-sm font-semibold text-[#141b4d]"
                     >
                         Capacity (Optional)
                     </label>
@@ -382,7 +382,7 @@ export default function EventForm({
                         type="number"
                         min="1"
                         defaultValue={existingEvent?.capacity ?? ""}
-                        className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                        className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
             </div>
@@ -390,7 +390,7 @@ export default function EventForm({
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="host"
-                    className="text-sm font-semibold text-[#171d52]"
+                    className="text-sm font-semibold text-[#141b4d]"
                 >
                     Host (Optional)
                 </label>
@@ -400,7 +400,7 @@ export default function EventForm({
                     name="host"
                     type="text"
                     defaultValue={existingEvent?.host ?? ""}
-                    className="border rounded-md p-2 bg-[#fbfcff] text-[#171d52] focus:border-[#5579bd] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                    className="border rounded-md p-2 bg-[#fbfcff] text-[#141b4d] focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                 />
             </div>
 

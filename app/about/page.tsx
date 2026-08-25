@@ -3,14 +3,14 @@
 import { Flower } from "lucide-react";
 
 const majors = [
-    { label: "Computer Science",         percent: 26,   fill: "#5579bd" },
-    { label: "Other",                     percent: 13.2, fill: "#ffd15d" },
+    { label: "Computer Science",         percent: 26,   fill: "#89abe3" },
+    { label: "Other",                     percent: 13.2, fill: "#dbc8b6" },
     { label: "Pre-Med / Pre-Health",      percent: 15.7, fill: "#4168a8" },
     { label: "Mechanical Engineering",    percent: 12.4, fill: "#2d5a96" },
     { label: "Aerospace Engineering",     percent: 9.1,  fill: "#264d84" },
     { label: "Biology",                   percent: 7,    fill: "#1e3f72" },
-    { label: "Computer Engineering",      percent: 5.4,  fill: "#171d52" },
-    { label: "Industrial Engineering",    percent: 3.7,  fill: "#8eafe3" },
+    { label: "Computer Engineering",      percent: 5.4,  fill: "#141b4d" },
+    { label: "Industrial Engineering",    percent: 3.7,  fill: "#89abe3" },
     { label: "Materials Engineering",     percent: 2.9,  fill: "#7ca0da" },
     { label: "Civil Engineering",         percent: 2.5,  fill: "#6a90d0" },
     { label: "Electrical Engineering",    percent: 2.1,  fill: "#5880c6" },
@@ -40,8 +40,8 @@ export default function AboutPage() {
 
             {/* Mission Statement */}
             <section className="sase-content-section">
-                <h2 className="text-[#171d52] font-black text-3xl md:text-4xl mb-6">Mission Statement</h2>
-                <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-8 max-w-4xl">
+                <h2 className="text-[#141b4d] font-black text-3xl md:text-4xl mb-6">Mission Statement</h2>
+                <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-8 max-w-4xl mx-auto">
                     <p className="text-[#64708c] text-lg leading-relaxed">
                         We work to maintain and grow a safe and inclusive space for members that prioritizes pillars of
                         professional development, culture, and community. We encourage members to leverage the
@@ -56,7 +56,7 @@ export default function AboutPage() {
 
             {/* Member Demographics */}
             <section className="sase-content-section">
-                <h2 className="text-[#171d52] font-black text-3xl md:text-4xl mb-6">Member Demographics</h2>
+                <h2 className="text-[#141b4d] font-black text-3xl md:text-4xl mb-6">Member Demographics</h2>
                 <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-8">
                     <div className="space-y-3">
                         {majors.sort((a, b) => b.percent - a.percent).map((item) => (
@@ -68,7 +68,7 @@ export default function AboutPage() {
                                         style={{ width: `${(item.percent / 26) * 100}%`, background: item.fill }}
                                     />
                                 </div>
-                                <span className="text-sm font-bold text-[#171d52] w-12 shrink-0">{item.percent}%</span>
+                                <span className="text-sm font-bold text-[#141b4d] w-12 shrink-0">{item.percent}%</span>
                             </div>
                         ))}
                     </div>
@@ -77,13 +77,13 @@ export default function AboutPage() {
 
             {/* Awards */}
             <section className="sase-content-section">
-                <h2 className="text-[#171d52] font-black text-3xl md:text-4xl mb-6">Awards &amp; Accomplishments</h2>
+                <h2 className="text-[#141b4d] font-black text-3xl md:text-4xl mb-6">Awards &amp; Accomplishments</h2>
                 <p className="text-[#64708c] text-lg mb-6 max-w-3xl">
                     In 2023, UCF SASE received the distinguished honor to host one of National SASE&apos;s annual
                     regional conferences, the SASE Southeast Regional Conference (SERC).
                 </p>
-                <div className="bg-[#ffd15d] rounded-2xl p-8 max-w-2xl shadow-[0_12px_30px_rgba(23,29,82,0.10)]">
-                    <div className="space-y-2 text-[#171d52]">
+                <div className="bg-[#dbc8b6] rounded-2xl p-8 max-w-2xl mx-auto shadow-[0_12px_30px_rgba(23,29,82,0.10)]">
+                    <div className="space-y-2 text-[#141b4d]">
                         <p className="font-black text-xl text-center mb-3">2024–2025</p>
                         <p><Flower className="inline-block mr-2 w-5 h-5" />SASE Inspire Awards: Honorable Mention for Most Improved Chapter</p>
                         <p><Flower className="inline-block mr-2 w-5 h-5" />APAC Hidden Lotus Award: Organization of Distinction</p>

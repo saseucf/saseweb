@@ -102,7 +102,7 @@ function PastEvents() {
 
     return (
         <section className="sase-content-section pb-16">
-            <h2 className="text-[#171d52] font-black mb-2">Past Events</h2>
+            <h2 className="text-[#141b4d] font-black mb-2">Past Events</h2>
             <p className="sase-eyebrow mb-8">2024–2025</p>
 
             <EventGallery title="GBM #1: Despicable SASE" images={gbm1Images} alt="GBM1" />
@@ -115,7 +115,7 @@ function PastEvents() {
 function EventGallery({ title, images, alt }: { title: string; images: string[]; alt: string }) {
     return (
         <div className="mb-12">
-            <h3 className="text-[#5579bd] font-black text-xl uppercase tracking-wide mb-4">{title}</h3>
+            <h3 className="text-[#89abe3] font-black text-xl uppercase tracking-wide mb-4">{title}</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {images.map((src, i) => (
                     // eslint-disable-next-line @next/next/no-img-element

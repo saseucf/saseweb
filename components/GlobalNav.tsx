@@ -76,7 +76,7 @@ export default function GlobalNav() {
   const isRealAdmin = role === "admin";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#171d52] shadow-md border-b border-[#26355f]">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#141b4d] shadow-md border-b border-[#26355f]">
       <Link href="/" className="flex items-center" aria-label="SASE home">
         <Image
           src="/UCF SASE LOGO 26-27.png"
@@ -88,7 +88,7 @@ export default function GlobalNav() {
         />
       </Link>
       
-      <div className="flex items-center gap-4 md:gap-6">
+      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar py-2">
         {loading ? (
            <div className="w-16 h-4 bg-[#26355f] animate-pulse rounded"></div>
         ) : isAdmin ? (
@@ -112,7 +112,7 @@ export default function GlobalNav() {
         )}
         
         {!role && !loading && (
-          <Link className="border border-[#8eafe3] rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#fffde9] hover:bg-[#fffde9] hover:text-[#171d52] transition-colors" href="/login">Log in</Link>
+          <Link className="border border-[#89abe3] rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#e9e8e8] hover:bg-[#e9e8e8] hover:text-[#141b4d] transition-colors" href="/login">Log in</Link>
         )}
         {role && !loading && (
           <div className="flex items-center gap-3">
@@ -121,8 +121,8 @@ export default function GlobalNav() {
                 onClick={() => setViewAsUser(!viewAsUser)}
                 className={`text-[0.65rem] md:text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-colors ${
                   viewAsUser 
-                  ? "bg-[#fffde9] text-[#171d52] border-[#fffde9]" 
-                  : "text-[#8eafe3] border-[#26355f] hover:border-[#8eafe3]"
+                  ? "bg-[#e9e8e8] text-[#141b4d] border-[#e9e8e8]" 
+                  : "text-[#89abe3] border-[#26355f] hover:border-[#89abe3]"
                 }`}
               >
                 {viewAsUser ? "Admin View" : "View as User"}
@@ -130,7 +130,7 @@ export default function GlobalNav() {
             )}
             <button 
               onClick={async () => { await supabase.auth.signOut(); window.location.reload(); }}
-              className="border border-[#8eafe3] rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#fffde9] hover:bg-red-500 hover:border-red-500 transition-colors"
+              className="border border-[#89abe3] rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#e9e8e8] hover:bg-red-500 hover:border-red-500 transition-colors"
             >
               Log out
             </button>
@@ -161,7 +161,7 @@ function SocialsDropdown() {
   return (
     <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <button
-        className="text-[0.65rem] md:text-xs font-bold tracking-widest uppercase transition-colors text-[#fffde9] hover:text-[#8eafe3] flex items-center gap-1"
+        className="text-[0.65rem] md:text-xs font-bold tracking-widest uppercase transition-colors text-[#e9e8e8] hover:text-[#89abe3] flex items-center gap-1"
         aria-haspopup="true"
         aria-expanded={open}
       >
@@ -172,7 +172,7 @@ function SocialsDropdown() {
       </button>
 
       {open && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-[#171d52] border border-[#26355f] rounded-lg shadow-xl overflow-hidden z-50">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-[#141b4d] border border-[#26355f] rounded-lg shadow-xl overflow-hidden z-50">
           <SocialLink href="https://www.instagram.com/saseucf/" icon="instagram" label="Instagram" />
           <SocialLink href="https://www.linkedin.com/company/ucf-sase/" icon="linkedin" label="LinkedIn" />
           <SocialLink href="https://discord.gg/PK8e6KwAQS" icon="discord" label="Discord" />
@@ -204,7 +204,7 @@ function SocialLink({ href, icon, label }: { href: string; icon: string; label: 
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-3 px-4 py-3 text-[#fffde9] hover:bg-[#26355f] hover:text-[#8eafe3] transition-colors text-xs font-semibold tracking-wide"
+      className="flex items-center gap-3 px-4 py-3 text-[#e9e8e8] hover:bg-[#26355f] hover:text-[#89abe3] transition-colors text-xs font-semibold tracking-wide"
     >
       {icons[icon]}
       {label}

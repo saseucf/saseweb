@@ -199,7 +199,8 @@ function EventCalendar({ events }: { events: Event[] }) {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
+            <div className="overflow-x-auto no-scrollbar w-full">
+                <div className="grid grid-cols-7 gap-1 mb-2 min-w-[450px]">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                     <div key={day} className="text-center text-xs font-bold text-[#ACA39A] uppercase tracking-wider py-2">
                         {day}
@@ -237,6 +238,7 @@ function EventCalendar({ events }: { events: Event[] }) {
                         </div>
                     );
                 })}
+            </div>
             </div>
 
             {/* Selected Date Details */}

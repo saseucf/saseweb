@@ -16,7 +16,7 @@ export default function ProgramsPage() {
             <div className="sase-page-header">
                 <p className="sase-eyebrow">UCF SASE / Programs</p>
                 <h1>Programs</h1>
-                <p className="mt-2 text-[#64708c] max-w-2xl">
+                <p className="mt-2 text-[#64708c] max-w-2xl mx-auto">
                     UCF SASE offers hands-on programs designed to grow leadership, professionalism, and community.
                     Explore our Intern Program and Mentor–Mentee Program to get involved, build skills, and connect
                     with peers and professionals.
@@ -26,10 +26,10 @@ export default function ProgramsPage() {
             {/* Intern Program */}
             <section className="sase-content-section">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="bg-[#e9eef8] text-[#5579bd] p-3 rounded-full">
+                    <div className="bg-[#e9eef8] text-[#89abe3] p-3 rounded-full">
                         <Rocket className="w-6 h-6" />
                     </div>
-                    <h2 className="text-[#171d52] font-black">Intern Program</h2>
+                    <h2 className="text-[#141b4d] font-black">Intern Program</h2>
                 </div>
                 <p className="text-[#64708c] text-lg mb-6 max-w-3xl">
                     The SASE Intern Program is a semester-long experience for new and returning members to gain
@@ -71,10 +71,10 @@ export default function ProgramsPage() {
             {/* Mentor–Mentee Program */}
             <section className="sase-content-section">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="bg-[#e9eef8] text-[#5579bd] p-3 rounded-full">
+                    <div className="bg-[#e9eef8] text-[#89abe3] p-3 rounded-full">
                         <Users className="w-6 h-6" />
                     </div>
-                    <h2 className="text-[#171d52] font-black">Mentor–Mentee Program</h2>
+                    <h2 className="text-[#141b4d] font-black">Mentor–Mentee Program</h2>
                 </div>
                 <p className="text-[#64708c] text-lg mb-6 max-w-3xl">
                     Our Mentor–Mentee Program pairs members for peer guidance, academic support, and career growth.
@@ -115,7 +115,7 @@ export default function ProgramsPage() {
 
             {/* Get in touch */}
             <section className="sase-content-section pb-12">
-                <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-8 max-w-2xl">
+                <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-8 max-w-2xl mx-auto">
                     <p className="text-[#64708c] mb-6">
                         Questions about programs or how to get started? Meet the team behind SASE and reach out with
                         any questions.
@@ -134,8 +134,8 @@ function ProgramCard({ icon, title, children }: { icon: React.ReactNode; title: 
     return (
         <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-6 hover:-translate-y-1 transition-transform duration-300">
             <div className="flex items-center gap-2 mb-4">
-                <div className="bg-[#e9eef8] text-[#5579bd] p-2 rounded-full">{icon}</div>
-                <h3 className="font-bold text-[#171d52] text-base">{title}</h3>
+                <div className="bg-[#e9eef8] text-[#89abe3] p-2 rounded-full">{icon}</div>
+                <h3 className="font-bold text-[#141b4d] text-base">{title}</h3>
             </div>
             {children}
         </div>

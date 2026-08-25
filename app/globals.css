@@ -204,19 +204,19 @@
 
 .sase-page {
   background: #f6f8fc;
-  color: #171d52;
+  color: #141b4d;
   min-height: 100svh;
   padding: 48px 5vw 80px;
 }
 .sase-page-header { margin: 0 auto 34px; max-width: 1180px; }
 .sase-page-header h1 { font-size: clamp(2.5rem, 6vw, 4.8rem); letter-spacing: -0.04em; line-height: 0.95; margin: 12px 0 14px; }
 .sase-page-header > p:last-child { color: #5f6b89; max-width: 560px; }
-.sase-page .sase-eyebrow { color: #5579bd; }
+.sase-page .sase-eyebrow { color: #89abe3; }
 .sase-secondary-button, .sase-primary-button, .sase-danger-button { border-radius: 4px; display: inline-block; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.09em; padding: 13px 18px; text-transform: uppercase; }
 .sase-page .sase-secondary-button { background: transparent; border: 1px solid #aab8d3; color: #344674; }
-.sase-page .sase-secondary-button:hover { background: #e9eef8; border-color: #5579bd; }
-.sase-page .sase-primary-button { background: #5579bd; color: #fffde9; }
-.sase-page .sase-primary-button:hover { background: #171d52; }
+.sase-page .sase-secondary-button:hover { background: #e9eef8; border-color: #89abe3; }
+.sase-page .sase-primary-button { background: #89abe3; color: #e9e8e8; }
+.sase-page .sase-primary-button:hover { background: #141b4d; }
 .sase-danger-button { background: #fff1f0; border: 1px solid #ebada7; color: #a33d3a; }
 .sase-danger-button:hover { background: #a33d3a; color: white; }
 .sase-content-section { margin: 48px auto 0; max-width: 1180px; }
@@ -227,22 +227,22 @@
 .sase-form-card p { color: #68738f; font-size: 0.9rem; line-height: 1.6; margin-top: 9px; }
 .sase-form-card .sase-primary-button { margin-top: 20px; }
 .sase-meta { color: #73809e; font-family: var(--font-geist-mono); font-size: 0.72rem; margin-top: 12px; }
-.sase-status { color: #5579bd; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; margin-top: 12px; text-transform: uppercase; }
+.sase-status { color: #89abe3; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; margin-top: 12px; text-transform: uppercase; }
 .sase-admin-grid { max-width: 1180px; margin-left: auto; margin-right: auto; }
 .sase-add-button { margin-left: auto; }
 .sase-creator-panel { background: #fff; border: 1px solid #dbe2f0; border-radius: 5px; box-shadow: 0 12px 30px rgba(23, 29, 82, 0.06); display: flex; flex-direction: column; gap: 16px; margin: 0 auto; max-width: 680px; padding: 26px; }
 .sase-creator-page > div:not(.sase-page-header) { max-width: 680px; }
-.sase-creator-page textarea, .sase-creator-page input, .sase-creator-page select { background: #fbfcff; border: 1px solid #cbd5e8; border-radius: 3px; color: #171d52; padding: 11px; }
-.sase-creator-page textarea:focus, .sase-creator-page input:focus, .sase-creator-page select:focus { border-color: #5579bd; outline: 2px solid #dbe5fa; }
+.sase-creator-page textarea, .sase-creator-page input, .sase-creator-page select { background: #fbfcff; border: 1px solid #cbd5e8; border-radius: 3px; color: #141b4d; padding: 11px; }
+.sase-creator-page textarea:focus, .sase-creator-page input:focus, .sase-creator-page select:focus { border-color: #89abe3; outline: 2px solid #dbe5fa; }
 .sase-responses-page { overflow-x: hidden; }
 .sase-table-wrap { background: white; border: 1px solid #dbe2f0; border-radius: 5px; box-shadow: 0 12px 30px rgba(23, 29, 82, 0.06); margin: 34px auto 0; max-width: 1180px; overflow-x: auto; }
 .sase-table-wrap table { color: #26355f; }
-.sase-table-wrap thead { background: #171d52; color: #fffde9; }
+.sase-table-wrap thead { background: #141b4d; color: #e9e8e8; }
 .sase-table-wrap th { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .sase-table-wrap tbody tr:nth-child(even) { background: #f5f7fc; }
-.sase-login-page { align-items: center; background: linear-gradient(135deg, #171d52 0%, #24336e 60%, #5579bd 100%); display: flex; justify-content: center; min-height: 100svh; padding: 24px; }
-.sase-login-card { background: #fffde9; border: 0; border-radius: 5px; box-shadow: 0 24px 70px rgba(4, 8, 34, 0.3); max-width: 430px; width: 100%; }
-.sase-login-card h1 { color: #171d52; letter-spacing: -0.03em; }
+.sase-login-page { align-items: center; background: linear-gradient(135deg, #141b4d 0%, #24336e 60%, #89abe3 100%); display: flex; justify-content: center; min-height: 100svh; padding: 24px; }
+.sase-login-card { background: #e9e8e8; border: 0; border-radius: 5px; box-shadow: 0 24px 70px rgba(4, 8, 34, 0.3); max-width: 430px; width: 100%; }
+.sase-login-card h1 { color: #141b4d; letter-spacing: -0.03em; }
 .sase-login-card p { color: #64708c; }
 .sase-login-card input { background: #fff; border-color: #cbd5e8; }
 
@@ -251,4 +251,12 @@
   .sase-add-button { margin-left: 0; margin-top: 14px; }
   .sase-creator-panel { padding: 18px; }
   .sase-page-header h1 { font-size: 3.2rem; }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

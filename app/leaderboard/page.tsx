@@ -17,8 +17,8 @@ function getInitials(name: string) {
 }
 
 const rankColors: Record<number, string> = {
-    0: "bg-[#ffd15d] text-[#171d52]",
-    1: "bg-[#c0c0c0] text-[#171d52]",
+    0: "bg-[#dbc8b6] text-[#141b4d]",
+    1: "bg-[#c0c0c0] text-[#141b4d]",
     2: "bg-[#cd7f32] text-white",
 };
 
@@ -71,7 +71,7 @@ export default async function LeaderboardPage() {
                                         className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black"
                                         style={{
                                             background: idx < 3 ? "rgba(0,0,0,0.1)" : "#e9eef8",
-                                            color: idx < 3 ? "inherit" : "#5579bd",
+                                            color: idx < 3 ? "inherit" : "#89abe3",
                                         }}
                                     >
                                         {getInitials(entry.full_name ?? "?")}

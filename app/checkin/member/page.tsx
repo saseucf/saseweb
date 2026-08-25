@@ -44,7 +44,7 @@ export default function MemberDashboard() {
   if (loading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#171d52]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#141b4d]" />
       </div>
     );
   }
@@ -55,11 +55,11 @@ export default function MemberDashboard() {
       {/* Header Profile Section */}
       <div className="w-full flex items-center justify-between bg-white p-5 rounded-xl border border-[#cbd5e8] shadow-sm">
         <div>
-          <h2 className="font-bold text-[#171d52] text-lg">{profile?.first_name} {profile?.last_name}</h2>
+          <h2 className="font-bold text-[#141b4d] text-lg">{profile?.first_name} {profile?.last_name}</h2>
           <p className="text-sm text-[#64708c] font-medium">{profile?.major} • {profile?.year}</p>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold text-[#5579bd]">{profile?.total_points || 0}</div>
+          <div className="text-2xl font-bold text-[#89abe3]">{profile?.total_points || 0}</div>
           <div className="text-[10px] text-[#64708c] uppercase tracking-widest font-bold">Points</div>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default function MemberDashboard() {
       {/* QR Code Section */}
       <div className="w-full bg-white p-8 rounded-xl border border-[#cbd5e8] shadow-sm flex flex-col items-center space-y-6">
         <div className="text-center space-y-1">
-          <h3 className="text-xl font-bold text-[#171d52]">Your Event QR</h3>
+          <h3 className="text-xl font-bold text-[#141b4d]">Your Event QR</h3>
           <p className="text-sm text-[#64708c] font-medium">Have an admin scan this at the door.</p>
         </div>
         
@@ -78,12 +78,12 @@ export default function MemberDashboard() {
               size={230}
               level={"H"}
               includeMargin={false}
-              fgColor="#171d52"
+              fgColor="#141b4d"
             />
           ) : null}
         </div>
         
-        <p className="text-xs text-[#5579bd] font-mono bg-[#e9eef8] px-3 py-1.5 rounded-full border border-[#cbd5e8] font-semibold">
+        <p className="text-xs text-[#89abe3] font-mono bg-[#e9eef8] px-3 py-1.5 rounded-full border border-[#cbd5e8] font-semibold">
           ID: {userId?.split('-')[0]}...
         </p>
       </div>
