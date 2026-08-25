@@ -1,43 +1,58 @@
+import type { Metadata } from "next";
+import { Orbitron, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import NavBar from "@/components/navbar";
-import { Geist } from "next/font/google";
-import { ThemeProvider } from "@/components/themeprovider";
-import { createServerSupabase } from "@/lib/supabase-server";
 
-const geist = Geist({
-    subsets: ["latin"],
-    display: "swap",
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
+  subsets: ["latin"],
 });
 
-export const metadata = {
-    title: "Home",
-    description:
-        "Welcome to SASE UCF — events, programs, and resources for the Society of Asian Scientists and Engineers at UCF.",
-} as const;
+const robotoMono = Roboto_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+});
 
-export default async function RootLayout({
-    children,
+export const metadata: Metadata = {
+  title: "SASE Web Dev - Fresh Start",
+  description: "A clean slate for the SASE UCF Web Dev team.",
+  manifest: "/manifest.webmanifest",
+};
+
+export const viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
+import GlobalNav from "@/components/GlobalNav";
+import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/theme-provider";
+
+export default function RootLayout({
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    const supabase = createServerSupabase();
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
-
-    return (
-        <html lang="en" className={geist.className}>
-            <body>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="dark"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <NavBar session={session} />
-                    {children}
-                </ThemeProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${orbitron.variable} ${robotoMono.variable} font-sans antialiased pt-[78px] min-h-screen flex flex-col`}
+        suppressHydrationWarning
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <GlobalNav />
+          <div className="flex-1 flex flex-col">
+            {children}
+          </div>
+          <Footer />
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }

@@ -1,234 +1,133 @@
+import { createPublicSupabase } from "@/lib/supabase-public";
+import AdminEventControls from "@/components/events/admin-event-controls";
+import EventsClient from "@/components/events/events-client";
 
-"use client"
+// Public, publicly-readable data (see "Events are viewable by everyone" RLS
+// policy) — safe to cache and revalidate periodically instead of refetching
+// on every single request.
+export const revalidate = 60;
 
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import Image from "next/image"
+type Event = {
+    id: string;
+    title: string;
+    description: string | null;
+    event_type: string;
+    location: string | null;
+    start_time: string;
+    end_time: string;
+    capacity: number | null;
+    points: number;
+    host: string | null;
+    created_at: string;
+    status: "draft" | "published" | "cancelled";
+};
 
-const gbm1Images = [
-    "/events/gbm1-1.JPG",
-    "/events/gbm1-2.JPG",
-    "/events/gbm1-3.JPG",
-    "/events/gbm1-4.JPG",
-    "/events/gbm1-5.JPG",
-    "/events/gbm1-6.JPG",
-]
+export default async function EventsPage() {
+    const supabase = createPublicSupabase();
 
-const menmetImages = [
-    "/events/menmet-1.png",
-    "/events/menmet-2.png",
-    "/events/menmet-3.png",
-    "/events/menmet-4.png",
-    "/events/menmet-6.png",
-]
+    // Fetch published events from Supabase in chronological order.
+    // Draft and cancelled events should not be visible on the public events page.
+    const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .eq("status", "published")
+        .order("start_time", { ascending: true });
 
-const gbm2Images = [
-    "/events/gbm2-1.JPG",
-    "/events/gbm2-2.JPG",
-    "/events/gbm2-3.JPG",
-    "/events/gbm2-4.JPG",
-    "/events/gbm2-5.JPG",
-    "/events/gbm2-6.JPG",
-    "/events/gbm2-7.JPG",
-]
+    if (error) {
+        console.error("Could not load events:", error);
 
-const Page = () => {
-    return (
-        <div className="min-h-screen w-full overflow-x-clip flex flex-col items-center">
-            <h1
-                className="font-bold text-4xl sm:text-6xl py-4 sm:py-10 text-center text-saseblue"
-                data-aos="fade-up"
-                data-aos-duration="1000"
-            >
-                UPCOMING EVENTS
-            </h1>
-
-            <div
-                className="flex justify-center items-center w-full px-2 sm:px-10 py-4 sm:py-10"
-                data-aos="fade-up"
-                data-aos-duration="1000"
-            >
-                <div className="w-full max-w-3xl aspect-video">
-                    <iframe
-                        src="https://calendar.google.com/calendar/embed?src=cbdda5359c7179063608f9aeacb5122649b722539f5c65174b688816d9988e80%40group.calendar.google.com&ctz=America%2FNew_York"
-                        className="w-full h-full rounded-md border-0"
-                        allowFullScreen
-                    ></iframe>
+        return (
+            <main className="sase-page sase-member-page">
+                <div className="sase-page-header">
+                    <p className="sase-eyebrow">UCF SASE / Events</p>
+                    <h1>Events</h1>
                 </div>
+                <section className="sase-content-section">
+                    <p className="text-red-600 font-medium">Could not load events</p>
+                    <p className="mt-2 text-sm text-gray-500">{error instanceof Error ? error.message : String(error)}</p>
+                </section>
+            </main>
+        );
+    }
+
+    const events = (data ?? []) as Event[];
+
+    return (
+        <main className="sase-page sase-member-page">
+            <div className="sase-page-header flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <p className="sase-eyebrow">UCF SASE / Events</p>
+                    <h1>Upcoming Events</h1>
+                    <p className="mt-2 text-gray-500">See what&apos;s happening and get involved.</p>
+                </div>
+                <AdminEventControls />
             </div>
 
-            <h1
-                className="font-bold text-4xl sm:text-6xl py-4 sm:py-10 text-center text-saseblue"
-                data-aos="fade-up"
-                data-aos-duration="1000"
-            >
-                PAST EVENTS
-            </h1>
-            <h1
-                className="font-bold text-4xl sm:text-6xl py-4 sm:py-10 text-center"
-                data-aos="fade-up"
-                data-aos-duration="1000"
-            >
-                2024-2025
-            </h1>
+            <section className="sase-content-section">
+                <EventsClient events={events} />
+            </section>
 
-            <h2
-                className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 text-center text-saseblue"
-                data-aos="fade-up"
-                data-aos-duration="1000"
-            >
-                {" "}
-                GBM #1: DESPICABLE SASE
-            </h2>
-            <Carousel className="w-full max-w-7xl">
-                <CarouselContent className="">
-                    {gbm1Images.map((src, index) => (
-                        <CarouselItem
-                            key={index}
-                            className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4"
-                        >
-                            <Image
-                                src={src}
-                                width={200}
-                                height={100}
-                                quality={80}
-                                alt={`GBM1 ${index + 1}`}
-                                className="object-cover w-full h-full rounded-md"
-                            />
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-            </Carousel>
 
-            <h2
-                className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue"
-                data-aos="fade-up"
-                data-aos-duration="1000"
-            >
-                Mentor-mentee speed friending
-            </h2>
-            <Carousel className="w-full max-w-7xl">
-                <CarouselContent className="">
-                    {menmetImages.map((src, index) => (
-                        <CarouselItem
-                            key={index}
-                            className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4"
-                        >
-                            <Image
-                                src={src}
-                                width={200}
-                                height={100}
-                                quality={80}
-                                alt={`Mentor-Mentee ${index + 1}`}
-                                className="object-cover w-full h-full rounded-md"
-                            />
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-            </Carousel>
-
-            <h2
-                className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue"
-                data-aos="fade-up"
-                data-aos-duration="1000"
-            >
-                GBM #2: SASe crossing
-            </h2>
-            <Carousel className="w-full max-w-7xl">
-                <CarouselContent className="">
-                    {gbm2Images.map((src, index) => (
-                        <CarouselItem
-                            key={index}
-                            className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4"
-                        >
-                            <Image
-                                src={src}
-                                width={200}
-                                height={100}
-                                quality={80}
-                                alt={`GBM2 ${index + 1}`}
-                                className="object-cover w-full h-full rounded-md"
-                            />
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-            </Carousel>
-
-            {/* 
-      <h2 className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">IEEE x SASE Breadboarding workshop</h2>
-      <Carousel className="w-full max-w-7xl">
-          <CarouselContent className="">
-              {images.map((image, index) => (
-                  image.name.includes("breadboard") ?
-                      <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                          <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
-                      </CarouselItem> : null
-              ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-      </Carousel>
-      <h2 className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">sase service: lake lily</h2>
-      <Carousel className="w-full max-w-7xl" data-aos="fade-up" data-aos-duration="1000">
-          <CarouselContent className="">
-              {images.map((image, index) => (
-                  image.name.includes("lakelily") ?
-                      <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                          <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
-                      </CarouselItem> : null
-              ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-      </Carousel>
-      <h1 className="font-bold text-3xl sm:text-6xl py-4 sm:py-10 text-center mt-10" data-aos="fade-up" data-aos-duration="1000">2023-2024</h1>
-      <h2 className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">Everything everywhere all at once gbm</h2>
-      <Carousel className="w-full max-w-7xl" data-aos="fade-up" data-aos-duration="1000">
-          <CarouselContent className="">
-              {images.map((image, index) => (
-                  image.name.includes("gbm2") ?
-                      <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                          <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
-                      </CarouselItem> : null
-              ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-      </Carousel>
-      <h2 className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">Christmas Gbm</h2>
-      <Carousel className="w-full max-w-7xl" data-aos="fade-up" data-aos-duration="1000">
-          <CarouselContent className="">
-              {images.map((image, index) => (
-                  image.name.includes("gbm2") ?
-                      <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                          <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
-                      </CarouselItem> : null
-              ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-      </Carousel>
-      <h2 className="font-bold text-3xl sm:text-5xl py-4 sm:py-10 uppercase text-center text-saseblue" data-aos="fade-up" data-aos-duration="1000">Corporate game night</h2>
-      <Carousel className="w-full max-w-7xl" data-aos="fade-up" data-aos-duration="1000">
-          <CarouselContent className="">
-              {images.map((image, index) => (
-                  image.name.includes("gbm2") ?
-                      <CarouselItem key={index} className="flex justify-center align-middle basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/4 xl:basis-1/4 2xl:basis-1/4">
-                          <img src={image.url} alt={image.name} className="object-cover w-full h-full rounded-md" />
-                      </CarouselItem> : null
-              ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-      </Carousel>
-      */}
-        </div>
-    )
+            {/* Past Events */}
+            <PastEvents />
+        </main>
+    );
 }
 
-export default Page
+function PastEvents() {
+    const gbm1Images = [
+        "/events/gbm1-1.JPG",
+        "/events/gbm1-2.JPG",
+        "/events/gbm1-3.JPG",
+        "/events/gbm1-4.JPG",
+        "/events/gbm1-5.JPG",
+        "/events/gbm1-6.JPG",
+    ];
+    const menmetImages = [
+        "/events/menmet-1.png",
+        "/events/menmet-2.png",
+        "/events/menmet-3.png",
+        "/events/menmet-4.png",
+        "/events/menmet-6.png",
+    ];
+    const gbm2Images = [
+        "/events/gbm2-1.JPG",
+        "/events/gbm2-2.JPG",
+        "/events/gbm2-3.JPG",
+        "/events/gbm2-4.JPG",
+        "/events/gbm2-5.JPG",
+        "/events/gbm2-6.JPG",
+        "/events/gbm2-7.JPG",
+    ];
+
+    return (
+        <section className="sase-content-section pb-16">
+            <h2 className="text-foreground font-black mb-2">Past Events</h2>
+            <p className="sase-eyebrow mb-8">2024–2025</p>
+
+            <EventGallery title="GBM #1: Despicable SASE" images={gbm1Images} alt="GBM1" />
+            <EventGallery title="Mentor-Mentee Speed Friending" images={menmetImages} alt="Mentor-Mentee" />
+            <EventGallery title="GBM #2: SASE Crossing" images={gbm2Images} alt="GBM2" />
+        </section>
+    );
+}
+
+function EventGallery({ title, images, alt }: { title: string; images: string[]; alt: string }) {
+    return (
+        <div className="mb-12">
+            <h3 className="text-[#89abe3] font-black text-xl uppercase tracking-wide mb-4">{title}</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {images.map((src, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        key={i}
+                        src={src}
+                        alt={`${alt} ${i + 1}`}
+                        className="w-full aspect-square object-cover rounded-xl border border-border hover:scale-105 transition-transform duration-200"
+                        loading="lazy"
+                    />
+                ))}
+            </div>
+        </div>
+    );
+}
