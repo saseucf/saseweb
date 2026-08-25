@@ -27,6 +27,7 @@ CREATE TABLE public.profiles (
     name_confirmed BOOLEAN DEFAULT FALSE NOT NULL,
     grad_date DATE,
     shirt_size TEXT,
+    phone_number TEXT,
     resume_url TEXT,
     github_url TEXT,
     linkedin_url TEXT,

@@ -14,6 +14,7 @@ function ConfirmName() {
     const [lastName, setLastName] = useState("")
     const [major, setMajor] = useState("")
     const [school, setSchool] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState("")
@@ -28,7 +29,7 @@ function ConfirmName() {
 
             const { data: profile } = await supabase
                 .from("profiles")
-                .select("first_name, last_name, major, school, name_confirmed")
+                .select("first_name, last_name, major, school, phone_number, name_confirmed")
                 .eq("id", user.id)
                 .single()
 
@@ -41,6 +42,7 @@ function ConfirmName() {
             setLastName(profile.last_name || "")
             setMajor(profile.major || "")
             setSchool(profile.school || "")
+            setPhoneNumber(profile.phone_number || "")
             setLoading(false)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,6 +77,7 @@ function ConfirmName() {
                 last_name: lastName.trim(),
                 major: major.trim(),
                 school: school.trim(),
+                phone_number: phoneNumber.trim(),
                 name_confirmed: true,
             })
             .eq("id", user.id)
@@ -154,6 +157,21 @@ function ConfirmName() {
                             value={school}
                             onChange={(event) => setSchool(event.target.value)}
                             placeholder="e.g. University of Central Florida"
+                            required
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                        <label className="text-sm font-semibold text-[#171d52]" htmlFor="phoneNumber">
+                            Phone number
+                        </label>
+                        <input
+                            id="phoneNumber"
+                            type="tel"
+                            className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+                            value={phoneNumber}
+                            onChange={(event) => setPhoneNumber(event.target.value)}
+                            placeholder="e.g. (407) 555-1234"
                             required
                         />
                     </div>

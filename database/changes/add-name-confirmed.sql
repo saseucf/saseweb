@@ -1,3 +1,7 @@
+-- Add phone number field to profiles.
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS phone_number TEXT;
+
 -- Auto-filled names from OAuth metadata are only a best guess. Add a flag
 -- so the app can prompt new signups to confirm/edit their name once.
 ALTER TABLE public.profiles
