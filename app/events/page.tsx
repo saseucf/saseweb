@@ -102,7 +102,7 @@ function PastEvents() {
 
     return (
         <section className="sase-content-section pb-16">
-            <h2 className="text-[#141b4d] font-black mb-2">Past Events</h2>
+            <h2 className="text-foreground font-black mb-2">Past Events</h2>
             <p className="sase-eyebrow mb-8">2024–2025</p>
 
             <EventGallery title="GBM #1: Despicable SASE" images={gbm1Images} alt="GBM1" />
@@ -123,7 +123,7 @@ function EventGallery({ title, images, alt }: { title: string; images: string[];
                         key={i}
                         src={src}
                         alt={`${alt} ${i + 1}`}
-                        className="w-full aspect-square object-cover rounded-xl border border-[#dbe2f0] hover:scale-105 transition-transform duration-200"
+                        className="w-full aspect-square object-cover rounded-xl border border-border hover:scale-105 transition-transform duration-200"
                         loading="lazy"
                     />
                 ))}

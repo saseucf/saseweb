@@ -74,8 +74,8 @@ function MemberCard({ member, size = "md" }: { member: Member; size?: "lg" | "md
                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#89abe3] opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_8px_#89abe3]" />
             </div>
             <div>
-                <p className={`text-[#141b4d] ${nameClass}`}>{member.name}</p>
-                <p className={`text-[#64708c] ${roleClass} mt-0.5 max-w-[130px]`}>{member.role}</p>
+                <p className={`text-foreground ${nameClass}`}>{member.name}</p>
+                <p className={`text-muted-foreground ${roleClass} mt-0.5 max-w-[130px]`}>{member.role}</p>
             </div>
         </div>
     );
@@ -87,7 +87,7 @@ function SectionHeading({ label, title }: { label: string; title: string }) {
             <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">
                 {label}
             </span>
-            <h2 className="text-3xl md:text-4xl font-black text-[#141b4d] tracking-tight">{title}</h2>
+            <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">{title}</h2>
         </div>
     );
 }
@@ -104,7 +104,7 @@ export default function TeamPage() {
                 </div>
                 <p className="sase-eyebrow relative z-10">UCF SASE / Team</p>
                 <h1 className="relative z-10">Meet the Team</h1>
-                <p className="relative z-10 mt-2 text-[#64708c] max-w-xl mx-auto">
+                <p className="relative z-10 mt-2 text-muted-foreground max-w-xl mx-auto">
                     The dedicated officers behind UCF SASE — building community, driving growth, and representing our members.
                 </p>
             </div>

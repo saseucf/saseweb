@@ -60,9 +60,9 @@ function TimelineEntry({ entry, index }: { entry: typeof awards[0]; index: numbe
             {/* Content card */}
             <div className={`w-full md:w-[calc(50%-2rem)] ${isLeft ? "md:pr-8 md:text-right" : "md:pl-8 md:text-left"}`}>
                 <div
-                    className={`bg-white border rounded-2xl p-6 shadow-[0_8px_24px_rgba(23,29,82,0.08)] transition-all duration-500 ${active ? "border-[#89abe3] shadow-[0_8px_32px_rgba(137,171,227,0.2)]" : "border-[#dbe2f0]"}`}
+                    className={`bg-white border rounded-2xl p-6 shadow-sm transition-all duration-500 ${active ? "border-[#89abe3] shadow-[0_8px_32px_rgba(137,171,227,0.2)]" : "border-border"}`}
                 >
-                    <div className={`inline-block text-xs font-black uppercase tracking-[0.15em] px-3 py-1 rounded-full mb-4 transition-colors duration-500 ${active ? "bg-[#89abe3] text-[#141b4d]" : "bg-[#f0f4fb] text-[#64708c]"}`}>
+                    <div className={`inline-block text-xs font-black uppercase tracking-[0.15em] px-3 py-1 rounded-full mb-4 transition-colors duration-500 ${active ? "bg-[#89abe3] text-foreground" : "bg-muted text-muted-foreground"}`}>
                         {entry.year}
                     </div>
                     <ul className={`space-y-3 ${isLeft ? "md:text-right" : "md:text-left"}`}>
@@ -84,7 +84,7 @@ function TimelineEntry({ entry, index }: { entry: typeof awards[0]; index: numbe
 
             {/* Center dot + line */}
             <div className="hidden md:flex flex-col items-center w-16 shrink-0">
-                <div className={`w-5 h-5 rounded-full border-4 transition-all duration-500 z-10 ${active ? "bg-[#89abe3] border-[#89abe3] shadow-[0_0_16px_rgba(137,171,227,0.7)]" : "bg-white border-[#dbe2f0]"}`} />
+                <div className={`w-5 h-5 rounded-full border-4 transition-all duration-500 z-10 ${active ? "bg-[#89abe3] border-[#89abe3] shadow-[0_0_16px_rgba(137,171,227,0.7)]" : "bg-white border-border"}`} />
             </div>
 
             {/* Spacer for alt side */}
@@ -105,7 +105,7 @@ export default function AwardsTimeline() {
                 ))}
             </div>
 
-            <p className="text-xs text-[#64708c] text-center mt-10 max-w-xl mx-auto">
+            <p className="text-xs text-muted-foreground text-center mt-10 max-w-xl mx-auto">
                 The Hidden Lotus Awards are presented by APAC (UCF&apos;s Asian Pacific American Coalition) and celebrate student organizations that promote cultural awareness, advocacy, and community engagement.
             </p>
         </div>

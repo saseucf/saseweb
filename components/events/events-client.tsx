@@ -39,8 +39,8 @@ export default function EventsClient({ events }: { events: Event[] }) {
                     onClick={() => setSelectedType(null)}
                     className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
                         selectedType === null 
-                        ? 'bg-[#141B4D] text-[#E9E8E8]' 
-                        : 'bg-white border border-[#D0D0CE] text-[#3F4444] hover:bg-[#E9E8E8]'
+                        ? 'bg-foreground text-background' 
+                        : 'bg-card border border-[#D0D0CE] text-muted-foreground hover:bg-background'
                     }`}
                 >
                     All Events
@@ -54,8 +54,8 @@ export default function EventsClient({ events }: { events: Event[] }) {
                             onClick={() => setSelectedType(type)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
                                 isSelected 
-                                ? 'bg-white shadow-md border-transparent text-[#141B4D]' 
-                                : 'bg-white border border-[#D0D0CE] text-[#3F4444] hover:bg-[#E9E8E8]'
+                                ? 'bg-card shadow-md border-transparent text-foreground' 
+                                : 'bg-card border border-[#D0D0CE] text-muted-foreground hover:bg-background'
                             }`}
                             style={{
                                 borderColor: isSelected ? color : undefined,
@@ -70,7 +70,7 @@ export default function EventsClient({ events }: { events: Event[] }) {
             </div>
 
             {/* Custom Interactive Calendar */}
-            <div className="mb-12 bg-white rounded-2xl border border-[#D0D0CE] shadow-sm p-6 max-w-4xl mx-auto">
+            <div className="mb-12 bg-card rounded-2xl border border-[#D0D0CE] shadow-sm p-6 max-w-4xl mx-auto">
                 <EventCalendar events={filteredEvents} />
             </div>
 
@@ -91,25 +91,25 @@ export default function EventsClient({ events }: { events: Event[] }) {
                             >
                                 <div>
                                     <div className="flex justify-between items-start gap-2 mb-2">
-                                        <h2 className="text-[#141B4D] font-bold text-xl">{event.title}</h2>
-                                        <span className="bg-[#E9E8E8] text-[#141B4D] text-xs font-bold px-2 py-1 rounded whitespace-nowrap">
+                                        <h2 className="text-foreground font-bold text-xl">{event.title}</h2>
+                                        <span className="bg-background text-foreground text-xs font-bold px-2 py-1 rounded whitespace-nowrap">
                                             {event.points} pt{event.points === 1 ? "" : "s"}
                                         </span>
                                     </div>
                                     
                                     <div className="flex items-center gap-2 mb-3">
                                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: eventColor }} />
-                                        <p className="sase-eyebrow !m-0 !text-[#3F4444]">{event.event_type}</p>
+                                        <p className="sase-eyebrow !m-0 !text-muted-foreground">{event.event_type}</p>
                                     </div>
                                     
                                     {event.description && (
-                                        <p className="text-[#3F4444] text-sm mb-4 line-clamp-3">{event.description}</p>
+                                        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{event.description}</p>
                                     )}
 
                                     <div className="flex flex-col gap-2 mt-4 border-t border-[#D0D0CE] pt-4">
                                         <div className="flex items-start gap-2 text-sm">
-                                            <span className="font-semibold text-[#141B4D] min-w-[70px]">When:</span>
-                                            <span className="text-[#3F4444]">
+                                            <span className="font-semibold text-foreground min-w-[70px]">When:</span>
+                                            <span className="text-muted-foreground">
                                                 {new Date(event.start_time).toLocaleString(undefined, {
                                                     weekday: 'short', month: 'short', day: 'numeric',
                                                     hour: 'numeric', minute: '2-digit'
@@ -121,13 +121,13 @@ export default function EventsClient({ events }: { events: Event[] }) {
                                             </span>
                                         </div>
                                         <div className="flex items-start gap-2 text-sm">
-                                            <span className="font-semibold text-[#141B4D] min-w-[70px]">Where:</span>
-                                            <span className="text-[#3F4444]">{event.location ?? "TBA"}</span>
+                                            <span className="font-semibold text-foreground min-w-[70px]">Where:</span>
+                                            <span className="text-muted-foreground">{event.location ?? "TBA"}</span>
                                         </div>
                                         {event.host && (
                                             <div className="flex items-start gap-2 text-sm">
-                                                <span className="font-semibold text-[#141B4D] min-w-[70px]">Host:</span>
-                                                <span className="text-[#3F4444]">{event.host}</span>
+                                                <span className="font-semibold text-foreground min-w-[70px]">Host:</span>
+                                                <span className="text-muted-foreground">{event.host}</span>
                                             </div>
                                         )}
                                     </div>
@@ -191,10 +191,10 @@ function EventCalendar({ events }: { events: Event[] }) {
         <div>
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-black text-[#141B4D]">{monthName} {year}</h3>
+                <h3 className="text-2xl font-black text-foreground">{monthName} {year}</h3>
                 <div className="flex gap-2">
-                    <button onClick={prevMonth} className="px-3 py-1 bg-[#E9E8E8] hover:bg-[#D0D0CE] rounded text-[#141B4D] font-bold">&larr;</button>
-                    <button onClick={nextMonth} className="px-3 py-1 bg-[#E9E8E8] hover:bg-[#D0D0CE] rounded text-[#141B4D] font-bold">&rarr;</button>
+                    <button onClick={prevMonth} className="px-3 py-1 bg-background hover:bg-[#D0D0CE] rounded text-foreground font-bold">&larr;</button>
+                    <button onClick={nextMonth} className="px-3 py-1 bg-background hover:bg-[#D0D0CE] rounded text-foreground font-bold">&rarr;</button>
                 </div>
             </div>
 
@@ -208,7 +208,7 @@ function EventCalendar({ events }: { events: Event[] }) {
                 ))}
                 
                 {days.map((date, i) => {
-                    if (!date) return <div key={`empty-${i}`} className="p-2 h-20 bg-[#f6f8fc] rounded border border-transparent" />;
+                    if (!date) return <div key={`empty-${i}`} className="p-2 h-20 bg-background rounded border border-transparent" />;
                     
                     const dateStr = formatDateKey(date);
                     const dayEvents = eventsByDate.get(dateStr) || [];
@@ -219,10 +219,10 @@ function EventCalendar({ events }: { events: Event[] }) {
                             key={i} 
                             onClick={() => setSelectedDate(date)}
                             className={`p-2 min-h-20 rounded border cursor-pointer hover:border-[#89ABE3] transition-colors relative flex flex-col ${
-                                isSelected ? 'border-[#141B4D] bg-[#F4F6FB] shadow-inner' : 'border-[#E9E8E8] bg-white'
+                                isSelected ? 'border-foreground bg-[#F4F6FB] shadow-inner' : 'border-background bg-card'
                             }`}
                         >
-                            <span className={`text-sm font-semibold mb-1 ${isSelected ? 'text-[#141B4D]' : 'text-[#3F4444]'}`}>
+                            <span className={`text-sm font-semibold mb-1 ${isSelected ? 'text-foreground' : 'text-muted-foreground'}`}>
                                 {date.getDate()}
                             </span>
                             <div className="flex flex-wrap gap-1 mt-auto">
@@ -244,7 +244,7 @@ function EventCalendar({ events }: { events: Event[] }) {
             {/* Selected Date Details */}
             {selectedDate && (
                 <div className="mt-6 p-4 bg-[#F4F6FB] rounded-lg border border-[#89ABE3]">
-                    <h4 className="font-bold text-[#141B4D] mb-3">
+                    <h4 className="font-bold text-foreground mb-3">
                         Events on {selectedDate.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
                     </h4>
                     {selectedEvents.length === 0 ? (
@@ -252,11 +252,11 @@ function EventCalendar({ events }: { events: Event[] }) {
                     ) : (
                         <ul className="space-y-3">
                             {selectedEvents.map(e => (
-                                <li key={e.id} className="flex items-start gap-3 bg-white p-3 rounded shadow-sm border border-[#E9E8E8]">
+                                <li key={e.id} className="flex items-start gap-3 bg-card p-3 rounded shadow-sm border border-background">
                                     <div className="w-1.5 min-h-[40px] self-stretch rounded-full" style={{ backgroundColor: getEventTypeColor(e.event_type) }} />
                                     <div>
-                                        <p className="font-bold text-[#141B4D] text-sm">{e.title}</p>
-                                        <p className="text-xs text-[#3F4444] mt-1">
+                                        <p className="font-bold text-foreground text-sm">{e.title}</p>
+                                        <p className="text-xs text-muted-foreground mt-1">
                                             {new Date(e.start_time).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })} 
                                             {" • "} <span className="font-semibold" style={{ color: getEventTypeColor(e.event_type) }}>{e.event_type}</span>
                                         </p>

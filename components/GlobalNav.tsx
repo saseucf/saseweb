@@ -4,24 +4,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import supabase from "@/lib/auth";
 
 export default function GlobalNav() {
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [viewAsUser, setViewAsUser] = useState(false);
   const [hash, setHash] = useState("");
 
   useEffect(() => {
+    setMounted(true);
     const updateHash = () => setHash(window.location.hash);
     updateHash();
     window.addEventListener("hashchange", updateHash);
     return () => window.removeEventListener("hashchange", updateHash);
   }, [pathname]);
 
-  // Next.js forces an instant scroll on same-page navigations, which bypasses
-  // the CSS scroll-behavior: smooth. When we're already on "/", scroll manually.
   const handleAnchorNav = (e: React.MouseEvent, targetHash: string) => {
     setHash(targetHash);
     if (pathname !== "/") return;
@@ -52,16 +55,10 @@ export default function GlobalNav() {
       setLoading(false);
     };
 
-    // getSession() reads from local storage (no network round-trip), unlike
-    // getUser() which revalidates against the Auth server every call. Fine
-    // for UI display here since actual access control is enforced via RLS.
     supabase.auth.getSession().then(({ data: { session } }) => {
       checkUser(session?.user?.id);
     });
 
-    // React to actual login/logout events instead of re-checking on every
-    // route change (this used to depend on [pathname], redoing the whole
-    // check and re-showing the loading skeleton on every navigation).
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       checkUser(session?.user?.id);
     });
@@ -69,28 +66,36 @@ export default function GlobalNav() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // We don't render on the admin login page to keep it focused
   if (isAdminLogin) return null;
 
   const isAdmin = role === "admin" && !viewAsUser;
   const isRealAdmin = role === "admin";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#141b4d] shadow-md border-b border-[#26355f]">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-background shadow-md border-b border-border">
       <Link href="/" className="flex items-center" aria-label="SASE home">
-        <Image
-          src="/UCF SASE LOGO 26-27.png"
-          alt="UCF SASE"
-          width={150}
-          height={63}
+        <Image 
+          src="/logo-white-horizontal.png" 
+          alt="SASE Logo" 
+          width={120} 
+          height={40} 
+          className="w-[90px] md:w-[120px] h-auto object-contain hidden dark:block"
           priority
-          className="h-auto w-[120px] md:w-[150px]"
+        />
+        <Image 
+          src="/logo-dark-horizontal.png" 
+          alt="SASE Logo" 
+          width={120} 
+          height={40} 
+          className="w-[90px] md:w-[120px] h-auto object-contain block dark:hidden"
+          priority
         />
       </Link>
 
-      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar py-2">
+      {/* Scrollable Links */}
+      <div className="flex-1 flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar py-2 mx-4 justify-end">
         {loading ? (
-          <div className="w-16 h-4 bg-[#26355f] animate-pulse rounded"></div>
+          <div className="w-16 h-4 bg-muted animate-pulse rounded"></div>
         ) : isAdmin ? (
           <>
             <NavLink href="/" active={pathname === "/"}>Home</NavLink>
@@ -109,18 +114,32 @@ export default function GlobalNav() {
             <NavLink href="/checkin" active={!!pathname?.includes('/checkin') && !pathname?.includes('/admin')}>Check-in</NavLink>
           </>
         )}
+      </div>
+
+      {/* Fixed Actions: Theme Toggle & Auth */}
+      <div className="flex items-center gap-3 shrink-0">
+        {mounted && (
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 text-foreground hover:text-[#89abe3] transition-colors"
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        )}
 
         {!role && !loading && (
-          <Link className="border border-[#89abe3] rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#e9e8e8] hover:bg-[#e9e8e8] hover:text-[#141b4d] transition-colors" href="/login">Log in</Link>
+          <Link className="border border-border rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-foreground hover:bg-foreground hover:text-background transition-colors" href="/login">Log in</Link>
         )}
+        
         {role && !loading && (
           <div className="flex items-center gap-3">
             {isRealAdmin && (
               <button
                 onClick={() => setViewAsUser(!viewAsUser)}
                 className={`text-[0.65rem] md:text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-colors ${viewAsUser
-                    ? "bg-[#e9e8e8] text-[#141b4d] border-[#e9e8e8]"
-                    : "text-[#89abe3] border-[#26355f] hover:border-[#89abe3]"
+                    ? "bg-foreground text-background border-foreground"
+                    : "text-[#89abe3] border-border hover:border-[#89abe3]"
                   }`}
               >
                 {viewAsUser ? "Admin View" : "View as User"}
@@ -128,7 +147,7 @@ export default function GlobalNav() {
             )}
             <button
               onClick={async () => { await supabase.auth.signOut(); window.location.reload(); }}
-              className="border border-[#89abe3] rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#e9e8e8] hover:bg-red-500 hover:border-red-500 transition-colors"
+              className="border border-red-500 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-500 hover:bg-red-500 hover:text-white transition-colors"
             >
               Log out
             </button>
@@ -142,7 +161,7 @@ export default function GlobalNav() {
 function NavLink({ href, active, onClick, children }: { href: string; active: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }) {
   return (
     <Link
-      className={`text-[0.65rem] md:text-xs font-bold tracking-widest uppercase transition-colors whitespace-nowrap ${active ? "text-[#89abe3]" : "text-[#e9e8e8] hover:text-[#89abe3]"
+      className={`text-[0.65rem] md:text-xs font-bold tracking-widest uppercase transition-colors whitespace-nowrap ${active ? "text-[#89abe3]" : "text-foreground hover:text-[#89abe3]"
         }`}
       href={href}
       onClick={onClick}

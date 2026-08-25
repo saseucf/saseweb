@@ -5,13 +5,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-orbitron);
+  --font-mono: var(--font-mono);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #f6f8fc;
+  --foreground: #141b4d;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -46,8 +46,8 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --background: #141b4d;
+  --foreground: #e9e8e8;
   --card: oklch(0.145 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
@@ -136,8 +136,8 @@
   --sase-blue: #89abe3;
   --sase-cream: #e9e8e8;
   --sase-yellow: #dbc8b6;
-  background: var(--sase-navy);
-  color: var(--sase-cream);
+  background: var(--background);
+  color: var(--foreground);
   min-height: 100svh;
   overflow: hidden;
   position: relative;
@@ -186,8 +186,8 @@
 }
 
 .sase-page {
-  background: #f6f8fc;
-  color: #141b4d;
+  background: var(--background);
+  color: var(--foreground);
   min-height: 100svh;
   padding: 48px 5vw 80px;
 }

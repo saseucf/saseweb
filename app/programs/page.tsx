@@ -16,7 +16,7 @@ export default function ProgramsPage() {
             <div className="sase-page-header">
                 <p className="sase-eyebrow">UCF SASE / Programs</p>
                 <h1>Programs</h1>
-                <p className="mt-2 text-[#64708c] max-w-2xl mx-auto">
+                <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
                     UCF SASE offers hands-on programs designed to grow leadership, professionalism, and community.
                     Explore our Intern Program and Mentor–Mentee Program to get involved, build skills, and connect
                     with peers and professionals.
@@ -29,9 +29,9 @@ export default function ProgramsPage() {
                     <div className="bg-[#e9eef8] text-[#89abe3] p-3 rounded-full">
                         <Rocket className="w-6 h-6" />
                     </div>
-                    <h2 className="text-[#141b4d] font-black">Intern Program</h2>
+                    <h2 className="text-foreground font-black">Intern Program</h2>
                 </div>
-                <p className="text-[#64708c] text-lg mb-6 max-w-3xl">
+                <p className="text-muted-foreground text-lg mb-6 max-w-3xl">
                     The SASE Intern Program is a semester-long experience for new and returning members to gain
                     leadership exposure by shadowing officers, contributing to committees, and delivering a capstone
                     project. Interns work closely with the executive board to plan events, run workshops, and support
@@ -40,21 +40,21 @@ export default function ProgramsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <ProgramCard icon={<Star className="w-5 h-5" />} title="What You Gain">
-                        <ul className="list-disc pl-5 space-y-2 text-sm text-[#64708c]">
+                        <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
                             <li>Hands-on officer shadowing experience.</li>
                             <li>Leadership and project-management skills.</li>
                             <li>A portfolio-worthy capstone project.</li>
                         </ul>
                     </ProgramCard>
                     <ProgramCard icon={<ClipboardList className="w-5 h-5" />} title="Expectations">
-                        <ul className="list-disc pl-5 space-y-2 text-sm text-[#64708c]">
+                        <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
                             <li>Attend weekly intern meetings and GBMs.</li>
                             <li>Contribute to at least one committee.</li>
                             <li>Complete capstone project by end of semester.</li>
                         </ul>
                     </ProgramCard>
                     <ProgramCard icon={<CalendarCheck className="w-5 h-5" />} title="Timeline &amp; Commitment">
-                        <ul className="list-disc pl-5 space-y-2 text-sm text-[#64708c]">
+                        <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
                             <li>Time: ~2–4 hours/week during the semester.</li>
                             <li>Kickoff and training early semester; capstone showcase near the end.</li>
                             <li>Flexible roles to match availability and interests.</li>
@@ -74,9 +74,9 @@ export default function ProgramsPage() {
                     <div className="bg-[#e9eef8] text-[#89abe3] p-3 rounded-full">
                         <Users className="w-6 h-6" />
                     </div>
-                    <h2 className="text-[#141b4d] font-black">Mentor–Mentee Program</h2>
+                    <h2 className="text-foreground font-black">Mentor–Mentee Program</h2>
                 </div>
-                <p className="text-[#64708c] text-lg mb-6 max-w-3xl">
+                <p className="text-muted-foreground text-lg mb-6 max-w-3xl">
                     Our Mentor–Mentee Program pairs members for peer guidance, academic support, and career growth.
                     Whether you want to share experience as a mentor or get tailored advice as a mentee, you&apos;ll
                     join a network that empowers you to set goals and stay accountable.
@@ -84,21 +84,21 @@ export default function ProgramsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <ProgramCard icon={<Users className="w-5 h-5" />} title="How It Works">
-                        <ul className="list-disc pl-5 space-y-2 text-sm text-[#64708c]">
+                        <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
                             <li>Kickoff with Speed Friending to meet potential matches.</li>
                             <li>Pairs matched by major, year, interests, and goals.</li>
                             <li>Optional mini-cohorts and themed socials throughout the term.</li>
                         </ul>
                     </ProgramCard>
                     <ProgramCard icon={<ClipboardList className="w-5 h-5" />} title="Expectations">
-                        <ul className="list-disc pl-5 space-y-2 text-sm text-[#64708c]">
+                        <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
                             <li>Meet at least twice per month (in-person or virtual).</li>
                             <li>Set 1–2 SMART goals and track progress together.</li>
                             <li>Attend at least two M&amp;M events each semester.</li>
                         </ul>
                     </ProgramCard>
                     <ProgramCard icon={<HeartHandshake className="w-5 h-5" />} title="Benefits">
-                        <ul className="list-disc pl-5 space-y-2 text-sm text-[#64708c]">
+                        <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
                             <li>Academic and career guidance from peers who&apos;ve been there.</li>
                             <li>Accountability, confidence, and stronger study habits.</li>
                             <li>Community and friendships that last beyond the semester.</li>
@@ -115,8 +115,8 @@ export default function ProgramsPage() {
 
             {/* Get in touch */}
             <section className="sase-content-section pb-12">
-                <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-8 max-w-2xl mx-auto">
-                    <p className="text-[#64708c] mb-6">
+                <div className="bg-card rounded-2xl border border-border shadow-md p-8 max-w-2xl mx-auto">
+                    <p className="text-muted-foreground mb-6">
                         Questions about programs or how to get started? Meet the team behind SASE and reach out with
                         any questions.
                     </p>
@@ -132,10 +132,10 @@ export default function ProgramsPage() {
 
 function ProgramCard({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
     return (
-        <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-6 hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-card rounded-2xl border border-border shadow-md p-6 hover:-translate-y-1 transition-transform duration-300">
             <div className="flex items-center gap-2 mb-4">
                 <div className="bg-[#e9eef8] text-[#89abe3] p-2 rounded-full">{icon}</div>
-                <h3 className="font-bold text-[#141b4d] text-base">{title}</h3>
+                <h3 className="font-bold text-foreground text-base">{title}</h3>
             </div>
             {children}
         </div>

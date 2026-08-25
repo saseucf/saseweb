@@ -19,7 +19,7 @@ function getInitials(name: string) {
 const rankColors: Record<number, string> = {
     0: "bg-[#dbc8b6] text-[#141b4d]",
     1: "bg-[#c0c0c0] text-[#141b4d]",
-    2: "bg-[#cd7f32] text-white",
+    2: "bg-[#cd7f32] text-[#141b4d]",
 };
 
 const rankLabels: Record<number, string> = {
@@ -42,7 +42,7 @@ export default async function Leaderboard() {
         <div className="w-full max-w-2xl mx-auto">
             <div className="text-center mb-8">
                 <h3 className="text-[#89abe3] font-black text-4xl tracking-tight mb-2">Leaderboard</h3>
-                <p className="text-[#64708c]">Top contributors across all SASE UCF events.</p>
+                <p className="text-muted-foreground">Top contributors across all SASE UCF events.</p>
             </div>
             
             {entries.length === 0 ? (
@@ -50,11 +50,11 @@ export default async function Leaderboard() {
                     <p className="text-gray-500 font-medium">No leaderboard data yet. Earn points by attending events!</p>
                 </div>
             ) : (
-                <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] overflow-hidden">
+                <div className="bg-card rounded-2xl border border-border shadow-md overflow-hidden">
                     {entries.map((entry, idx) => (
                         <div
                             key={entry.id}
-                            className={`flex items-center justify-between px-6 py-4 border-b border-[#f0f4fb] last:border-0 transition-colors hover:bg-[#f6f8fc] ${rankColors[idx] ?? ""}`}
+                            className={`flex items-center justify-between px-6 py-4 border-b border-[#f0f4fb] last:border-0 transition-colors hover:bg-background ${rankColors[idx] ?? ""}`}
                         >
                             <div className="flex items-center gap-4">
                                 <span className="font-black text-lg w-8 text-center">

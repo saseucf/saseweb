@@ -131,10 +131,10 @@ function Responses() {
                         <div key={submission.id} className="sase-form-card">
                             <div className="flex flex-wrap justify-between items-center mb-6 pb-4 border-b border-[#D0D0CE] gap-4">
                                 <div>
-                                    <span className="inline-block bg-[#141B4D] text-white text-xs font-bold px-2 py-1 rounded mb-2">
+                                    <span className="inline-block bg-foreground text-white text-xs font-bold px-2 py-1 rounded mb-2">
                                         Response {submissions.length - index}
                                     </span>
-                                    <h3 className="font-bold text-lg text-[#141B4D] break-all">{submission.email || "Unknown"}</h3>
+                                    <h3 className="font-bold text-lg text-foreground break-all">{submission.email || "Unknown"}</h3>
                                 </div>
                                 <span className="text-sm font-medium text-[#ACA39A] whitespace-nowrap">
                                     {new Date(submission.created_at).toLocaleString(undefined, {
@@ -150,9 +150,9 @@ function Responses() {
                                     const displayAnswer = Array.isArray(answer) ? answer.join(", ") : answer;
                                     return (
                                         <div key={question.id}>
-                                            <p className="font-semibold text-[#141B4D] mb-1.5">{question.label || "Untitled question"}</p>
-                                            <div className="bg-[#f6f8fc] p-3 rounded-lg border border-[#D0D0CE]">
-                                                <p className="text-[#3F4444] whitespace-pre-wrap text-sm">
+                                            <p className="font-semibold text-foreground mb-1.5">{question.label || "Untitled question"}</p>
+                                            <div className="bg-background p-3 rounded-lg border border-[#D0D0CE]">
+                                                <p className="text-muted-foreground whitespace-pre-wrap text-sm">
                                                     {displayAnswer || <span className="italic text-[#ACA39A]">No answer provided</span>}
                                                 </p>
                                             </div>

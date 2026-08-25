@@ -66,16 +66,16 @@ export default async function AboutPage() {
     return (
         <main className="sase-page">
             {/* ── Hero Banner ── */}
-            <div className="relative overflow-hidden bg-[#141b4d] py-20 px-6 text-center">
+            <div className="relative overflow-hidden py-20 px-6 text-center">
                 {/* Decorative blobs */}
                 <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-[#89abe3]/15 blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" aria-hidden />
                 <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-[#dbc8b6]/10 blur-2xl translate-x-1/4 translate-y-1/4 pointer-events-none" aria-hidden />
                 <div className="relative z-10 max-w-3xl mx-auto">
                     <p className="sase-eyebrow text-[#89abe3]">UCF SASE / About</p>
-                    <h1 className="text-4xl md:text-6xl font-black text-[#e9e8e8] tracking-tight mt-2 mb-6">
+                    <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tight mt-2 mb-6">
                         Who We <span className="text-[#89abe3]">Are</span>
                     </h1>
-                    <p className="text-[#a8bde8] text-lg md:text-xl leading-relaxed">
+                    <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
                         Founded in 2020, UCF SASE is a nationally recognized chapter of the Society of Asian Scientists and Engineers — a community built on leadership, professionalism, diversity, and service.
                     </p>
                 </div>
@@ -87,9 +87,9 @@ export default async function AboutPage() {
                         { icon: <CalendarDays className="w-6 h-6" />, value: "2020", label: "Chapter Founded" },
                         { icon: <Globe2 className="w-6 h-6" />, value: "20K+", label: "National SASE Members" },
                     ].map(({ icon, value, label }) => (
-                        <div key={label} className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm hover:bg-white/10 hover:border-[#89abe3]/40 transition-all duration-300 group">
+                        <div key={label} className="bg-muted/50 border border-border rounded-2xl p-6 backdrop-blur-sm hover:bg-muted transition-all duration-300 group">
                             <div className="text-[#89abe3] flex justify-center mb-3 group-hover:scale-110 transition-transform">{icon}</div>
-                            <div className="text-3xl font-black text-[#e9e8e8]">{value}</div>
+                            <div className="text-3xl font-black text-foreground">{value}</div>
                             <div className="text-xs uppercase tracking-widest text-[#89abe3] mt-1">{label}</div>
                         </div>
                     ))}
@@ -100,7 +100,7 @@ export default async function AboutPage() {
             <section className="sase-content-section">
                 <div className="text-center mb-10">
                     <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">Purpose</span>
-                    <h2 className="text-3xl md:text-4xl font-black text-[#141b4d] tracking-tight">Mission Statement</h2>
+                    <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Mission Statement</h2>
                 </div>
                 <div className="relative bg-gradient-to-br from-[#141b4d] to-[#26355f] rounded-2xl p-8 md:p-12 max-w-4xl mx-auto shadow-[0_16px_48px_rgba(23,29,82,0.2)] overflow-hidden">
                     <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-[#89abe3]/10 blur-2xl translate-x-1/3 -translate-y-1/3 pointer-events-none" aria-hidden />
@@ -119,24 +119,24 @@ export default async function AboutPage() {
             <section className="sase-content-section">
                 <div className="text-center mb-10">
                     <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">Community</span>
-                    <h2 className="text-3xl md:text-4xl font-black text-[#141b4d] tracking-tight">Member Demographics</h2>
-                    <p className="text-[#64708c] mt-2 text-sm">Live data from our member registry — by declared major.</p>
+                    <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Member Demographics</h2>
+                    <p className="text-muted-foreground mt-2 text-sm">Live data from our member registry — by declared major.</p>
                 </div>
-                <div className="bg-white rounded-2xl border border-[#dbe2f0] shadow-[0_12px_30px_rgba(23,29,82,0.06)] p-8 max-w-3xl mx-auto">
+                <div className="bg-background rounded-2xl border border-border shadow-md p-8 max-w-3xl mx-auto">
                     <div className="space-y-4">
                         {chartData.length === 0 ? (
-                            <p className="text-center text-[#64708c]">Not enough data to display demographics yet.</p>
+                            <p className="text-center text-muted-foreground">Not enough data to display demographics yet.</p>
                         ) : (
                             chartData.map((item) => (
                                 <div key={item.label} className="flex items-center gap-3 group">
-                                    <span className="text-xs text-[#64708c] w-44 shrink-0 text-right font-medium group-hover:text-[#141b4d] transition-colors">{item.label}</span>
-                                    <div className="flex-1 bg-[#f0f4fb] rounded-full h-4 overflow-hidden">
+                                    <span className="text-xs text-muted-foreground w-44 shrink-0 text-right font-medium group-hover:text-foreground transition-colors">{item.label}</span>
+                                    <div className="flex-1 bg-muted rounded-full h-4 overflow-hidden">
                                         <div
                                             className="h-full rounded-full transition-all duration-700"
                                             style={{ width: `${(item.percent / maxPercent) * 100}%`, background: item.fill }}
                                         />
                                     </div>
-                                    <span className="text-sm font-black text-[#141b4d] w-12 shrink-0 tabular-nums">{item.percent}%</span>
+                                    <span className="text-sm font-black text-foreground w-12 shrink-0 tabular-nums">{item.percent}%</span>
                                 </div>
                             ))
                         )}
@@ -148,8 +148,8 @@ export default async function AboutPage() {
             <section className="sase-content-section pb-16">
                 <div className="text-center mb-12">
                     <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">Recognition</span>
-                    <h2 className="text-3xl md:text-4xl font-black text-[#141b4d] tracking-tight">Awards &amp; Accomplishments</h2>
-                    <p className="text-[#64708c] mt-2 max-w-lg mx-auto text-sm leading-relaxed">
+                    <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Awards &amp; Accomplishments</h2>
+                    <p className="text-muted-foreground mt-2 max-w-lg mx-auto text-sm leading-relaxed">
                         Since 2022, UCF SASE has earned consistent recognition from both National SASE and UCF&apos;s Asian Pacific American Coalition.
                     </p>
                 </div>

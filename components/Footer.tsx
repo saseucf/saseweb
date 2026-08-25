@@ -4,15 +4,24 @@ import Image from "next/image";
 
 export default function Footer() {
     return (
-        <footer className="bg-[#171d52] border-t border-[#26355f] py-8 px-6 mt-auto">
+        <footer className="bg-background border-t border-border py-8 px-6 mt-auto">
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center">
+                    {/* Dark Mode Logo (White) */}
                     <Image
-                        src="/UCF SASE LOGO 26-27.png"
+                        src="/logo-white-horizontal.png"
                         alt="UCF SASE"
-                        width={120}
-                        height={50}
-                        className="opacity-75"
+                        width={180}
+                        height={60}
+                        className="opacity-75 h-auto w-[120px] md:w-[150px] hidden dark:block"
+                    />
+                    {/* Light Mode Logo (Dark) */}
+                    <Image
+                        src="/logo-dark-horizontal.png"
+                        alt="UCF SASE"
+                        width={180}
+                        height={60}
+                        className="opacity-75 h-auto w-[120px] md:w-[150px] block dark:hidden"
                     />
                 </div>
 
@@ -52,7 +61,7 @@ function SocialLink({ href, icon, label }: { href: string; icon: string; label: 
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-[#26355f] text-[#fffde9] hover:bg-[#8eafe3] hover:text-[#171d52] transition-colors shadow-md"
+            className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-foreground hover:bg-[#8eafe3] hover:text-background transition-colors shadow-md"
         >
             {icons[icon]}
         </a>

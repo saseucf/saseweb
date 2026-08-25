@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <main className="sase-home">
       <AosInit />
-      <section className="relative flex flex-col justify-center min-h-[95vh] pt-20 pb-0 overflow-hidden bg-[#141b4d]">
+      <section className="relative flex flex-col justify-center min-h-[95vh] pt-20 pb-0 overflow-hidden bg-background">
         {/* Background Elements (z-0) */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           {/* Sun and Clouds */}
@@ -20,20 +20,31 @@ export default function Home() {
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 relative z-10 mb-[15vh] md:mb-[25vh]" data-aos="fade-up">
           <div className="flex flex-col items-start gap-2 max-w-2xl">
             <div className="flex items-center gap-4 md:gap-6 mb-4 md:pl-[60px]">
+              {/* Dark Mode Logo */}
               <Image 
-                src="/UCF SASE LOGO 26-27.png" 
+                src="/logo-hero.png" 
                 alt="SASE Society of Asian Scientists & Engineers" 
-                width={700} 
-                height={300} 
-                className="w-[320px] md:w-[600px] object-contain drop-shadow-lg mix-blend-screen" 
+                width={800} 
+                height={200} 
+                className="w-[320px] md:w-[600px] h-auto object-contain drop-shadow-lg hidden dark:block" 
+                priority
+              />
+              {/* Light Mode Logo */}
+              <Image 
+                src="/logo-dark-twotone.png" 
+                alt="SASE Society of Asian Scientists & Engineers" 
+                width={800} 
+                height={200} 
+                className="w-[320px] md:w-[600px] h-auto object-contain drop-shadow-lg block dark:hidden" 
+                priority
               />
             </div>
             
             <div className="flex flex-wrap items-center gap-4 mt-4 md:pl-[60px]">
-              <Link href="/forms" className="bg-[#89abe3] hover:bg-[#e9e8e8] text-[#141b4d] font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
+              <Link href="/forms" className="bg-[#89abe3] hover:bg-foreground hover:text-background text-foreground font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
                 Explore Forms
               </Link>
-              <Link href="/events" className="bg-[#e9e8e8] hover:bg-[#89abe3] text-[#141b4d] font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
+              <Link href="/events" className="bg-foreground text-background hover:bg-[#89abe3] hover:text-foreground font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
                 See Events
               </Link>
             </div>
@@ -42,54 +53,51 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="relative z-10 bg-[#f6f8fc] text-[#141b4d] py-24 px-6 md:px-12 mt-32">
+      <section id="about" className="relative z-10 bg-background text-foreground py-24 px-6 md:px-12 mt-32">
         <div className="max-w-4xl mx-auto text-center space-y-8" data-aos="fade-up">
           <h2 className="text-3xl md:text-5xl font-black tracking-tight">
             Welcome to the UCF <span className="text-[#89abe3]">SASE</span> Website
           </h2>
-          <p className="text-lg md:text-xl text-[#64708c] leading-relaxed">
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
             Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage scientific and engineering professionals achieve their full potential. The University of Central Florida SASE Chapter was founded in 2020, shortly before the pandemic. With only 4 years under our belt, we have made tremendous strides towards the development of our members centered around core values of career, diversity, and service. Our events and programs not only advance professional pursuits, but also foster a supportive community that celebrates each and every member’s story.
           </p>
         </div>
       </section>
 
       {/* Core Values Section */}
-      <section className="relative z-10 bg-[#f6f8fc] text-[#141b4d] pb-32 px-6 md:px-12">
+      <section className="relative z-10 bg-background text-foreground pb-32 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <h3 className="text-center text-[#89abe3] font-black text-4xl mb-16 tracking-tight" data-aos="fade-up">
             3 Core Values
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="200">
-            {/* Value 1 */}
-            <div className="bg-white rounded-2xl p-8 border border-[#cbd5e8] shadow-[0_12px_30px_rgba(23,29,82,0.06)] hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
-              <div className="bg-[#e9eef8] text-[#89abe3] p-4 rounded-full mb-6">
+            <div className="bg-background rounded-2xl p-8 border border-border shadow-md hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
+              <div className="bg-[#e9eef8] dark:bg-muted text-[#89abe3] p-4 rounded-full mb-6">
                 <Briefcase className="w-8 h-8" />
               </div>
               <h4 className="text-xl font-bold mb-4">Professional Development</h4>
-              <p className="text-[#64708c] leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 We encourage members to leverage the experiences, knowledge, and skills gained through our organization to pursue their goals and aspirations.
               </p>
             </div>
 
-            {/* Value 2 */}
-            <div className="bg-white rounded-2xl p-8 border border-[#cbd5e8] shadow-[0_12px_30px_rgba(23,29,82,0.06)] hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
-              <div className="bg-[#e9eef8] text-[#89abe3] p-4 rounded-full mb-6">
+            <div className="bg-background rounded-2xl p-8 border border-border shadow-md hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
+              <div className="bg-[#e9eef8] dark:bg-muted text-[#89abe3] p-4 rounded-full mb-6">
                 <HandHeart className="w-8 h-8" />
               </div>
               <h4 className="text-xl font-bold mb-4">Service</h4>
-              <p className="text-[#64708c] leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 We commit ourselves to promoting service opportunities that enable our members to give back to the community and make a meaningful impact.
               </p>
             </div>
 
-            {/* Value 3 */}
-            <div className="bg-white rounded-2xl p-8 border border-[#cbd5e8] shadow-[0_12px_30px_rgba(23,29,82,0.06)] hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
-              <div className="bg-[#e9eef8] text-[#89abe3] p-4 rounded-full mb-6">
+            <div className="bg-background rounded-2xl p-8 border border-border shadow-md hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
+              <div className="bg-[#e9eef8] dark:bg-muted text-[#89abe3] p-4 rounded-full mb-6">
                 <HeartHandshake className="w-8 h-8" />
               </div>
               <h4 className="text-xl font-bold mb-4">Diversity</h4>
-              <p className="text-[#64708c] leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 We aim to empower our members by showcasing how their diverse backgrounds can broaden perspectives and inspire collaborative efforts.
               </p>
             </div>
@@ -98,18 +106,18 @@ export default function Home() {
       </section>
 
       {/* Leaderboard Section */}
-      <section className="relative z-10 bg-[#f6f8fc] pb-24 px-6 md:px-12">
+      <section className="relative z-10 bg-background pb-24 px-6 md:px-12">
         <Leaderboard />
       </section>
 
       {/* Sponsors Section */}
-      <section className="relative z-10 bg-[#141b4d] py-20 px-6 md:px-12">
+      <section className="relative z-10 bg-foreground text-background py-20 px-6 md:px-12">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">
               Thank You
             </span>
-            <h2 className="text-3xl md:text-4xl font-black text-[#e9e8e8] tracking-tight">Our Sponsors</h2>
+            <h2 className="text-3xl md:text-4xl font-black text-background tracking-tight">Our Sponsors</h2>
             <p className="mt-3 text-[#89abe3] max-w-xl mx-auto text-sm leading-relaxed">
               UCF SASE is made possible by the generous support of our sponsors. Interested in partnering with us?
               Reach out to our External VP at{" "}
@@ -129,7 +137,7 @@ export default function Home() {
             </div>
             <div className="flex justify-center">
               <a href="https://www.blueorigin.com" target="_blank" rel="noopener noreferrer"
-                className="group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#89abe3]/50 rounded-2xl p-8 md:p-12 transition-all duration-300 hover:shadow-[0_0_40px_rgba(137,171,227,0.15)] hover:-translate-y-1 flex items-center justify-center">
+                className="group bg-card/5 hover:bg-card/10 border border-white/10 hover:border-[#89abe3]/50 rounded-2xl p-8 md:p-12 transition-all duration-300 hover:shadow-[0_0_40px_rgba(137,171,227,0.15)] hover:-translate-y-1 flex items-center justify-center">
                 <Image src="/blueorigin.png" alt="Blue Origin" width={260} height={100} className="object-contain brightness-90 group-hover:brightness-110 transition-all duration-300" />
               </a>
             </div>
@@ -147,14 +155,14 @@ export default function Home() {
             </div>
             <div className="flex justify-center">
               <a href="https://patelconservatory.org" target="_blank" rel="noopener noreferrer"
-                className="group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#d4af37]/50 rounded-2xl p-8 md:p-12 transition-all duration-300 hover:shadow-[0_0_40px_rgba(212,175,55,0.15)] hover:-translate-y-1 flex items-center justify-center">
+                className="group bg-card/5 hover:bg-card/10 border border-white/10 hover:border-[#d4af37]/50 rounded-2xl p-8 md:p-12 transition-all duration-300 hover:shadow-[0_0_40px_rgba(212,175,55,0.15)] hover:-translate-y-1 flex items-center justify-center">
                 <Image src="/patel.png" alt="Patel Conservatory" width={220} height={100} className="object-contain brightness-90 group-hover:brightness-110 transition-all duration-300" />
               </a>
             </div>
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/about" className="inline-block border border-[#89abe3]/40 text-[#89abe3] hover:bg-[#89abe3] hover:text-[#141b4d] font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-full transition-colors">
+            <Link href="/about" className="inline-block border border-[#89abe3]/40 text-[#89abe3] hover:bg-[#89abe3] hover:text-foreground font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-full transition-colors">
               Learn More About SASE
             </Link>
           </div>

@@ -86,7 +86,7 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
     <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {status ? (
-        <div className="w-full max-w-sm p-8 bg-white border border-[#cbd5e8] rounded-xl shadow-lg flex flex-col items-center justify-center space-y-6 text-center animate-in zoom-in-95">
+        <div className="w-full max-w-sm p-8 bg-card border border-border rounded-xl shadow-lg flex flex-col items-center justify-center space-y-6 text-center animate-in zoom-in-95">
           {status.success ? (
             <div className="bg-green-100 text-green-700 p-4 rounded-full">
               <CheckCircle className="w-12 h-12" />
@@ -98,7 +98,7 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
           )}
           <div>
             <h2 className="text-2xl font-bold text-[#171d52]">{status.success ? "Checked In!" : "Check-In Failed"}</h2>
-            <p className="text-[#64708c] font-medium mt-2">{status.msg}</p>
+            <p className="text-muted-foreground font-medium mt-2">{status.msg}</p>
           </div>
           <button
             onClick={() => router.push('/checkin/member')}
@@ -108,10 +108,10 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
           </button>
         </div>
       ) : event ? (
-        <div className="w-full max-w-sm p-8 bg-white border border-[#cbd5e8] rounded-xl shadow-lg flex flex-col items-center text-center space-y-6">
+        <div className="w-full max-w-sm p-8 bg-card border border-border rounded-xl shadow-lg flex flex-col items-center text-center space-y-6">
           <div className="space-y-2">
             <h1 className="text-2xl font-bold tracking-tight text-[#171d52]">Event Check-In</h1>
-            <p className="text-[#64708c] font-medium">You are checking into:</p>
+            <p className="text-muted-foreground font-medium">You are checking into:</p>
             <h2 className="text-xl font-bold text-[#5579bd] mt-2">{event.title}</h2>
             <p className="text-sm font-bold bg-[#171d52] text-[#fffde9] inline-block px-3 py-1 rounded-full mt-2">
               +{event.points} Points
