@@ -1,6 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
-import Link from "next/link";
+
 import { Users, CheckCircle, Trophy, BarChart3, TrendingUp, CalendarDays } from "lucide-react";
 
 export const revalidate = 0; // Don't cache this admin page
@@ -82,21 +82,18 @@ export default async function DemographicsPage() {
     const uniqueAttendees = attendeeMap.size;
 
     // Returning vs New
-    let oneTimeAttendees = 0;
     let returningAttendees = 0;
     const topAttendees = Array.from(attendeeMap.values()).sort((a, b) => b.count - a.count);
     
     topAttendees.forEach(att => {
         if (att.count > 1) returningAttendees++;
-        else oneTimeAttendees++;
     });
 
     // Sort Maps for display
     const sortedMajors = Array.from(majorMap.entries()).sort((a, b) => b[1] - a[1]);
     const sortedYears = Array.from(yearMap.entries()).sort((a, b) => b[1] - a[1]);
     const sortedEventTypes = Array.from(eventTypeMap.entries()).sort((a, b) => b[1] - a[1]);
-    
-    const topAttendee = topAttendees.length > 0 ? topAttendees[0] : null;
+
 
     return (
         <main className="sase-page pt-[120px]">
