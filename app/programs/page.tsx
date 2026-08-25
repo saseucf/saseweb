@@ -63,7 +63,7 @@ export default function ProgramsPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-3 mt-8">
-                    <Link href="/forms" className="sase-primary-button">Apply / Register Interest</Link>
+                    <button disabled className="sase-primary-button opacity-50 cursor-not-allowed">Intern Apps (Coming Soon)</button>
                     <Link href="/events" className="sase-secondary-button">Find Info Sessions &amp; GBMs</Link>
                 </div>
             </section>
@@ -107,8 +107,8 @@ export default function ProgramsPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-3 mt-8">
-                    <Link href="/forms" className="sase-primary-button">Become a Mentor</Link>
-                    <Link href="/forms" className="sase-secondary-button">Become a Mentee</Link>
+                    <button disabled className="sase-primary-button opacity-50 cursor-not-allowed">Mentor Apps (Coming Soon)</button>
+                    <button disabled className="sase-secondary-button opacity-50 cursor-not-allowed">Mentee Apps (Coming Soon)</button>
                     <Link href="/events" className="sase-secondary-button">See Past Events</Link>
                 </div>
             </section>
@@ -121,7 +121,7 @@ export default function ProgramsPage() {
                         any questions.
                     </p>
                     <div className="flex flex-wrap gap-3">
-                        <Link href="/about" className="sase-primary-button">Meet the Board</Link>
+                        <button disabled className="sase-primary-button opacity-50 cursor-not-allowed">Meet the Board (Coming Soon)</button>
                         <Link href="/events" className="sase-secondary-button">Upcoming Info Sessions</Link>
                     </div>
                 </div>

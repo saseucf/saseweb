@@ -141,35 +141,34 @@ export default async function AdminEventsPage() {
                                     </div>
                                 </div>
 
-                                <div className="mt-6 flex flex-wrap items-center gap-2 pt-4 border-t border-gray-100">
-                                    <Link
-                                        href={`/admin/events/${event.id}/edit`}
-                                        className="sase-secondary-button flex-1 text-center"
-                                        style={{ padding: '8px 12px', fontSize: '0.65rem' }}
-                                    >
-                                        Edit
-                                    </Link>
+                                <div className="mt-6 pt-4 border-t border-gray-100">
+                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                                        <Link
+                                            href={`/admin/events/${event.id}/edit`}
+                                            className="sase-secondary-button flex items-center justify-center !text-xs !py-2"
+                                        >
+                                            Edit
+                                        </Link>
 
-                                    <Link
-                                        href={`/checkin/admin/event/${event.id}/qr`}
-                                        className="sase-primary-button flex-1 text-center"
-                                        style={{ padding: '8px 12px', fontSize: '0.65rem' }}
-                                    >
-                                        QR Code
-                                    </Link>
+                                        <Link
+                                            href={`/checkin/admin/event/${event.id}/qr`}
+                                            className="sase-primary-button flex items-center justify-center !text-xs !py-2"
+                                        >
+                                            QR Code
+                                        </Link>
 
-                                    <Link
-                                        href={`/admin/events/${event.id}/rsvps`}
-                                        className="sase-secondary-button flex-1 text-center"
-                                        style={{ padding: '8px 12px', fontSize: '0.65rem' }}
-                                    >
-                                        RSVP List
-                                    </Link>
+                                        <Link
+                                            href={`/admin/events/${event.id}/rsvps`}
+                                            className="sase-secondary-button flex items-center justify-center !text-xs !py-2"
+                                        >
+                                            RSVP List
+                                        </Link>
 
-                                    <EventActions
-                                        eventId={event.id}
-                                        status={event.status}
-                                    />
+                                        <EventActions
+                                            eventId={event.id}
+                                            status={event.status}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         ))}

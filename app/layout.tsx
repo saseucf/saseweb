@@ -26,6 +26,7 @@ export const viewport = {
 };
 
 import GlobalNav from "@/components/GlobalNav";
+import Footer from "@/components/Footer";
 
 export default function RootLayout({
   children,
@@ -35,11 +36,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[78px]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[78px] min-h-screen flex flex-col`}
         suppressHydrationWarning
       >
         <GlobalNav />
-        {children}
+        <div className="flex-1 flex flex-col">
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   );

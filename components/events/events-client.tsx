@@ -70,7 +70,7 @@ export default function EventsClient({ events }: { events: Event[] }) {
             </div>
 
             {/* Custom Interactive Calendar */}
-            <div className="mb-12 bg-white rounded-2xl border border-[#D0D0CE] shadow-sm p-6 max-w-4xl">
+            <div className="mb-12 bg-white rounded-2xl border border-[#D0D0CE] shadow-sm p-6 max-w-4xl mx-auto">
                 <EventCalendar events={filteredEvents} />
             </div>
 
