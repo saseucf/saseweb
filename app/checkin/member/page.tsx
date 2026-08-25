@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/checkin-supabase";
+import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { Loader2, LogOut } from "lucide-react";
 import { QRCodeSVG } from 'qrcode.react';
@@ -12,7 +12,6 @@ export default function MemberDashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,7 +34,7 @@ export default function MemberDashboard() {
     };
     
     fetchUser();
-  }, [router, supabase]);
+  }, [router]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

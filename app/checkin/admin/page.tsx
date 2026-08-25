@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/checkin-supabase";
+import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { Loader2, LogOut, CheckCircle, XCircle, Camera, QrCode } from "lucide-react";
 import QRScanner from "@/components/checkin/QRScanner";
@@ -19,7 +19,6 @@ export default function AdminDashboard() {
   const [checkInLoading, setCheckInLoading] = useState(false);
 
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
     const init = async () => {
@@ -58,7 +57,7 @@ export default function AdminDashboard() {
       setLoading(false);
     };
     init();
-  }, [router, supabase]);
+  }, [router]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

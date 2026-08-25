@@ -1,17 +1,32 @@
 "use client"
 
-import { FormEvent, useState } from "react"
-import { useRouter } from "next/navigation"
+import { FormEvent, useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { FaDiscord } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
 import supabase from "@/lib/auth"
 
 export function LoginForm() {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const redirectUrl = searchParams.get("redirect") || "/"
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const [checkingSession, setCheckingSession] = useState(true)
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                router.replace(redirectUrl)
+                return
+            }
+            setCheckingSession(false)
+        })
+    }, [router, redirectUrl])
+
+    if (checkingSession) return null
 
     const handlePasswordLogin = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -29,7 +44,7 @@ export function LoginForm() {
             return
         }
 
-        router.replace("/")
+        router.replace(redirectUrl)
     }
 
     const handleOAuthLogin = async (provider: "discord" | "google") => {
@@ -37,7 +52,7 @@ export function LoginForm() {
         const { error: loginError } = await supabase.auth.signInWithOAuth({
             provider,
             options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
+                redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`,
             },
         })
 

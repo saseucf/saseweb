@@ -1,20 +1,53 @@
 "use client"
 
-import { useState, Suspense } from "react";
-import { createClient } from "@/lib/checkin-supabase";
+import { useState, useEffect, Suspense } from "react";
+import supabase from "@/lib/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { FaDiscord } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [checkingSession, setCheckingSession] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect');
-  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const user = session?.user;
+      if (!user) {
+        setCheckingSession(false);
+        return;
+      }
+
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profileData?.role === 'admin') {
+        router.replace('/checkin/admin');
+      } else {
+        router.replace(redirectUrl || '/checkin/member');
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (checkingSession) {
+    return (
+      <div className="sase-login-page flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-white" />
+      </div>
+    );
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +81,18 @@ function LoginForm() {
         router.push('/checkin/member');
       }
     }
+  };
+
+  const handleOAuthLogin = async (provider: "discord" | "google") => {
+    setError(null);
+    const { error: authError } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/checkin/login${redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : ""}`,
+      },
+    });
+
+    if (authError) setError(authError.message);
   };
 
   return (
@@ -104,6 +149,31 @@ function LoginForm() {
             Sign In
           </button>
         </form>
+
+        <div className="flex items-center gap-3 text-xs text-[#8896b5] my-5">
+          <span className="h-px flex-1 bg-[#cbd5e8]" />
+          or continue with
+          <span className="h-px flex-1 bg-[#cbd5e8]" />
+        </div>
+
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={() => handleOAuthLogin("discord")}
+            className="w-full flex items-center justify-center gap-2 rounded border border-[#cbd5e8] p-3 text-sm font-semibold text-[#171d52] hover:bg-[#e9eef8] transition-colors"
+          >
+            <FaDiscord />
+            Continue with Discord
+          </button>
+          <button
+            type="button"
+            onClick={() => handleOAuthLogin("google")}
+            className="w-full flex items-center justify-center gap-2 rounded border border-[#cbd5e8] p-3 text-sm font-semibold text-[#171d52] hover:bg-[#e9eef8] transition-colors"
+          >
+            <FcGoogle />
+            Continue with Google
+          </button>
+        </div>
       </div>
     </main>
   );
