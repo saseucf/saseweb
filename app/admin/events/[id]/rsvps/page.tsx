@@ -226,7 +226,7 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
                           </span>
                         </td>
                         <td className="px-6 py-4 text-gray-500 whitespace-nowrap text-xs">
-                          {new Date(sub.created_at).toLocaleString()}
+                          {new Date(sub.created_at).toLocaleString('en-US', { timeZone: 'America/New_York' })}
                         </td>
                       </tr>
                     );

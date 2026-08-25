@@ -101,6 +101,7 @@ export default function GlobalNav() {
             <NavLink href="/" active={pathname === "/"}>Home</NavLink>
             <NavLink href="/admin/events" active={!!pathname?.includes('/admin/events')}>Manage Events</NavLink>
             <NavLink href="/forms/admin" active={!!pathname?.includes('/forms/admin')}>Manage Forms</NavLink>
+            <NavLink href="/admin/demographics" active={!!pathname?.includes('/admin/demographics')}>Demographics</NavLink>
             <NavLink href="/checkin/admin" active={!!pathname?.includes('/checkin/admin')}>Check-in Admin</NavLink>
           </>
         ) : (
