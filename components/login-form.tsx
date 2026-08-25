@@ -17,8 +17,19 @@ export function LoginForm() {
     const [checkingSession, setCheckingSession] = useState(true)
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        supabase.auth.getSession().then(async ({ data: { session } }) => {
             if (session) {
+                const { data: profile } = await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("id", session.user.id)
+                    .single()
+
+                if (profile && profile.name_confirmed === false) {
+                    router.replace(`/confirm-name?redirect=${encodeURIComponent(redirectUrl)}`)
+                    return
+                }
+
                 router.replace(redirectUrl)
                 return
             }
