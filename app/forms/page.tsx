@@ -60,20 +60,24 @@ export default function Forms(){
 
     return (
         <main className="sase-page sase-member-page">
-            <div className="sase-page-header">
-                <p className="sase-eyebrow">UCF SASE / Member portal</p>
-                <h1>Forms and RSVPs</h1>
-                <p>Find open applications, sign-ups, and opportunities from the SASE community.</p>
+            <div className="flex flex-wrap items-center justify-between gap-6 mb-12">
+                <div className="sase-page-header !mb-0">
+                    <p className="sase-eyebrow">UCF SASE / Member portal</p>
+                    <h1 className="!mb-2">Forms and RSVPs</h1>
+                    <p className="text-gray-600 max-w-xl">Find open applications, sign-ups, and opportunities from the SASE community.</p>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                    <button className="sase-secondary-button" onClick={backToHome}>
+                        &larr; Back to Home
+                    </button>
+                    {isAdmin && (
+                        <Link href="/forms/admin" className="sase-primary-button">
+                            Manage Forms
+                        </Link>
+                    )}
+                </div>
             </div>
-            
-            <button className="sase-secondary-button" onClick={backToHome}>
-                Back to home
-            </button>
-            {isAdmin && (
-                <Link href="/forms/admin" className="sase-primary-button">
-                    Admin
-                </Link>
-            )}
 
             <section className="sase-content-section">
                 <h2>Available Forms</h2>

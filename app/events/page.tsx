@@ -1,5 +1,6 @@
 import { createPublicSupabase } from "@/lib/supabase-public";
 import AdminEventControls from "@/components/events/admin-event-controls";
+import EventsClient from "@/components/events/events-client";
 
 // Public, publicly-readable data (see "Events are viewable by everyone" RLS
 // policy) — safe to cache and revalidate periodically instead of refetching
@@ -63,58 +64,70 @@ export default async function EventsPage() {
             </div>
 
             <section className="sase-content-section">
-                {events.length === 0 ? (
-                    <div className="sase-form-card">
-                        <p className="text-gray-500 font-medium text-center">No upcoming events right now. Check back soon!</p>
-                    </div>
-                ) : (
-                    <div className="sase-form-grid">
-                        {events.map((event) => (
-                            <div key={event.id} className="sase-form-card flex flex-col justify-between">
-                                <div>
-                                    <div className="flex justify-between items-start gap-2 mb-2">
-                                        <h2 className="text-[#171d52] font-bold text-xl">{event.title}</h2>
-                                        <span className="bg-[#e9eef8] text-[#344674] text-xs font-bold px-2 py-1 rounded whitespace-nowrap">
-                                            {event.points} pt{event.points === 1 ? "" : "s"}
-                                        </span>
-                                    </div>
-                                    <p className="sase-eyebrow mb-3">{event.event_type}</p>
-                                    
-                                    {event.description && (
-                                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{event.description}</p>
-                                    )}
-
-                                    <div className="flex flex-col gap-2 mt-4 border-t border-gray-100 pt-4">
-                                        <div className="flex items-start gap-2 text-sm">
-                                            <span className="font-semibold text-[#344674] min-w-[70px]">When:</span>
-                                            <span className="text-gray-600">
-                                                {new Date(event.start_time).toLocaleString(undefined, {
-                                                    weekday: 'short', month: 'short', day: 'numeric',
-                                                    hour: 'numeric', minute: '2-digit'
-                                                })}
-                                                {" - "}
-                                                {new Date(event.end_time).toLocaleTimeString(undefined, {
-                                                    hour: 'numeric', minute: '2-digit'
-                                                })}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-start gap-2 text-sm">
-                                            <span className="font-semibold text-[#344674] min-w-[70px]">Where:</span>
-                                            <span className="text-gray-600">{event.location ?? "TBA"}</span>
-                                        </div>
-                                        {event.host && (
-                                            <div className="flex items-start gap-2 text-sm">
-                                                <span className="font-semibold text-[#344674] min-w-[70px]">Host:</span>
-                                                <span className="text-gray-600">{event.host}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <EventsClient events={events} />
             </section>
+
+
+            {/* Past Events */}
+            <PastEvents />
         </main>
+    );
+}
+
+function PastEvents() {
+    const gbm1Images = [
+        "/events/gbm1-1.JPG",
+        "/events/gbm1-2.JPG",
+        "/events/gbm1-3.JPG",
+        "/events/gbm1-4.JPG",
+        "/events/gbm1-5.JPG",
+        "/events/gbm1-6.JPG",
+    ];
+    const menmetImages = [
+        "/events/menmet-1.png",
+        "/events/menmet-2.png",
+        "/events/menmet-3.png",
+        "/events/menmet-4.png",
+        "/events/menmet-6.png",
+    ];
+    const gbm2Images = [
+        "/events/gbm2-1.JPG",
+        "/events/gbm2-2.JPG",
+        "/events/gbm2-3.JPG",
+        "/events/gbm2-4.JPG",
+        "/events/gbm2-5.JPG",
+        "/events/gbm2-6.JPG",
+        "/events/gbm2-7.JPG",
+    ];
+
+    return (
+        <section className="sase-content-section pb-16">
+            <h2 className="text-foreground font-black mb-2">Past Events</h2>
+            <p className="sase-eyebrow mb-8">2024–2025</p>
+
+            <EventGallery title="GBM #1: Despicable SASE" images={gbm1Images} alt="GBM1" />
+            <EventGallery title="Mentor-Mentee Speed Friending" images={menmetImages} alt="Mentor-Mentee" />
+            <EventGallery title="GBM #2: SASE Crossing" images={gbm2Images} alt="GBM2" />
+        </section>
+    );
+}
+
+function EventGallery({ title, images, alt }: { title: string; images: string[]; alt: string }) {
+    return (
+        <div className="mb-12">
+            <h3 className="text-[#89abe3] font-black text-xl uppercase tracking-wide mb-4">{title}</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {images.map((src, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        key={i}
+                        src={src}
+                        alt={`${alt} ${i + 1}`}
+                        className="w-full aspect-square object-cover rounded-xl border border-border hover:scale-105 transition-transform duration-200"
+                        loading="lazy"
+                    />
+                ))}
+            </div>
+        </div>
     );
 }

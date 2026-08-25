@@ -98,14 +98,14 @@ function LoginForm() {
   return (
     <main className="sase-login-page">
       <div className="sase-login-card p-8 md:p-12 relative">
-        <Link href="/checkin" className="absolute top-6 left-6 text-sm text-[#5579bd] hover:text-[#171d52] transition-colors flex items-center font-semibold">
+        <Link href="/checkin" className="absolute top-6 left-6 text-sm text-[#89abe3] hover:text-foreground transition-colors flex items-center font-semibold">
           <ArrowLeft className="w-4 h-4 mr-1" />
           Back
         </Link>
         
         <div className="text-center mt-6 mb-8">
           <h1 className="text-3xl font-bold">Member Login</h1>
-          <p className="mt-2 text-sm text-[#64708c]">Sign in to access your QR code</p>
+          <p className="mt-2 text-sm text-muted-foreground">Sign in to access your QR code</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
@@ -116,26 +116,26 @@ function LoginForm() {
           )}
           
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-[#171d52]" htmlFor="email">Email</label>
+            <label className="text-sm font-semibold text-foreground" htmlFor="email">Email</label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+              className="w-full rounded border border-border p-3 text-sm outline-none focus:border-[#89abe3] focus:ring-2 focus:ring-[#dbe5fa]"
               placeholder="knight@ucf.edu"
               required
             />
           </div>
           
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-[#171d52]" htmlFor="password">Password</label>
+            <label className="text-sm font-semibold text-foreground" htmlFor="password">Password</label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+              className="w-full rounded border border-border p-3 text-sm outline-none focus:border-[#89abe3] focus:ring-2 focus:ring-[#dbe5fa]"
               required
             />
           </div>
@@ -143,7 +143,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-[#5579bd] text-white p-3 font-bold uppercase tracking-wider text-sm mt-4 hover:bg-[#171d52] transition-colors flex items-center justify-center disabled:opacity-50"
+            className="w-full rounded bg-[#89abe3] text-white p-3 font-bold uppercase tracking-wider text-sm mt-4 hover:bg-foreground transition-colors flex items-center justify-center disabled:opacity-50"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
             Sign In
@@ -160,7 +160,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => handleOAuthLogin("discord")}
-            className="w-full flex items-center justify-center gap-2 rounded border border-[#cbd5e8] p-3 text-sm font-semibold text-[#171d52] hover:bg-[#e9eef8] transition-colors"
+            className="w-full flex items-center justify-center gap-2 rounded border border-border p-3 text-sm font-semibold text-[#171d52] hover:bg-[#e9eef8] transition-colors"
           >
             <FaDiscord />
             Continue with Discord
@@ -168,7 +168,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => handleOAuthLogin("google")}
-            className="w-full flex items-center justify-center gap-2 rounded border border-[#cbd5e8] p-3 text-sm font-semibold text-[#171d52] hover:bg-[#e9eef8] transition-colors"
+            className="w-full flex items-center justify-center gap-2 rounded border border-border p-3 text-sm font-semibold text-[#171d52] hover:bg-[#e9eef8] transition-colors"
           >
             <FcGoogle />
             Continue with Google

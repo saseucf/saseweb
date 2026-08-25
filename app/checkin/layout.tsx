@@ -16,7 +16,7 @@ export default function CheckinLayout({
   }
 
   return (
-    <div className="min-h-[calc(100vh-78px)] bg-[#f6f8fc] text-[#171d52] relative">
+    <div className="min-h-[calc(100vh-78px)] bg-background text-foreground relative">
       <main className="max-w-md mx-auto relative px-4 pt-6">
         {children}
       </main>

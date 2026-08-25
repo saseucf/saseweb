@@ -96,7 +96,7 @@ export default async function AdminEventsPage() {
                             <div key={event.id} className="sase-form-card flex flex-col justify-between">
                                 <div>
                                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                                        <h2 className="text-[#171d52] font-bold text-xl">
+                                        <h2 className="text-foreground font-bold text-xl">
                                             {event.title}
                                         </h2>
                                         <span className={`px-2 py-1 text-[0.65rem] font-bold uppercase tracking-wider rounded ${
@@ -141,35 +141,34 @@ export default async function AdminEventsPage() {
                                     </div>
                                 </div>
 
-                                <div className="mt-6 flex flex-wrap items-center gap-2 pt-4 border-t border-gray-100">
-                                    <Link
-                                        href={`/admin/events/${event.id}/edit`}
-                                        className="sase-secondary-button flex-1 text-center"
-                                        style={{ padding: '8px 12px', fontSize: '0.65rem' }}
-                                    >
-                                        Edit
-                                    </Link>
+                                <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col gap-3">
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <Link
+                                            href={`/admin/events/${event.id}/edit`}
+                                            className="sase-secondary-button flex items-center justify-center text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs"
+                                        >
+                                            Edit
+                                        </Link>
+
+                                        <Link
+                                            href={`/admin/events/${event.id}/rsvps`}
+                                            className="sase-secondary-button flex items-center justify-center text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs"
+                                        >
+                                            RSVP List
+                                        </Link>
+
+                                        <EventActions
+                                            eventId={event.id}
+                                            status={event.status}
+                                        />
+                                    </div>
 
                                     <Link
                                         href={`/checkin/admin/event/${event.id}/qr`}
-                                        className="sase-primary-button flex-1 text-center"
-                                        style={{ padding: '8px 12px', fontSize: '0.65rem' }}
+                                        className="sase-primary-button w-full flex items-center justify-center text-center !py-3 !text-sm"
                                     >
-                                        QR Code
+                                        Show QR Code
                                     </Link>
-
-                                    <Link
-                                        href={`/admin/events/${event.id}/rsvps`}
-                                        className="sase-secondary-button flex-1 text-center"
-                                        style={{ padding: '8px 12px', fontSize: '0.65rem' }}
-                                    >
-                                        RSVP List
-                                    </Link>
-
-                                    <EventActions
-                                        eventId={event.id}
-                                        status={event.status}
-                                    />
                                 </div>
                             </div>
                         ))}

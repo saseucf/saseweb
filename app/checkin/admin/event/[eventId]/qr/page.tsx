@@ -36,7 +36,7 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f6f8fc]">
+      <div className="flex h-screen items-center justify-center bg-background">
         <Loader2 className="w-12 h-12 animate-spin text-[#171d52]" />
       </div>
     );
@@ -44,14 +44,14 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
 
   if (!event) {
     return (
-      <div className="flex h-screen items-center justify-center flex-col bg-[#f6f8fc]">
+      <div className="flex h-screen items-center justify-center flex-col bg-background">
         <h1 className="text-2xl font-bold text-red-600">Event not found</h1>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#f6f8fc] p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-8">
       <div className="text-center space-y-4 mb-12">
         <h1 className="text-5xl font-black text-[#171d52] tracking-tight uppercase">{event.title}</h1>
         <p className="text-2xl text-[#5579bd] font-bold">Scan to Check-In!</p>
@@ -68,7 +68,7 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
         />
       </div>
       
-      <div className="mt-12 text-center text-[#64708c] font-bold tracking-wide uppercase">
+      <div className="mt-12 text-center text-muted-foreground font-bold tracking-wide uppercase">
         <p>Point your phone camera at this code to automatically check in.</p>
       </div>
     </div>
