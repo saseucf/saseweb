@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import supabase from "@/lib/auth";
 
 type Question = {
@@ -152,11 +153,11 @@ export default function FormResponsePage() {
         &larr; Back to Forms
       </Link>
       
-      <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden">
+      <div className="bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#171d52] via-[#5579bd] to-[#171d52]"></div>
         
         <form className="flex flex-col gap-10 mt-4" onSubmit={submitForm}>
-          {form.schema.map((question, index) => (
+          {form.schema.map((question) => (
             <fieldset key={question.id} className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
               <legend className="text-xl font-black text-[#171d52] mb-4 w-full leading-snug">
                 {question.label || "Untitled question"}
@@ -165,7 +166,7 @@ export default function FormResponsePage() {
 
               {question.type === "short_text" && (
                 <input
-                  className="w-full rounded-xl border border-[#cbd5e8] bg-gray-50 p-4 outline-none focus:bg-white focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
+                  className="w-full rounded-xl border border-border bg-gray-50 p-4 outline-none focus:bg-card focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
                   placeholder="Your answer"
                   value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
                   onChange={(event) => updateAnswer(question.id, event.target.value)}
@@ -175,7 +176,7 @@ export default function FormResponsePage() {
 
               {question.type === "paragraph" && (
                 <textarea
-                  className="min-h-32 w-full rounded-xl border border-[#cbd5e8] bg-gray-50 p-4 outline-none focus:bg-white focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium resize-y"
+                  className="min-h-32 w-full rounded-xl border border-border bg-gray-50 p-4 outline-none focus:bg-card focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium resize-y"
                   placeholder="Your answer"
                   value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
                   onChange={(event) => updateAnswer(question.id, event.target.value)}
@@ -197,7 +198,7 @@ export default function FormResponsePage() {
                           required={question.required}
                           className="peer sr-only"
                         />
-                        <div className="w-5 h-5 rounded-full border-2 border-[#cbd5e8] peer-checked:border-[#5579bd] transition-colors flex items-center justify-center">
+                        <div className="w-5 h-5 rounded-full border-2 border-border peer-checked:border-[#5579bd] transition-colors flex items-center justify-center">
                           <div className="w-2.5 h-2.5 rounded-full bg-[#5579bd] opacity-0 peer-checked:opacity-100 transition-opacity"></div>
                         </div>
                       </div>
@@ -218,7 +219,7 @@ export default function FormResponsePage() {
                           onChange={(event) => toggleCheckbox(question.id, option, event.target.checked)}
                           className="peer sr-only"
                         />
-                        <div className="w-5 h-5 rounded border-2 border-[#cbd5e8] peer-checked:border-[#5579bd] peer-checked:bg-[#5579bd] transition-all flex items-center justify-center">
+                        <div className="w-5 h-5 rounded border-2 border-border peer-checked:border-[#5579bd] peer-checked:bg-[#5579bd] transition-all flex items-center justify-center">
                           <svg className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         </div>
                       </div>

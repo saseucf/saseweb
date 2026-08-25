@@ -130,7 +130,7 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f6f8fc]">
+      <div className="flex h-screen items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-[#171d52]" />
       </div>
     );
@@ -161,19 +161,19 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
       <div className="sase-page-header">
         <p className="sase-eyebrow">UCF SASE / Event Data</p>
         <h1>{event.title} RSVPs</h1>
-        <p className="mt-2 text-[#64708c]">Monitor who is coming and track form submissions.</p>
+        <p className="mt-2 text-muted-foreground">Monitor who is coming and track form submissions.</p>
       </div>
 
       <div className="max-w-6xl mx-auto mt-8 flex flex-col gap-8">
         
         {/* Top Level Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl p-6 border border-[#cbd5e8] shadow-sm flex flex-col items-center justify-center text-center">
+          <div className="bg-card rounded-2xl p-6 border border-border shadow-sm flex flex-col items-center justify-center text-center">
             <span className="text-4xl font-black text-[#5579bd]">{totalRSVPs}</span>
-            <span className="text-xs uppercase font-bold tracking-widest text-[#64708c] mt-2">Total Submissions</span>
+            <span className="text-xs uppercase font-bold tracking-widest text-muted-foreground mt-2">Total Submissions</span>
           </div>
           
-          <div className="bg-white rounded-2xl p-6 border border-[#cbd5e8] shadow-sm md:col-span-2">
+          <div className="bg-card rounded-2xl p-6 border border-border shadow-sm md:col-span-2">
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#171d52] mb-4 border-b border-gray-100 pb-2">Submissions by Form</h3>
             {countsByForm.length === 0 ? (
               <p className="text-sm text-gray-500">No forms linked to this event.</p>
@@ -181,7 +181,7 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
               <div className="flex flex-col gap-3">
                 {countsByForm.map((cf, i) => (
                   <div key={i} className="flex justify-between items-center text-sm">
-                    <span className="font-medium text-[#64708c]">{cf.title}</span>
+                    <span className="font-medium text-muted-foreground">{cf.title}</span>
                     <span className="bg-[#e9eef8] text-[#5579bd] px-3 py-1 rounded-full font-bold">{cf.count}</span>
                   </div>
                 ))}
@@ -191,8 +191,8 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
         </div>
 
         {/* Master List */}
-        <div className="bg-white rounded-2xl border border-[#cbd5e8] shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 bg-[#fbfcff]">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 bg-muted">
             <h2 className="font-bold text-[#171d52]">Master RSVP List</h2>
           </div>
           
@@ -217,7 +217,7 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
                         <td className="px-6 py-4 font-bold text-[#171d52] whitespace-nowrap">
                           {sub.name}
                         </td>
-                        <td className="px-6 py-4 text-[#64708c] whitespace-nowrap">
+                        <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
                           {sub.email}
                         </td>
                         <td className="px-6 py-4">
@@ -226,7 +226,7 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
                           </span>
                         </td>
                         <td className="px-6 py-4 text-gray-500 whitespace-nowrap text-xs">
-                          {new Date(sub.created_at).toLocaleString()}
+                          {new Date(sub.created_at).toLocaleString('en-US', { timeZone: 'America/New_York' })}
                         </td>
                       </tr>
                     );

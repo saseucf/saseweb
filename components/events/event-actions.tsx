@@ -71,33 +71,31 @@ export default function EventActions({
     }
 
     return (
-        <div>
-            <div className="flex gap-2">
-                {status === "draft" && (
-                    <button
-                        type="button"
-                        onClick={handleDelete}
-                        disabled={isSubmitting}
-                        className="rounded-md border px-3 py-2 text-sm font-medium disabled:opacity-50"
-                    >
-                        Delete
-                    </button>
-                )}
+        <div className="flex flex-col w-full h-full justify-center">
+            {(status === "draft" || status === "cancelled") && (
+                <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={isSubmitting}
+                    className="sase-secondary-button w-full h-full flex items-center justify-center !text-red-600 !border-red-200 hover:!bg-red-50 text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs disabled:opacity-50"
+                >
+                    Delete
+                </button>
+            )}
 
-                {status === "published" && (
-                    <button
-                        type="button"
-                        onClick={handleCancel}
-                        disabled={isSubmitting}
-                        className="rounded-md border px-3 py-2 text-sm font-medium disabled:opacity-50"
-                    >
-                        Cancel
-                    </button>
-                )}
-            </div>
+            {status === "published" && (
+                <button
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={isSubmitting}
+                    className="sase-secondary-button w-full h-full flex items-center justify-center !text-red-600 !border-red-200 hover:!bg-red-50 text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs disabled:opacity-50"
+                >
+                    Cancel
+                </button>
+            )}
 
             {errorMessage && (
-                <p className="mt-2 text-sm text-destructive">
+                <p className="mt-1 text-[10px] text-red-600 text-center font-medium leading-tight">
                     {errorMessage}
                 </p>
             )}

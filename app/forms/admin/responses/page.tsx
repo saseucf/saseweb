@@ -122,42 +122,47 @@ function Responses() {
             </div>
 
             {submissions.length === 0 ? (
-                <p className="mt-8 text-gray-500">No responses have been submitted yet.</p>
+                <div className="sase-form-card mt-8">
+                    <p className="text-[#ACA39A] font-medium text-center">No responses have been submitted yet.</p>
+                </div>
             ) : (
-                <div className="sase-table-wrap">
-                    <table className="min-w-full border-collapse text-left text-sm">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="whitespace-nowrap border-b border-gray-300 px-4 py-3">Email</th>
-                                {form.schema.map((question) => (
-                                    <th key={question.id} className="min-w-48 border-b border-gray-300 px-4 py-3">
-                                        {question.label || "Untitled question"}
-                                    </th>
-                                ))}
-                                <th className="whitespace-nowrap border-b border-gray-300 px-4 py-3">Submitted</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {submissions.map((submission) => (
-                                <tr key={submission.id} className="odd:bg-white even:bg-gray-50">
-                                    <td className="whitespace-nowrap border-b border-gray-200 px-4 py-3 font-medium">
-                                        {submission.email || "Unknown"}
-                                    </td>
-                                    {form.schema.map((question) => {
-                                        const answer = submission.responses?.[question.id];
-                                        return (
-                                            <td key={question.id} className="border-b border-gray-200 px-4 py-3 align-top">
-                                                {Array.isArray(answer) ? answer.join(", ") : answer || "-"}
-                                            </td>
-                                        );
+                <div className="space-y-6 mt-8 max-w-4xl">
+                    {submissions.map((submission, index) => (
+                        <div key={submission.id} className="sase-form-card">
+                            <div className="flex flex-wrap justify-between items-center mb-6 pb-4 border-b border-[#D0D0CE] gap-4">
+                                <div>
+                                    <span className="inline-block bg-foreground text-white text-xs font-bold px-2 py-1 rounded mb-2">
+                                        Response {submissions.length - index}
+                                    </span>
+                                    <h3 className="font-bold text-lg text-foreground break-all">{submission.email || "Unknown"}</h3>
+                                </div>
+                                <span className="text-sm font-medium text-[#ACA39A] whitespace-nowrap">
+                                    {new Date(submission.created_at).toLocaleString('en-US', {
+                                        timeZone: 'America/New_York',
+                                        dateStyle: "medium",
+                                        timeStyle: "short"
                                     })}
-                                    <td className="whitespace-nowrap border-b border-gray-200 px-4 py-3">
-                                        {new Date(submission.created_at).toLocaleString()}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                </span>
+                            </div>
+                            
+                            <div className="space-y-6">
+                                {form.schema.map((question) => {
+                                    const answer = submission.responses?.[question.id];
+                                    const displayAnswer = Array.isArray(answer) ? answer.join(", ") : answer;
+                                    return (
+                                        <div key={question.id}>
+                                            <p className="font-semibold text-foreground mb-1.5">{question.label || "Untitled question"}</p>
+                                            <div className="bg-background p-3 rounded-lg border border-[#D0D0CE]">
+                                                <p className="text-muted-foreground whitespace-pre-wrap text-sm">
+                                                    {displayAnswer || <span className="italic text-[#ACA39A]">No answer provided</span>}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
         </main>
