@@ -114,7 +114,8 @@ export default async function AdminEventsPage() {
                                         <div className="flex items-start gap-2">
                                             <span className="font-semibold text-[#344674] min-w-[50px]">Time:</span>
                                             <span className="text-gray-600">
-                                                {new Date(event.start_time).toLocaleString(undefined, {
+                                                {new Date(event.start_time).toLocaleString('en-US', {
+                                                    timeZone: 'America/New_York',
                                                     weekday: 'short', month: 'short', day: 'numeric',
                                                     hour: 'numeric', minute: '2-digit'
                                                 })}

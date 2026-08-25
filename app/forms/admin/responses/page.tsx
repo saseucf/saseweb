@@ -137,7 +137,8 @@ function Responses() {
                                     <h3 className="font-bold text-lg text-foreground break-all">{submission.email || "Unknown"}</h3>
                                 </div>
                                 <span className="text-sm font-medium text-[#ACA39A] whitespace-nowrap">
-                                    {new Date(submission.created_at).toLocaleString(undefined, {
+                                    {new Date(submission.created_at).toLocaleString('en-US', {
+                                        timeZone: 'America/New_York',
                                         dateStyle: "medium",
                                         timeStyle: "short"
                                     })}

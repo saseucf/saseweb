@@ -110,12 +110,14 @@ export default function EventsClient({ events }: { events: Event[] }) {
                                         <div className="flex items-start gap-2 text-sm">
                                             <span className="font-semibold text-foreground min-w-[70px]">When:</span>
                                             <span className="text-muted-foreground">
-                                                {new Date(event.start_time).toLocaleString(undefined, {
+                                                {new Date(event.start_time).toLocaleString('en-US', {
+                                                    timeZone: 'America/New_York',
                                                     weekday: 'short', month: 'short', day: 'numeric',
                                                     hour: 'numeric', minute: '2-digit'
                                                 })}
                                                 {" - "}
-                                                {new Date(event.end_time).toLocaleTimeString(undefined, {
+                                                {new Date(event.end_time).toLocaleTimeString('en-US', {
+                                                    timeZone: 'America/New_York',
                                                     hour: 'numeric', minute: '2-digit'
                                                 })}
                                             </span>
@@ -257,7 +259,7 @@ function EventCalendar({ events }: { events: Event[] }) {
                                     <div>
                                         <p className="font-bold text-foreground text-sm">{e.title}</p>
                                         <p className="text-xs text-muted-foreground mt-1">
-                                            {new Date(e.start_time).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })} 
+                                            {new Date(e.start_time).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' })} 
                                             {" • "} <span className="font-semibold" style={{ color: getEventTypeColor(e.event_type) }}>{e.event_type}</span>
                                         </p>
                                     </div>
