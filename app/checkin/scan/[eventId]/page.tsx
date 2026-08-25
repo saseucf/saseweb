@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/checkin-supabase";
+import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import React from "react";
@@ -15,7 +15,6 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
   const [userId, setUserId] = useState<string | null>(null);
 
   const router = useRouter();
-  const supabase = createClient();
   const { eventId } = React.use(params);
 
   useEffect(() => {
@@ -47,7 +46,7 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
     };
 
     init();
-  }, [eventId, router, supabase]);
+  }, [eventId, router]);
 
   const handleCheckIn = async () => {
     if (!userId || !event) return;

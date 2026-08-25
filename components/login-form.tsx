@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FaDiscord } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
@@ -14,6 +14,19 @@ export function LoginForm() {
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const [checkingSession, setCheckingSession] = useState(true)
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                router.replace(redirectUrl)
+                return
+            }
+            setCheckingSession(false)
+        })
+    }, [router, redirectUrl])
+
+    if (checkingSession) return null
 
     const handlePasswordLogin = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()

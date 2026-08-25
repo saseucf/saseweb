@@ -1,5 +1,5 @@
 -- 1. Add role column to profiles
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user' NOT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'member' NOT NULL;
 
 -- 2. Create function to check if current user is an admin
 CREATE OR REPLACE FUNCTION public.is_admin()

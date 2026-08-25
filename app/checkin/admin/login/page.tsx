@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react";
-import { createClient } from "@/lib/checkin-supabase";
+import { useState, useEffect } from "react";
+import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2, ShieldAlert } from "lucide-react";
@@ -11,8 +11,39 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [checkingSession, setCheckingSession] = useState(true);
   const router = useRouter();
-  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const user = session?.user;
+      if (!user) {
+        setCheckingSession(false);
+        return;
+      }
+
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profileData?.role === 'admin') {
+        router.replace('/checkin/admin');
+      } else {
+        setCheckingSession(false);
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (checkingSession) {
+    return (
+      <div className="sase-login-page flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-white" />
+      </div>
+    );
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

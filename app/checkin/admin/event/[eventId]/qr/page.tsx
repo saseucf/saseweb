@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/checkin-supabase";
+import supabase from "@/lib/auth";
 import { QRCodeSVG } from 'qrcode.react';
 import React from "react";
 import { Loader2 } from "lucide-react";
@@ -11,8 +11,7 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [qrUrl, setQrUrl] = useState("");
-  
-  const supabase = createClient();
+
   const { eventId } = React.use(params);
 
   useEffect(() => {
@@ -33,7 +32,7 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
       setLoading(false);
     };
     init();
-  }, [eventId, supabase]);
+  }, [eventId]);
 
   if (loading) {
     return (

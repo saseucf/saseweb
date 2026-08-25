@@ -34,8 +34,6 @@ export default function GlobalNav() {
     window.history.pushState(null, "", targetHash || "/");
   };
 
-  // Determine if it's the member checkin login
-  const isCheckinLogin = pathname?.includes("/checkin/login");
   const isAdminLogin = pathname?.includes("/checkin/admin/login");
 
   useEffect(() => {
@@ -71,8 +69,8 @@ export default function GlobalNav() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // We don't render on checkin login pages to keep them focused
-  if (isCheckinLogin || isAdminLogin) return null;
+  // We don't render on the admin login page to keep it focused
+  if (isAdminLogin) return null;
 
   const isAdmin = role === "admin" && !viewAsUser;
   const isRealAdmin = role === "admin";
