@@ -13,8 +13,8 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SASE Web Dev - Fresh Start",
-  description: "A clean slate for the SASE UCF Web Dev team.",
+  title: "UCF SASE",
+  description: "Society of Asian Scientists and Engineers UCF Chapter",
   manifest: "/manifest.webmanifest",
 };
 

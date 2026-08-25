@@ -150,7 +150,7 @@ export default function AdminDashboard() {
           ) : (
             events.map((evt) => (
               <option key={evt.id} value={evt.id}>
-                {evt.title} ({new Date(evt.start_time).toLocaleDateString()})
+                {evt.title} ({new Date(evt.start_time).toLocaleDateString('en-US', { timeZone: 'America/New_York' })})
               </option>
             ))
           )}

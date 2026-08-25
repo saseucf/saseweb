@@ -72,7 +72,7 @@ export default function EventActions({
 
     return (
         <div className="flex flex-col w-full h-full justify-center">
-            {status === "draft" && (
+            {(status === "draft" || status === "cancelled") && (
                 <button
                     type="button"
                     onClick={handleDelete}
