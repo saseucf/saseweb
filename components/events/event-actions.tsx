@@ -77,7 +77,7 @@ export default function EventActions({
                     type="button"
                     onClick={handleDelete}
                     disabled={isSubmitting}
-                    className="sase-secondary-button w-full h-full flex items-center justify-center !text-red-600 !border-red-200 hover:!bg-red-50 !text-xs !py-2 disabled:opacity-50"
+                    className="sase-secondary-button w-full h-full flex items-center justify-center !text-red-600 !border-red-200 hover:!bg-red-50 text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs disabled:opacity-50"
                 >
                     Delete
                 </button>
@@ -88,7 +88,7 @@ export default function EventActions({
                     type="button"
                     onClick={handleCancel}
                     disabled={isSubmitting}
-                    className="sase-secondary-button w-full h-full flex items-center justify-center !text-red-600 !border-red-200 hover:!bg-red-50 !text-xs !py-2 disabled:opacity-50"
+                    className="sase-secondary-button w-full h-full flex items-center justify-center !text-red-600 !border-red-200 hover:!bg-red-50 text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs disabled:opacity-50"
                 >
                     Cancel
                 </button>

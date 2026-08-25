@@ -87,10 +87,10 @@ export default function GlobalNav() {
           className="h-auto w-[120px] md:w-[150px]"
         />
       </Link>
-      
+
       <div className="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar py-2">
         {loading ? (
-           <div className="w-16 h-4 bg-[#26355f] animate-pulse rounded"></div>
+          <div className="w-16 h-4 bg-[#26355f] animate-pulse rounded"></div>
         ) : isAdmin ? (
           <>
             <NavLink href="/" active={pathname === "/"}>Home</NavLink>
@@ -109,25 +109,24 @@ export default function GlobalNav() {
             <NavLink href="/checkin" active={!!pathname?.includes('/checkin') && !pathname?.includes('/admin')}>Check-in</NavLink>
           </>
         )}
-        
+
         {!role && !loading && (
           <Link className="border border-[#89abe3] rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#e9e8e8] hover:bg-[#e9e8e8] hover:text-[#141b4d] transition-colors" href="/login">Log in</Link>
         )}
         {role && !loading && (
           <div className="flex items-center gap-3">
             {isRealAdmin && (
-              <button 
+              <button
                 onClick={() => setViewAsUser(!viewAsUser)}
-                className={`text-[0.65rem] md:text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-colors ${
-                  viewAsUser 
-                  ? "bg-[#e9e8e8] text-[#141b4d] border-[#e9e8e8]" 
-                  : "text-[#89abe3] border-[#26355f] hover:border-[#89abe3]"
-                }`}
+                className={`text-[0.65rem] md:text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-colors ${viewAsUser
+                    ? "bg-[#e9e8e8] text-[#141b4d] border-[#e9e8e8]"
+                    : "text-[#89abe3] border-[#26355f] hover:border-[#89abe3]"
+                  }`}
               >
                 {viewAsUser ? "Admin View" : "View as User"}
               </button>
             )}
-            <button 
+            <button
               onClick={async () => { await supabase.auth.signOut(); window.location.reload(); }}
               className="border border-[#89abe3] rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#e9e8e8] hover:bg-red-500 hover:border-red-500 transition-colors"
             >
@@ -143,9 +142,8 @@ export default function GlobalNav() {
 function NavLink({ href, active, onClick, children }: { href: string; active: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }) {
   return (
     <Link
-      className={`text-[0.65rem] md:text-xs font-bold tracking-widest uppercase transition-colors whitespace-nowrap ${
-        active ? "text-[#89abe3]" : "text-[#e9e8e8] hover:text-[#89abe3]"
-      }`}
+      className={`text-[0.65rem] md:text-xs font-bold tracking-widest uppercase transition-colors whitespace-nowrap ${active ? "text-[#89abe3]" : "text-[#e9e8e8] hover:text-[#89abe3]"
+        }`}
       href={href}
       onClick={onClick}
     >

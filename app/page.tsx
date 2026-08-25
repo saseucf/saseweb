@@ -8,29 +8,38 @@ export default function Home() {
   return (
     <main className="sase-home">
       <AosInit />
-      {/* Hero Section */}
-      <div className="sase-sun" aria-hidden="true" />
-      <div className="sase-cloud sase-cloud-top" aria-hidden="true" />
-      <div className="sase-cloud sase-cloud-middle" aria-hidden="true" />
+      <section className="relative flex flex-col justify-center min-h-[95vh] pt-20 pb-0 overflow-hidden bg-[#141b4d]">
+        {/* Background Elements (z-0) */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          {/* Sun and Clouds */}
+          <div className="sase-sun" aria-hidden="true" style={{ top: '15%', right: '5%', position: 'absolute' }} />
+          <div className="sase-cloud sase-cloud-top" aria-hidden="true" style={{ top: '25%', right: '12%', position: 'absolute' }} />
+          <div className="sase-cloud sase-cloud-middle" aria-hidden="true" style={{ top: '55%', right: '40%', position: 'absolute' }} />
+        </div>
 
-      <section className="sase-hero relative z-10 flex flex-col justify-center">
-        <div className="sase-hero-copy pt-[10vh]" data-aos="fade-up">
-          <p className="sase-eyebrow">University of Central Florida</p>
-          <h1>Build your<br /><span>future together.</span></h1>
-          <p className="sase-intro">
-            Connect with a community of Asian scientists and engineers through
-            events, opportunities, and shared momentum.
-          </p>
-          <div className="sase-actions">
-            <Link href="/forms" className="sase-primary-button">Explore forms</Link>
-            <Link href="/events" className="sase-secondary-button border-[#89abe3] hover:border-[#dbc8b6] hover:text-[#dbc8b6]">See events <span aria-hidden="true">-&gt;</span></Link>
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 relative z-10 mb-[15vh] md:mb-[25vh]" data-aos="fade-up">
+          <div className="flex flex-col items-start gap-2 max-w-2xl">
+            <div className="flex items-center gap-4 md:gap-6 mb-4 md:pl-[60px]">
+              <Image 
+                src="/UCF SASE LOGO 26-27.png" 
+                alt="SASE Society of Asian Scientists & Engineers" 
+                width={700} 
+                height={300} 
+                className="w-[320px] md:w-[600px] object-contain drop-shadow-lg mix-blend-screen" 
+              />
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-4 mt-4 md:pl-[60px]">
+              <Link href="/forms" className="bg-[#89abe3] hover:bg-[#e9e8e8] text-[#141b4d] font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
+                Explore Forms
+              </Link>
+              <Link href="/events" className="bg-[#e9e8e8] hover:bg-[#89abe3] text-[#141b4d] font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
+                See Events
+              </Link>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Decorative Waves */}
-      <div className="sase-wave sase-wave-back" aria-hidden="true" />
-      <div className="sase-wave sase-wave-front" aria-hidden="true" />
 
       {/* About Section */}
       <section id="about" className="relative z-10 bg-[#f6f8fc] text-[#141b4d] py-24 px-6 md:px-12 mt-32">
@@ -50,7 +59,7 @@ export default function Home() {
           <h3 className="text-center text-[#89abe3] font-black text-4xl mb-16 tracking-tight" data-aos="fade-up">
             3 Core Values
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="200">
             {/* Value 1 */}
             <div className="bg-white rounded-2xl p-8 border border-[#cbd5e8] shadow-[0_12px_30px_rgba(23,29,82,0.06)] hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
@@ -113,7 +122,7 @@ export default function Home() {
             <div className="flex items-center gap-3 justify-center mb-6">
               <div className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent to-[#fbbf24]/50" />
               <span className="flex items-center gap-2 text-xs font-black tracking-[0.15em] uppercase text-[#fbbf24]">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
                 Platinum Sponsor
               </span>
               <div className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent to-[#fbbf24]/50" />
@@ -131,7 +140,7 @@ export default function Home() {
             <div className="flex items-center gap-3 justify-center mb-6">
               <div className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent to-[#d4af37]/50" />
               <span className="flex items-center gap-2 text-xs font-black tracking-[0.15em] uppercase text-[#d4af37]">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3l3.057-3L12 3.5 15.943 0 19 3l-3 7H8L5 3zm-1 8h16l-2 13H6L4 11z"/></svg>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3l3.057-3L12 3.5 15.943 0 19 3l-3 7H8L5 3zm-1 8h16l-2 13H6L4 11z" /></svg>
                 Gold Sponsor
               </span>
               <div className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent to-[#d4af37]/50" />

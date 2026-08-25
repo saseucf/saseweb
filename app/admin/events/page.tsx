@@ -141,25 +141,18 @@ export default async function AdminEventsPage() {
                                     </div>
                                 </div>
 
-                                <div className="mt-6 pt-4 border-t border-gray-100">
-                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                                <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col gap-3">
+                                    <div className="grid grid-cols-3 gap-3">
                                         <Link
                                             href={`/admin/events/${event.id}/edit`}
-                                            className="sase-secondary-button flex items-center justify-center !text-xs !py-2"
+                                            className="sase-secondary-button flex items-center justify-center text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs"
                                         >
                                             Edit
                                         </Link>
 
                                         <Link
-                                            href={`/checkin/admin/event/${event.id}/qr`}
-                                            className="sase-primary-button flex items-center justify-center !text-xs !py-2"
-                                        >
-                                            QR Code
-                                        </Link>
-
-                                        <Link
                                             href={`/admin/events/${event.id}/rsvps`}
-                                            className="sase-secondary-button flex items-center justify-center !text-xs !py-2"
+                                            className="sase-secondary-button flex items-center justify-center text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs"
                                         >
                                             RSVP List
                                         </Link>
@@ -169,6 +162,13 @@ export default async function AdminEventsPage() {
                                             status={event.status}
                                         />
                                     </div>
+
+                                    <Link
+                                        href={`/checkin/admin/event/${event.id}/qr`}
+                                        className="sase-primary-button w-full flex items-center justify-center text-center !py-3 !text-sm"
+                                    >
+                                        Show QR Code
+                                    </Link>
                                 </div>
                             </div>
                         ))}
