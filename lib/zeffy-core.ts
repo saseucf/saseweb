@@ -98,6 +98,17 @@ function nonNegativeInteger(value: unknown): number | null {
     : null;
 }
 
+function httpsUrl(value: unknown): string | null {
+  const candidate = nonEmptyString(value);
+  if (!candidate) return null;
+  try {
+    const url = new URL(candidate);
+    return url.protocol === "https:" ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 function parseQuestion(value: unknown): ZeffyQuestionAnswer | null {
   const item = record(value);
   const question = nonEmptyString(item?.question);
@@ -184,7 +195,7 @@ function parsePayment(value: unknown): ZeffyResult<ZeffyPayment | null> {
       refundStatus: nonEmptyString(payment.refund_status) ?? "unknown",
       campaignId,
       campaignTitle: nonEmptyString(payment.description),
-      receiptUrl: nonEmptyString(payment.receipt_url),
+      receiptUrl: httpsUrl(payment.receipt_url),
       buyer: {
         email: nonEmptyString(buyer?.email),
         firstName: nonEmptyString(buyer?.first_name),

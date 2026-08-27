@@ -288,3 +288,20 @@ test("rejects payments outside the configured campaign or currency", async () =>
     if (!result.ok) assert.equal(result.error.kind, "invalid_response");
   }
 });
+
+test("keeps only HTTPS receipt links", async () => {
+  const client = createZeffyClient({
+    apiKey: "secret-key",
+    campaignId: "campaign-1",
+    fetchImpl: async () =>
+      Response.json({
+        data: [payment({ receipt_url: "javascript:alert('unsafe')" })],
+        has_more: false,
+        next_cursor: null,
+      }),
+  });
+
+  const result = await client.listSuccessfulPayments();
+  assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.data[0].receiptUrl, null);
+});
