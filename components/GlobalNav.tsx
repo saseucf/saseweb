@@ -114,6 +114,7 @@ export default function GlobalNav() {
         <>
           <NavItem href="/" active={pathname === "/"}>Home</NavItem>
           <NavItem href="/admin/events" active={!!pathname?.includes('/admin/events')}>Manage Events</NavItem>
+          <NavItem href="/admin/membership" active={!!pathname?.includes('/admin/membership')}>Membership</NavItem>
           <NavItem href="/forms/admin" active={!!pathname?.includes('/forms/admin')}>Manage Forms</NavItem>
           <NavItem href="/admin/demographics" active={!!pathname?.includes('/admin/demographics')}>Demographics</NavItem>
           <NavItem href="/checkin/admin" active={!!pathname?.includes('/checkin/admin')}>Check-in Admin</NavItem>
@@ -254,4 +255,3 @@ export default function GlobalNav() {
     </nav>
   );
 }
-
