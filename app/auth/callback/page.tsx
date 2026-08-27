@@ -15,7 +15,7 @@ function AuthCallback() {
         // component mounts, the client has already parsed the access/refresh
         // tokens out of the URL hash and stored the session. getSession() just
         // waits for that internal init to finish and hands us the result.
-        supabase.auth.getSession().then(({ data }) => {
+        supabase.auth.getSession().then(async ({ data }) => {
             const user = data.session?.user
             if (user) {
                 try {
@@ -24,6 +24,17 @@ function AuthCallback() {
                     // ignore localStorage errors
                 }
                 window.dispatchEvent(new CustomEvent("sase:auth", { detail: { user } }))
+
+                const { data: profile } = await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("id", user.id)
+                    .single()
+
+                if (profile && !profile.name_confirmed) {
+                    router.replace(`/confirm-name?redirect=${encodeURIComponent(redirectUrl)}`)
+                    return
+                }
 
                 router.replace(redirectUrl)
                 return

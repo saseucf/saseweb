@@ -47,7 +47,7 @@ export default function GlobalNav() {
   const isAdminLogin = pathname?.includes("/checkin/admin/login");
 
   useEffect(() => {
-    const checkUser = async (userId: string | undefined) => {
+    const checkUser = async (userId: string | undefined, event?: string) => {
       if (!userId) {
         setRole(null);
         setLoading(false);
@@ -55,19 +55,32 @@ export default function GlobalNav() {
       }
       const { data: profile } = await supabase
         .from("profiles")
-        .select("role")
+        .select("*")
         .eq("id", userId)
         .single();
       setRole(profile?.role ?? "member");
       setLoading(false);
+
+      // On a fresh sign-in (OAuth or password), redirect to the name-
+      // confirmation page if the user hasn't confirmed their name yet.
+      // Using SIGNED_IN (not INITIAL_SESSION / TOKEN_REFRESHED) so this
+      // only fires once per actual login, not on every page load.
+      if (
+        event === "SIGNED_IN" &&
+        profile &&
+        profile.name_confirmed === false &&
+        window.location.pathname !== "/confirm-name"
+      ) {
+        window.location.href = `/confirm-name?redirect=${encodeURIComponent(window.location.pathname)}`;
+      }
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       checkUser(session?.user?.id);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      checkUser(session?.user?.id);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      checkUser(session?.user?.id, event);
     });
 
     return () => subscription.unsubscribe();

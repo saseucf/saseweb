@@ -20,8 +20,14 @@ CREATE TABLE public.profiles (
     year TEXT NOT NULL,
     school TEXT NOT NULL,
     role TEXT DEFAULT 'member' NOT NULL,
+    -- Names auto-filled from OAuth metadata are only a best guess (see
+    -- handle_new_user() below). This starts FALSE for new signups so the
+    -- app can prompt the user to confirm/edit their name once; it's set
+    -- TRUE after they do.
+    name_confirmed BOOLEAN DEFAULT FALSE NOT NULL,
     grad_date DATE,
     shirt_size TEXT,
+    phone_number TEXT,
     resume_url TEXT,
     github_url TEXT,
     linkedin_url TEXT,
@@ -46,13 +52,14 @@ CREATE POLICY "Users can update their own profile"
 -- Function to automatically create a profile when a new user signs up.
 --
 -- Different signup paths give us different pieces of a name, and none of
--- them currently give us first_name/last_name directly:
---   - Email/password (register-form.tsx)      -> only a "username"
---   - Discord OAuth (login-form.tsx)           -> a single display name,
---                                                  exposed by Supabase as
---                                                  full_name / name / user_name
--- So we pick the best available signal, auto-fill first/last name from it,
--- and let the user correct it later on /profile.
+-- them are fully reliable:
+--   - Google OAuth    -> structured given_name / family_name (reliable)
+--   - Discord OAuth    -> only a single display name, exposed by Supabase as
+--                          full_name / name / user_name (no real last name)
+--   - Email/password   -> only a "username"
+-- We pick the best available signal to auto-fill first/last name, but since
+-- it's only ever a guess, name_confirmed starts FALSE and the app prompts
+-- the user to confirm/edit it once after signup (see /confirm-name).
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -61,26 +68,27 @@ DECLARE
     derived_last_name TEXT;
     space_pos INT;
 BEGIN
-    -- 1. Pick a display name from whatever metadata is actually available,
-    --    in priority order, falling back to a generic placeholder.
-    display_name := COALESCE(
-        NULLIF(TRIM(NEW.raw_user_meta_data->>'first_name'), ''),
-        NULLIF(TRIM(NEW.raw_user_meta_data->>'full_name'), ''),
-        NULLIF(TRIM(NEW.raw_user_meta_data->>'name'), ''),
-        NULLIF(TRIM(NEW.raw_user_meta_data->>'username'), ''),
-        NULLIF(TRIM(NEW.raw_user_meta_data->>'user_name'), ''),
-        'New Member'
-    );
-
-    -- 2. If a real first_name/last_name pair was explicitly provided
-    --    (not currently true for either signup path, but kept for the
-    --    future), use it as-is instead of splitting anything.
-    IF NEW.raw_user_meta_data ? 'first_name' AND NEW.raw_user_meta_data ? 'last_name' THEN
+    -- 1. Google gives structured given_name/family_name directly - prefer
+    --    that over splitting a single display name.
+    -- 2. A real first_name/last_name pair, if explicitly provided.
+    -- 3. Otherwise fall back to splitting whatever single display name is
+    --    available, in priority order, on its first space.
+    --    "Jane Doe" -> "Jane" / "Doe". "kevin" -> "kevin" / "".
+    IF NULLIF(TRIM(NEW.raw_user_meta_data->>'given_name'), '') IS NOT NULL THEN
+        derived_first_name := TRIM(NEW.raw_user_meta_data->>'given_name');
+        derived_last_name := COALESCE(NULLIF(TRIM(NEW.raw_user_meta_data->>'family_name'), ''), '');
+    ELSIF NEW.raw_user_meta_data ? 'first_name' AND NEW.raw_user_meta_data ? 'last_name' THEN
         derived_first_name := NEW.raw_user_meta_data->>'first_name';
         derived_last_name := NEW.raw_user_meta_data->>'last_name';
     ELSE
-        -- 3. Otherwise split the single display name on its first space.
-        --    "Jane Doe" -> "Jane" / "Doe". "kevin" -> "kevin" / "".
+        display_name := COALESCE(
+            NULLIF(TRIM(NEW.raw_user_meta_data->>'full_name'), ''),
+            NULLIF(TRIM(NEW.raw_user_meta_data->>'name'), ''),
+            NULLIF(TRIM(NEW.raw_user_meta_data->>'username'), ''),
+            NULLIF(TRIM(NEW.raw_user_meta_data->>'user_name'), ''),
+            'New Member'
+        );
+
         space_pos := POSITION(' ' IN display_name);
         IF space_pos > 0 THEN
             derived_first_name := SUBSTRING(display_name FROM 1 FOR space_pos - 1);
@@ -91,7 +99,7 @@ BEGIN
         END IF;
     END IF;
 
-    INSERT INTO public.profiles (id, first_name, last_name, email, major, year, school)
+    INSERT INTO public.profiles (id, first_name, last_name, email, major, year, school, name_confirmed)
     VALUES (
         NEW.id,
         derived_first_name,
@@ -99,7 +107,8 @@ BEGIN
         NEW.email,
         COALESCE(NEW.raw_user_meta_data->>'major', ''),
         COALESCE(NEW.raw_user_meta_data->>'year', ''),
-        COALESCE(NEW.raw_user_meta_data->>'school', '')
+        COALESCE(NEW.raw_user_meta_data->>'school', ''),
+        FALSE
     );
     RETURN NEW;
 END;
