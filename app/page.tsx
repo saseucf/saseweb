@@ -59,7 +59,7 @@ export default function Home() {
             Welcome to the UCF <span className="text-[#89abe3]">SASE</span> Website
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-            Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage scientific and engineering professionals achieve their full potential. The University of Central Florida SASE Chapter was founded in 2020, shortly before the pandemic. With only 4 years under our belt, we have made tremendous strides towards the development of our members centered around core values of career, diversity, and service. Our events and programs not only advance professional pursuits, but also foster a supportive community that celebrates each and every member’s story.
+            Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage scientific and engineering professionals achieve their full potential. The University of Central Florida SASE Chapter was founded in 2020, shortly before the pandemic. With only 5 years under our belt, we have made tremendous strides towards the development of our members centered around core values of career, diversity, and service. Our events and programs not only advance professional pursuits, but also foster a supportive community that celebrates each and every member’s story.
           </p>
         </div>
       </section>
@@ -125,7 +125,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Platinum */}
           <div className="mb-10">
             <div className="flex items-center gap-3 justify-center mb-6">
               <div className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent to-[#fbbf24]/50" />
@@ -139,24 +138,6 @@ export default function Home() {
               <a href="https://www.blueorigin.com" target="_blank" rel="noopener noreferrer"
                 className="group bg-card/5 hover:bg-card/10 border border-white/10 hover:border-[#89abe3]/50 rounded-2xl p-8 md:p-12 transition-all duration-300 hover:shadow-[0_0_40px_rgba(137,171,227,0.15)] hover:-translate-y-1 flex items-center justify-center">
                 <Image src="/blueorigin.png" alt="Blue Origin" width={260} height={100} className="object-contain brightness-90 group-hover:brightness-110 transition-all duration-300" />
-              </a>
-            </div>
-          </div>
-
-          {/* Gold */}
-          <div>
-            <div className="flex items-center gap-3 justify-center mb-6">
-              <div className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent to-[#d4af37]/50" />
-              <span className="flex items-center gap-2 text-xs font-black tracking-[0.15em] uppercase text-[#d4af37]">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3l3.057-3L12 3.5 15.943 0 19 3l-3 7H8L5 3zm-1 8h16l-2 13H6L4 11z" /></svg>
-                Gold Sponsor
-              </span>
-              <div className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent to-[#d4af37]/50" />
-            </div>
-            <div className="flex justify-center">
-              <a href="https://patelconservatory.org" target="_blank" rel="noopener noreferrer"
-                className="group bg-card/5 hover:bg-card/10 border border-white/10 hover:border-[#d4af37]/50 rounded-2xl p-8 md:p-12 transition-all duration-300 hover:shadow-[0_0_40px_rgba(212,175,55,0.15)] hover:-translate-y-1 flex items-center justify-center">
-                <Image src="/patel.png" alt="Patel Conservatory" width={220} height={100} className="object-contain brightness-90 group-hover:brightness-110 transition-all duration-300" />
               </a>
             </div>
           </div>
