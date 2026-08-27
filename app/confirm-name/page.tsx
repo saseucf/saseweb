@@ -4,11 +4,12 @@ import { FormEvent, Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import supabase from "@/lib/auth"
+import { getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 function ConfirmName() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const redirectUrl = searchParams.get("redirect") || "/"
+    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"))
 
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")

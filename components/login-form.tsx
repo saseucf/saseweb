@@ -5,11 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { FaDiscord } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
 import supabase from "@/lib/auth"
+import { getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 export function LoginForm() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const redirectUrl = searchParams.get("redirect") || "/"
+    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"))
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")

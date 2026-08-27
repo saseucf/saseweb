@@ -5,7 +5,7 @@
 - Local branch: `codex/zeffy-membership`
 - Intended base: current `origin/dev`; the feature branch was originally cut from `302d9b7`
 - Local head: the commit containing this packet; run `git rev-parse --short HEAD` for its current hash
-- Branch shape: 10 commits ahead of and 17 commits behind current `origin/dev`; sync with `dev` before opening the pull request
+- Branch shape: 11 commits ahead of and 17 commits behind current `origin/dev`; sync with `dev` before opening the pull request
 - Conflict check: Git merge simulation is clean against current `origin/dev` despite the divergence
 - Delivery state: local only; no push, pull request, deployment, or Vercel environment change was made
 - Unrelated work: the untracked `style.md` file was not edited or committed
@@ -43,7 +43,7 @@ Signed-in members can see their real membership status and open the official $25
 
 ## What Changed
 
-The branch changes 23 files: 14 product/data implementation files, 3 automated test files, 4 configuration/dependency files, and 2 review/product-context documents. The large lockfile diff is mainly the safe Next 15 patch upgrade and transitive vulnerability updates.
+The branch changes 25 files: 15 product/data implementation files, 4 automated test files, 4 configuration/dependency files, and 2 review/product-context documents. The large lockfile diff is mainly the safe Next 15 patch upgrade and transitive vulnerability updates.
 
 The branch does one coherent thing: it adds a manual, auditable membership-payment reconciliation flow. It deliberately does not add webhooks, automatic matching, embedded checkout, refund automation, a Stripe integration, or a new membership-tier model.
 
@@ -65,6 +65,7 @@ Known follow-ups, not hidden requirements:
 - With no webhook, an external refund does not automatically unset `paid_member`; an officer must review and unlink it.
 - `paid_member` is not school-year-specific. Before the next renewal cycle, derive an active entitlement from membership-period records or add an explicit active-period field.
 - Provider polling currently happens when the admin opens or refreshes the workspace. A future webhook/ingestion table can remove that dependency.
+- Browser authentication now uses Supabase's cookie-backed SSR client so client and server routes share one session. Existing sessions created by the old local-storage client may need to sign in once after deployment.
 - The remaining npm audit finding is Next 15's bundled PostCSS. npm only offers a breaking Next 16 upgrade; that migration was intentionally kept out of this release.
 
 ## Cast of Entities
@@ -101,6 +102,8 @@ The three files in `tests/` are the fastest executable description of the intend
 ## Responsibility and Security Review
 
 - Zeffy API access stays in server-only modules; the only public Zeffy value is the hosted checkout URL.
+- Browser and server authentication now share Supabase's cookie-backed session instead of maintaining incompatible local-storage and cookie sessions.
+- Auth redirect parameters accept only bounded internal paths and cannot point back to login/callback/profile-confirmation entry pages.
 - Admin page protection is backed by route-level authorization and database-level `is_admin()` checks.
 - Members cannot set their own `paid_member` flag through the normal profile update policy.
 - Matching and profile mutation happen in one database transaction.
@@ -114,7 +117,7 @@ The main code seam to watch is `profiles.paid_member`: it remains a convenient c
 
 ## Proof Already Run
 
-- `npm test`: 23 of 23 tests pass. These cover authorization short-circuiting, unmatched filtering, unpaid-member selection, eligibility/refund rejection, trusted payment re-fetch, conflict mapping, unlink validation, safe HTTP errors, checkout-host validation, API-key alias resolution, missing configuration, pagination, malformed provider data, campaign/currency isolation, and HTTPS receipts.
+- `npm test`: 26 of 26 tests pass. These cover authorization short-circuiting, unmatched filtering, unpaid-member selection, eligibility/refund rejection, trusted payment re-fetch, conflict mapping, unlink validation, safe HTTP errors, auth-loop/open-redirect protection, checkout-host validation, API-key alias resolution, missing configuration, pagination, malformed provider data, campaign/currency isolation, and HTTPS receipts.
 - `npm run typecheck`: passes.
 - `npx eslint app components lib tests`: passes for application source and tests.
 - `git diff --check`: passes.
@@ -124,6 +127,7 @@ The main code seam to watch is `profiles.paid_member`: it remains a convenient c
 - Git merge simulation reports no current textual conflict with `origin/dev` or `origin/main`.
 - Supabase migration was applied and its table, policies, functions, indexes, and normalized `paid_member` contract were verified.
 - `ZEFFY_API` authenticated against the live Zeffy campaigns endpoint. The API returned one active USD campaign, `UCF SASE Dues`, and the payment client successfully loaded its current empty queue without exposing buyer data or the key.
+- Fresh browser-session click-throughs covered Home, About, Events, Programs, Team, Forms, Membership, both check-in portals, invalid member/admin login handling, auth callback/profile-confirmation redirects, theme switching, and 375-pixel mobile navigation. No console errors, warnings, horizontal overflow, external redirect, or `history.replaceState` failure remained in the clean session.
 
 Potential false-green areas:
 
@@ -176,8 +180,9 @@ Then verify:
 7. `32fb521` — member dues page and navigation
 8. `7c8e8cf` — dependency, accessibility, and release hardening
 9. `a5950f0` — this local review packet
-10. Final `HEAD` — `ZEFFY_API` compatibility, campaign configuration, and live provider validation
+10. `9d5e57d` — `ZEFFY_API` compatibility, campaign configuration, and live provider validation
+11. Final `HEAD` — cookie-backed browser authentication and redirect-loop protection
 
 ## Agent Read
 
-Clean enough for your local review. The architecture is intentionally conservative for a one-day MVP: humans make identity decisions, the server verifies payment facts, and the database preserves an audit trail. Do not treat it as live-complete until the Zeffy credentials and authenticated browser checklist are verified. No split is recommended before review; the phase commits already make the large branch inspectable.
+Clean enough for your local review. The architecture is intentionally conservative for a one-day MVP: humans make identity decisions, the server verifies payment facts, and the database preserves an audit trail. The signed-out and public browser story is clean; do not treat authenticated member/admin UI verification as complete until a real browser session finishes that checklist. No split is recommended before review; the phase commits already make the large branch inspectable.

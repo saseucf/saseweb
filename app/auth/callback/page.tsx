@@ -4,17 +4,17 @@ import { Suspense, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 import supabase from "@/lib/auth"
+import { getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 function AuthCallback() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const redirectUrl = searchParams.get("redirect") || "/"
+    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"))
 
     useEffect(() => {
-        // supabase-js uses the "implicit" flow by default, so by the time this
-        // component mounts, the client has already parsed the access/refresh
-        // tokens out of the URL hash and stored the session. getSession() just
-        // waits for that internal init to finish and hands us the result.
+        // The cookie-backed browser client completes the PKCE callback during
+        // its initialization. getSession() waits for that exchange and returns
+        // the same session that protected Server Components can read.
         supabase.auth.getSession().then(async ({ data }) => {
             const user = data.session?.user
             if (user) {
