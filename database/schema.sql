@@ -248,21 +248,3 @@ CREATE TRIGGER on_event_attendance_created
 -- ALTER TABLE public.forms ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.events(id) ON DELETE SET NULL;
 
 
--- ==========================================
--- 7. VERIFICATION CODES TABLE (Email OTP)
--- ==========================================
-DROP TABLE IF EXISTS public.verification_codes CASCADE;
-CREATE TABLE public.verification_codes (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    email TEXT NOT NULL,
-    code TEXT NOT NULL,
-    expires_at TIMESTAMPTZ NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    UNIQUE(user_id)  -- one pending code per user at a time
-);
-
--- Only the service-role key (used server-side) can read/write this table.
--- Regular users should never directly access OTPs.
-ALTER TABLE public.verification_codes ENABLE ROW LEVEL SECURITY;
--- No RLS policies: the API route uses the service-role key which bypasses RLS.
