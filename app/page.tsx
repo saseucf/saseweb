@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Briefcase, HandHeart, HeartHandshake } from "lucide-react";
 import Leaderboard from "@/components/Leaderboard";
 import AosInit from "@/components/AosInit";
-import WaveDivider from "@/components/WaveDivider";
 
 export default function Home() {
   return (
@@ -52,8 +51,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <WaveDivider />
 
       {/* About Section */}
       <section id="about" className="relative z-10 bg-background text-foreground py-24 px-6 md:px-12 mt-32">
