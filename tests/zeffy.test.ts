@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { createZeffyClient } from "../lib/zeffy-core";
+import { createZeffyClient, resolveZeffyApiKey } from "../lib/zeffy-core";
 
 function payment(overrides: Record<string, unknown> = {}) {
   return {
@@ -27,6 +27,16 @@ function payment(overrides: Record<string, unknown> = {}) {
   };
 }
 
+test("resolves the configured Zeffy API key without exposing it to the client", () => {
+  assert.equal(resolveZeffyApiKey({ ZEFFY_API: " current-key " }), "current-key");
+  assert.equal(
+    resolveZeffyApiKey({ ZEFFY_API: " current-key ", ZEFFY_API_KEY: "legacy-key" }),
+    "current-key",
+  );
+  assert.equal(resolveZeffyApiKey({ ZEFFY_API_KEY: " legacy-key " }), "legacy-key");
+  assert.equal(resolveZeffyApiKey({ ZEFFY_API: " ", ZEFFY_API_KEY: " " }), undefined);
+});
+
 test("reports missing configuration without making a request", async () => {
   let requests = 0;
   const client = createZeffyClient({
@@ -38,7 +48,7 @@ test("reports missing configuration without making a request", async () => {
 
   assert.deepEqual(client.getConfiguration(), {
     configured: false,
-    missing: ["ZEFFY_API_KEY", "ZEFFY_CAMPAIGN_ID"],
+    missing: ["ZEFFY_API", "ZEFFY_CAMPAIGN_ID"],
   });
   const result = await client.listSuccessfulPayments();
   assert.equal(result.ok, false);

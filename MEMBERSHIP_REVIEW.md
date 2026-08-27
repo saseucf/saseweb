@@ -3,13 +3,13 @@
 ## Status
 
 - Local branch: `codex/zeffy-membership`
-- Intended base: `origin/dev` at `302d9b7`
+- Intended base: current `origin/dev`; the feature branch was originally cut from `302d9b7`
 - Local head: the commit containing this packet; run `git rev-parse --short HEAD` for its current hash
-- Branch shape: 9 commits ahead of `origin/dev`, 0 commits behind
-- Conflict check: Git merge simulation is clean against current `origin/dev` and `origin/main`
+- Branch shape: 10 commits ahead of and 17 commits behind current `origin/dev`; sync with `dev` before opening the pull request
+- Conflict check: Git merge simulation is clean against current `origin/dev` despite the divergence
 - Delivery state: local only; no push, pull request, deployment, or Vercel environment change was made
 - Unrelated work: the untracked `style.md` file was not edited or committed
-- Live provider state: unverified until `ZEFFY_API_KEY` and `ZEFFY_CAMPAIGN_ID` are supplied
+- Live provider state: `ZEFFY_API` authentication and the empty live payment queue were verified; the discovered campaign ID still needs to be configured in each deployment environment
 
 ## Reviewer FAQ
 
@@ -61,7 +61,7 @@ Locked for this release:
 
 Known follow-ups, not hidden requirements:
 
-- Add Zeffy credentials and campaign ID in the deployment environment.
+- Add `ZEFFY_API` and the documented campaign ID in each deployment environment.
 - With no webhook, an external refund does not automatically unset `paid_member`; an officer must review and unlink it.
 - `paid_member` is not school-year-specific. Before the next renewal cycle, derive an active entitlement from membership-period records or add an explicit active-period field.
 - Provider polling currently happens when the admin opens or refreshes the workspace. A future webhook/ingestion table can remove that dependency.
@@ -114,7 +114,7 @@ The main code seam to watch is `profiles.paid_member`: it remains a convenient c
 
 ## Proof Already Run
 
-- `npm test`: 22 of 22 tests pass. These cover authorization short-circuiting, unmatched filtering, unpaid-member selection, eligibility/refund rejection, trusted payment re-fetch, conflict mapping, unlink validation, safe HTTP errors, checkout-host validation, missing configuration, pagination, malformed provider data, campaign/currency isolation, and HTTPS receipts.
+- `npm test`: 23 of 23 tests pass. These cover authorization short-circuiting, unmatched filtering, unpaid-member selection, eligibility/refund rejection, trusted payment re-fetch, conflict mapping, unlink validation, safe HTTP errors, checkout-host validation, API-key alias resolution, missing configuration, pagination, malformed provider data, campaign/currency isolation, and HTTPS receipts.
 - `npm run typecheck`: passes.
 - `npx eslint app components lib tests`: passes for application source and tests.
 - `git diff --check`: passes.
@@ -123,10 +123,11 @@ The main code seam to watch is `profiles.paid_member`: it remains a convenient c
 - Protected-route checks confirmed `/membership` and `/admin/membership` redirect signed-out users to login.
 - Git merge simulation reports no current textual conflict with `origin/dev` or `origin/main`.
 - Supabase migration was applied and its table, policies, functions, indexes, and normalized `paid_member` contract were verified.
+- `ZEFFY_API` authenticated against the live Zeffy campaigns endpoint. The API returned one active USD campaign, `UCF SASE Dues`, and the payment client successfully loaded its current empty queue without exposing buyer data or the key.
 
 Potential false-green areas:
 
-- A real Zeffy payment list cannot be exercised until the API key and campaign ID exist.
+- The live campaign currently has no successful payments, so the real payment-object shape and end-to-end assignment flow remain unverified until the first payment exists.
 - Authenticated paid/unpaid member states and the full admin assignment dialog were not browser-tested with live accounts; their domain logic is covered by automated tests.
 - No deployed Vercel environment or production flow was changed or tested.
 - CI has not run because the branch was not pushed.
@@ -146,8 +147,8 @@ Set values without committing secrets:
 
 ```text
 NEXT_PUBLIC_ZEFFY_MEMBERSHIP_URL=https://www.zeffy.com/en-US/ticketing/society-of-asian-scientists-and-engineerss-memberships
-ZEFFY_API_KEY=<secret>
-ZEFFY_CAMPAIGN_ID=<campaign id>
+ZEFFY_API=<secret>
+ZEFFY_CAMPAIGN_ID=c1f40aba-bcb9-4da8-9f6e-2cc57ad71e3a
 ZEFFY_EXPECTED_AMOUNT_CENTS=2500
 ZEFFY_EXPECTED_CURRENCY=USD
 MEMBERSHIP_PERIOD=2026-2027
@@ -174,7 +175,8 @@ Then verify:
 6. `0d49fd9` — admin membership workspace
 7. `32fb521` — member dues page and navigation
 8. `7c8e8cf` — dependency, accessibility, and release hardening
-9. Final `HEAD` — this local review packet
+9. `a5950f0` — this local review packet
+10. Final `HEAD` — `ZEFFY_API` compatibility, campaign configuration, and live provider validation
 
 ## Agent Read
 
