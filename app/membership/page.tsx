@@ -39,7 +39,7 @@ export default async function MembershipPage() {
     return (
       <main className="sase-page pt-[120px]">
         <div className="sase-page-header">
-          <p className="sase-eyebrow">UCF SASE / Membership</p>
+          <p className="sase-eyebrow !text-[#4266a4] dark:!text-[#89abe3]">UCF SASE / Membership</p>
           <h1>Membership dues</h1>
         </div>
         <section className="sase-content-section flex items-start gap-4 border border-destructive/35 bg-destructive/10 p-5" role="alert">
@@ -66,7 +66,7 @@ export default async function MembershipPage() {
   return (
     <main className="sase-page pt-[120px]">
       <div className="sase-page-header">
-        <p className="sase-eyebrow">UCF SASE / Membership</p>
+        <p className="sase-eyebrow !text-[#4266a4] dark:!text-[#89abe3]">UCF SASE / Membership</p>
         <h1>Membership dues</h1>
         <p>Complete annual dues through Zeffy, then an officer will confirm your membership.</p>
       </div>
@@ -75,7 +75,7 @@ export default async function MembershipPage() {
         <div className="grid gap-0 lg:grid-cols-[1fr_0.8fr]">
           <div className="px-5 py-7 sm:px-8 sm:py-9">
             <div className="flex items-start gap-4">
-              <span className={`grid size-11 shrink-0 place-items-center ${profile.paid_member ? "bg-emerald-500/10 text-emerald-600" : "bg-[#89abe3]/15 text-[#5579bd]"}`}>
+              <span className={`grid size-11 shrink-0 place-items-center ${profile.paid_member ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-[#89abe3]/15 text-[#4266a4] dark:text-[#89abe3]"}`}>
                 {profile.paid_member ? (
                   <CheckCircle2 className="size-6" aria-hidden="true" />
                 ) : (
@@ -83,7 +83,7 @@ export default async function MembershipPage() {
                 )}
               </span>
               <div>
-                <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-[#89abe3]">
+                <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-[#4266a4] dark:text-[#89abe3]">
                   Current status
                 </p>
                 <h2 id="membership-status-heading" className="mt-2 text-2xl font-black tracking-tight">
@@ -100,7 +100,7 @@ export default async function MembershipPage() {
             {!profile.paid_member ? (
               <ol className="mt-8 divide-y divide-border border-y border-border">
                 <li className="grid gap-2 py-4 sm:grid-cols-[32px_1fr]">
-                  <span className="font-mono text-sm font-bold text-[#89abe3]">01</span>
+                  <span className="font-mono text-sm font-bold text-[#4266a4] dark:text-[#89abe3]">01</span>
                   <span>
                     <strong className="block text-sm">Check your contact details</strong>
                     <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
@@ -109,7 +109,7 @@ export default async function MembershipPage() {
                   </span>
                 </li>
                 <li className="grid gap-2 py-4 sm:grid-cols-[32px_1fr]">
-                  <span className="font-mono text-sm font-bold text-[#89abe3]">02</span>
+                  <span className="font-mono text-sm font-bold text-[#4266a4] dark:text-[#89abe3]">02</span>
                   <span>
                     <strong className="block text-sm">Complete the hosted Zeffy form</strong>
                     <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
@@ -118,7 +118,7 @@ export default async function MembershipPage() {
                   </span>
                 </li>
                 <li className="grid gap-2 py-4 sm:grid-cols-[32px_1fr]">
-                  <span className="font-mono text-sm font-bold text-[#89abe3]">03</span>
+                  <span className="font-mono text-sm font-bold text-[#4266a4] dark:text-[#89abe3]">03</span>
                   <span>
                     <strong className="block text-sm">Wait for confirmation</strong>
                     <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
@@ -137,14 +137,14 @@ export default async function MembershipPage() {
             <p className="mt-3 text-xl font-black tracking-tight">{displayName}</p>
             <dl className="mt-5 space-y-4 text-sm">
               <div className="flex items-start gap-3">
-                <Mail className="mt-0.5 size-4 shrink-0 text-[#89abe3]" aria-hidden="true" />
+                <Mail className="mt-0.5 size-4 shrink-0 text-[#4266a4] dark:text-[#89abe3]" aria-hidden="true" />
                 <div className="min-w-0">
                   <dt className="sr-only">Email</dt>
                   <dd className="break-all">{profile.email}</dd>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Phone className="mt-0.5 size-4 shrink-0 text-[#89abe3]" aria-hidden="true" />
+                <Phone className="mt-0.5 size-4 shrink-0 text-[#4266a4] dark:text-[#89abe3]" aria-hidden="true" />
                 <div>
                   <dt className="sr-only">Phone number</dt>
                   <dd className="font-mono">{profile.phone_number || "No phone number saved"}</dd>
@@ -157,7 +157,7 @@ export default async function MembershipPage() {
                 <AlertCircle className="mt-0.5 size-4 shrink-0 text-amber-600" aria-hidden="true" />
                 <p className="leading-relaxed">
                   Add a phone number before paying to make manual matching easier.{" "}
-                  <Link href="/confirm-name?redirect=/membership" className="font-bold text-[#5579bd] underline underline-offset-2">
+                  <Link href="/confirm-name?redirect=/membership" className="font-bold text-[#4266a4] underline underline-offset-2 dark:text-[#89abe3]">
                     Update details
                   </Link>
                 </p>

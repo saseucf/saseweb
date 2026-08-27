@@ -98,7 +98,7 @@ export default function GlobalNav() {
 
     const NavItem = ({ href, active, onClick, children }: { href: string; active: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }) => (
       <Link
-        className={`${isMobile ? 'text-sm py-3 border-b border-border w-full block' : 'text-xs whitespace-nowrap'} font-bold tracking-widest uppercase transition-colors ${active ? "text-[#89abe3]" : "text-foreground hover:text-[#89abe3]"}`}
+        className={`${isMobile ? 'text-sm py-3 border-b border-border w-full block' : 'text-xs whitespace-nowrap'} font-bold tracking-widest uppercase transition-colors ${active ? "text-[#4266a4] dark:text-[#89abe3]" : "text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3]"}`}
         href={href}
         onClick={(e) => {
           if (onClick) onClick(e);
@@ -168,7 +168,7 @@ export default function GlobalNav() {
         {mounted && (
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 text-foreground hover:text-[#89abe3] transition-colors"
+            className="p-2 text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3] transition-colors"
             aria-label="Toggle Dark Mode"
           >
             {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
@@ -186,7 +186,7 @@ export default function GlobalNav() {
                 onClick={() => setViewAsUser(!viewAsUser)}
                 className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-colors ${viewAsUser
                     ? "bg-foreground text-background border-foreground"
-                    : "text-[#89abe3] border-border hover:border-[#89abe3]"
+                    : "text-[#4266a4] dark:text-[#89abe3] border-border hover:border-[#4266a4] dark:hover:border-[#89abe3]"
                   }`}
               >
                 {viewAsUser ? "Admin View" : "View as User"}
@@ -204,7 +204,7 @@ export default function GlobalNav() {
         {/* Mobile Check-in Button */}
         <Link 
           href={isAdmin ? "/checkin/admin" : "/checkin"}
-          className="lg:hidden bg-[#89abe3] text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-foreground transition-colors mr-1 flex items-center"
+          className="lg:hidden bg-[#89abe3] text-[#141b4d] px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors mr-1 flex items-center"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           Check-in
@@ -212,7 +212,7 @@ export default function GlobalNav() {
 
         {/* Mobile Hamburger Toggle */}
         <button 
-          className="lg:hidden p-2 text-foreground hover:text-[#89abe3] transition-colors"
+          className="lg:hidden p-2 text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3] transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle Menu"
         >
@@ -236,7 +236,7 @@ export default function GlobalNav() {
                     onClick={() => { setViewAsUser(!viewAsUser); setIsMobileMenuOpen(false); }}
                     className={`w-full text-center text-[10px] font-bold uppercase tracking-widest px-4 py-3 rounded-lg border transition-colors ${viewAsUser
                         ? "bg-foreground text-background border-foreground"
-                        : "text-[#89abe3] border-border hover:border-[#89abe3]"
+                        : "text-[#4266a4] dark:text-[#89abe3] border-border hover:border-[#4266a4] dark:hover:border-[#89abe3]"
                       }`}
                   >
                     {viewAsUser ? "Admin View" : "View as User"}

@@ -235,7 +235,7 @@ export default function MembershipReconciliation() {
 
       <div className="sase-page-header flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p className="sase-eyebrow">UCF SASE / Admin workspace</p>
+          <p className="sase-eyebrow !text-[#4266a4] dark:!text-[#89abe3]">UCF SASE / Admin workspace</p>
           <h1>Membership payments</h1>
           <p>Review Zeffy dues and assign each confirmed payment to one member.</p>
         </div>
@@ -277,7 +277,7 @@ export default function MembershipReconciliation() {
               type="checkbox"
               checked={includeMatched}
               onChange={(event) => setIncludeMatched(event.target.checked)}
-              className="size-4 accent-[#89abe3]"
+              className="size-4 accent-[#4266a4] dark:accent-[#89abe3]"
             />
             Show matched payments
           </label>
@@ -291,7 +291,7 @@ export default function MembershipReconciliation() {
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{error.message}</p>
               <button
                 type="button"
-                className="mt-4 text-xs font-extrabold uppercase tracking-widest text-[#89abe3] hover:underline"
+                className="mt-4 text-xs font-extrabold uppercase tracking-widest text-[#4266a4] hover:underline dark:text-[#89abe3]"
                 onClick={() => void loadWorkspace()}
               >
                 Try again
@@ -327,7 +327,7 @@ export default function MembershipReconciliation() {
                     key={payment.id}
                     type="button"
                     onClick={() => openPayment(payment.id)}
-                    className="grid w-full gap-3 px-5 py-5 text-left transition-colors duration-200 hover:bg-muted/55 focus-visible:bg-muted/55 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#89abe3] md:grid-cols-[1.35fr_1.2fr_.7fr_.8fr_auto] md:items-center md:gap-5"
+                    className="grid w-full gap-3 px-5 py-5 text-left transition-colors duration-200 hover:bg-muted/55 focus-visible:bg-muted/55 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#4266a4] dark:focus-visible:outline-[#89abe3] md:grid-cols-[1.35fr_1.2fr_.7fr_.8fr_auto] md:items-center md:gap-5"
                   >
                     <span className="min-w-0">
                       <span className="block truncate font-bold">{buyerName(payment)}</span>
@@ -362,7 +362,7 @@ export default function MembershipReconciliation() {
                         </>
                       )}
                     </span>
-                    <span className="flex items-center justify-between gap-2 text-xs font-extrabold uppercase tracking-widest text-[#89abe3] md:justify-end">
+                    <span className="flex items-center justify-between gap-2 text-xs font-extrabold uppercase tracking-widest text-[#4266a4] dark:text-[#89abe3] md:justify-end">
                       Review
                       <span aria-hidden="true">→</span>
                     </span>
@@ -371,7 +371,7 @@ export default function MembershipReconciliation() {
               </div>
             ) : (
               <div className="px-6 py-14 text-center">
-                <CheckCircle2 className="mx-auto size-7 text-[#89abe3]" aria-hidden="true" />
+                <CheckCircle2 className="mx-auto size-7 text-[#4266a4] dark:text-[#89abe3]" aria-hidden="true" />
                 <h3 className="mt-4 font-extrabold">The queue is clear</h3>
                 <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
                   There are no {includeMatched ? "Zeffy payments" : "unmatched payments"} to review.
@@ -398,7 +398,7 @@ export default function MembershipReconciliation() {
           <div className="flex max-h-[calc(100svh-2rem)] flex-col">
             <div className="flex items-start justify-between gap-5 border-b border-border px-5 py-5 sm:px-7">
               <div>
-                <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-[#89abe3]">
+                <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-[#4266a4] dark:text-[#89abe3]">
                   {selectedPayment.match ? "Matched payment" : "Payment needs review"}
                 </p>
                 <h2 className="mt-2 text-2xl font-black tracking-tight">{buyerName(selectedPayment)}</h2>
@@ -411,7 +411,7 @@ export default function MembershipReconciliation() {
                 aria-label="Close payment"
                 onClick={closeDialog}
                 disabled={saving}
-                className="grid min-h-11 min-w-11 place-items-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-[#89abe3] disabled:opacity-50"
+                className="grid min-h-11 min-w-11 place-items-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-[#4266a4] dark:focus-visible:outline-[#89abe3] disabled:opacity-50"
               >
                 <X className="size-5" aria-hidden="true" />
               </button>
@@ -435,7 +435,7 @@ export default function MembershipReconciliation() {
                         href={selectedPayment.receiptUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-1 font-bold text-[#89abe3] hover:underline"
+                        className="inline-flex items-center gap-1 font-bold text-[#4266a4] hover:underline dark:text-[#89abe3]"
                       >
                         Open receipt <ExternalLink className="size-3.5" aria-hidden="true" />
                       </a>
@@ -481,7 +481,7 @@ export default function MembershipReconciliation() {
                         maxLength={500}
                         onChange={(event) => setUnlinkReason(event.target.value)}
                         placeholder="Example: Assigned to the wrong member"
-                        className="mt-2 min-h-24 w-full resize-y border border-input bg-background px-3 py-3 text-sm outline-none focus:border-[#89abe3] focus:ring-2 focus:ring-[#89abe3]/25"
+                        className="mt-2 min-h-24 w-full resize-y border border-input bg-background px-3 py-3 text-sm outline-none focus:border-[#4266a4] focus:ring-2 focus:ring-[#4266a4]/25 dark:focus:border-[#89abe3] dark:focus:ring-[#89abe3]/25"
                       />
                       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                         This removes the local assignment. It does not refund or alter the Zeffy payment.
@@ -540,7 +540,7 @@ export default function MembershipReconciliation() {
                       value={search}
                       onChange={(event) => setSearch(event.target.value)}
                       placeholder="Search members"
-                      className="min-h-11 w-full border border-input bg-background py-2 pl-10 pr-3 text-sm outline-none focus:border-[#89abe3] focus:ring-2 focus:ring-[#89abe3]/25"
+                      className="min-h-11 w-full border border-input bg-background py-2 pl-10 pr-3 text-sm outline-none focus:border-[#4266a4] focus:ring-2 focus:ring-[#4266a4]/25 dark:focus:border-[#89abe3] dark:focus:ring-[#89abe3]/25"
                     />
                   </label>
 
@@ -554,7 +554,7 @@ export default function MembershipReconciliation() {
                             type="button"
                             aria-pressed={selected}
                             onClick={() => setSelectedMemberId(member.id)}
-                            className={`flex min-h-14 w-full items-center justify-between gap-4 border-b border-border px-4 py-3 text-left last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#89abe3] ${
+                            className={`flex min-h-14 w-full items-center justify-between gap-4 border-b border-border px-4 py-3 text-left last:border-b-0 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#4266a4] dark:focus-visible:outline-[#89abe3] ${
                               selected ? "bg-[#89abe3]/15" : "hover:bg-muted/55"
                             }`}
                           >
@@ -564,7 +564,7 @@ export default function MembershipReconciliation() {
                                 {member.email}{member.phoneNumber ? ` · ${member.phoneNumber}` : ""}
                               </span>
                             </span>
-                            <span className={`grid size-6 shrink-0 place-items-center border ${selected ? "border-[#89abe3] bg-[#89abe3] text-[#141b4d]" : "border-border"}`}>
+                            <span className={`grid size-6 shrink-0 place-items-center border ${selected ? "border-[#4266a4] bg-[#89abe3] text-[#141b4d] dark:border-[#89abe3]" : "border-border"}`}>
                               {selected ? <Check className="size-4" aria-hidden="true" /> : null}
                             </span>
                           </button>
