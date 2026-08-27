@@ -32,6 +32,7 @@ function FormCreator() {
   const [requiresLogin, setRequiresLogin] = useState(true);
   const [isOpen, setIsOpen] = useState(true);
   const [eventId, setEventId] = useState<string | null>(null);
+  const [formType, setFormType] = useState("");
   
   const [events, setEvents] = useState<SaseEvent[]>([]);
 
@@ -100,6 +101,7 @@ function FormCreator() {
       setRequiresLogin(data.requires_login);
       setIsOpen(data.is_open);
       setEventId(data.event_id || null);
+      setFormType(data.type || "");
       setQuestions(data.schema);
     }
 
@@ -273,6 +275,7 @@ function FormCreator() {
           requires_login: requiresLogin,
           is_open: isOpen,
           event_id: eventId || null,
+          type: formType.trim() !== "" ? formType.trim() : null,
         })
         .eq("id", formId);
 
@@ -292,6 +295,7 @@ function FormCreator() {
         requires_login: requiresLogin,
         is_open: isOpen,
         event_id: eventId || null,
+        type: formType.trim() !== "" ? formType.trim() : null,
         created_by: user.id,
       });
 
@@ -371,6 +375,17 @@ function FormCreator() {
                 </option>
               ))}
             </select>
+          </div>
+          
+          <div className="flex flex-col gap-1.5 md:col-span-2">
+            <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">Custom Form Type (Optional)</label>
+            <input
+              type="text"
+              placeholder="e.g. Application, Feedback (Used if not linked to an event)"
+              value={formType}
+              onChange={(e) => setFormType(e.target.value)}
+              className="border border-border rounded-xl px-4 py-3 text-sm focus:border-[#89abe3] focus:ring-2 focus:ring-[#e9eef8] outline-none transition-all"
+            />
           </div>
         </div>
 
