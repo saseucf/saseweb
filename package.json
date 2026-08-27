@@ -6,7 +6,10 @@
     "dev": "cross-env NODE_OPTIONS=--no-experimental-webstorage next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "tsx --test tests/**/*.test.ts",
+    "test:zeffy": "tsx --test tests/zeffy.test.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
@@ -29,6 +32,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "recharts": "^2.15.3",
+    "server-only": "^0.0.1",
     "simple-icons": "^15.10.0",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7"
@@ -45,6 +49,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "tw-animate-css": "^1.3.2",
     "typescript": "^5"
   }
