@@ -5,6 +5,12 @@ import { Trophy, Star, Award } from "lucide-react";
 
 const awards = [
     {
+        year: "2025–2026",
+        items: [
+            { icon: "award", text: "Hosted National SASE Southeast Regional Conference (SERC) 2026" },
+        ],
+    },
+    {
         year: "2024–2025",
         items: [
             { icon: "star", text: "SASE Inspire Awards: Honorable Mention for Most Improved Chapter" },

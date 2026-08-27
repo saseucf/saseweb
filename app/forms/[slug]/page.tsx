@@ -53,6 +53,18 @@ export default function FormResponsePage() {
           router.replace("/login");
           return;
         }
+
+        // Check for multiple submissions
+        const { count } = await supabase
+          .from("form_submissions")
+          .select("*", { count: "exact", head: true })
+          .eq("form_id", data.id)
+          .eq("user_id", user.id);
+
+        if (count && count > 0) {
+          setMessage("You have already submitted a response for this form.");
+          return;
+        }
       }
 
       setForm(data);
@@ -143,15 +155,14 @@ export default function FormResponsePage() {
       <div className="sase-page-header">
         <p className="sase-eyebrow">UCF SASE / Form</p>
         <h1>{form.title}</h1>
-        {form.description && <p>{form.description}</p>}
+        <Link
+          href="/forms"
+          className="sase-secondary-button mx-auto block max-w-max text-center mt-6"
+        >
+          &larr; Back to Forms
+        </Link>
+        {form.description && <p className="mt-4">{form.description}</p>}
       </div>
-
-      <Link
-        href="/forms"
-        className="sase-secondary-button mb-6 mx-auto block max-w-2xl text-center"
-      >
-        &larr; Back to Forms
-      </Link>
       
       <div className="bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#171d52] via-[#5579bd] to-[#171d52]"></div>

@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 
 export const metadata = {
     title: "Our Team – UCF SASE",
@@ -40,10 +40,11 @@ const mediaGBoard = [
     { name: "Tiffany Havo", role: "Public Relations", img: "/officerheadshot/tiff.jpg" },
 ];
 
+import { User } from "lucide-react";
+
 type Member = { name: string; role: string; img: string };
 
 function MemberCard({ member, size = "md" }: { member: Member; size?: "lg" | "md" | "sm" }) {
-    const imgSize = size === "lg" ? 180 : size === "sm" ? 100 : 140;
     const imgClass =
         size === "lg"
             ? "w-[140px] h-[140px] md:w-[180px] md:h-[180px]"
@@ -58,17 +59,10 @@ function MemberCard({ member, size = "md" }: { member: Member; size?: "lg" | "md
         <div className="group flex flex-col items-center text-center gap-3">
             <div className="relative">
                 <div
-                    className={`${imgClass} rounded-full overflow-hidden ring-4 ring-[#89abe3]/30 group-hover:ring-[#89abe3] transition-all duration-300 shadow-lg group-hover:shadow-[0_0_30px_rgba(137,171,227,0.4)] group-hover:-translate-y-1`}
+                    className={`${imgClass} rounded-full overflow-hidden ring-4 ring-[#89abe3]/30 group-hover:ring-[#89abe3] transition-all duration-300 shadow-lg group-hover:shadow-[0_0_30px_rgba(137,171,227,0.4)] group-hover:-translate-y-1 bg-muted flex items-center justify-center`}
                     style={{ transform: "translateY(0)" }}
                 >
-                    <Image
-                        src={member.img}
-                        alt={member.name}
-                        width={imgSize}
-                        height={imgSize}
-                        className="w-full h-full object-cover object-top transition-all duration-500"
-                        quality={90}
-                    />
+                    <User className={`text-muted-foreground ${size === "lg" ? "w-16 h-16 md:w-20 md:h-20" : size === "sm" ? "w-10 h-10" : "w-12 h-12 md:w-16 md:h-16"}`} />
                 </div>
                 {/* glow dot */}
                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#89abe3] opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_8px_#89abe3]" />
