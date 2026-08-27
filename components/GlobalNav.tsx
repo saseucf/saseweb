@@ -130,6 +130,7 @@ export default function GlobalNav() {
         <NavItem href="/programs" active={!!pathname?.includes('/programs')}>Programs</NavItem>
         <NavItem href="/team" active={!!pathname?.includes('/team')}>Team</NavItem>
         <NavItem href="/forms" active={!!pathname?.includes('/forms') && !pathname?.includes('/admin')}>Forms</NavItem>
+        <NavItem href="/membership" active={pathname === '/membership'}>Membership</NavItem>
         <NavItem href="/checkin" active={!!pathname?.includes('/checkin') && !pathname?.includes('/admin')}>Check-in</NavItem>
       </>
     );
@@ -158,7 +159,7 @@ export default function GlobalNav() {
       </Link>
 
       {/* Desktop Links */}
-      <div className="hidden md:flex flex-1 items-center gap-6 mx-8 justify-end">
+      <div className="hidden lg:flex flex-1 items-center gap-4 xl:gap-6 mx-8 justify-end">
         {renderLinks()}
       </div>
 
@@ -203,7 +204,7 @@ export default function GlobalNav() {
         {/* Mobile Check-in Button */}
         <Link 
           href={isAdmin ? "/checkin/admin" : "/checkin"}
-          className="md:hidden bg-[#89abe3] text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-foreground transition-colors mr-1 flex items-center"
+          className="lg:hidden bg-[#89abe3] text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-foreground transition-colors mr-1 flex items-center"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           Check-in
@@ -211,7 +212,7 @@ export default function GlobalNav() {
 
         {/* Mobile Hamburger Toggle */}
         <button 
-          className="md:hidden p-2 text-foreground hover:text-[#89abe3] transition-colors"
+          className="lg:hidden p-2 text-foreground hover:text-[#89abe3] transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle Menu"
         >
@@ -221,7 +222,7 @@ export default function GlobalNav() {
 
       {/* Mobile Dropdown Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-[100%] left-0 right-0 bg-background border-b border-border shadow-lg md:hidden flex flex-col p-6 animate-in slide-in-from-top-2">
+        <div className="absolute top-[100%] left-0 right-0 bg-background border-b border-border shadow-lg lg:hidden flex flex-col p-6 animate-in slide-in-from-top-2">
           {renderLinks(true)}
           
           <div className="mt-6 flex flex-col gap-4 sm:hidden">
