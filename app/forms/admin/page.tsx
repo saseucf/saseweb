@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "@/lib/auth";
+import { QRCodeCanvas } from "qrcode.react";
 
 type Form = {
   id: string;
@@ -19,6 +20,8 @@ export default function Admin() {
 
   const [forms, setForms] = useState<Form[]>([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  
+  const qrRefs = useRef<Record<string, HTMLCanvasElement | null>>({});
 
   function handleAddForm() {
     router.push("/forms/admin/formCreator");
@@ -26,6 +29,23 @@ export default function Admin() {
 
   function backToForms() {
     router.push("/forms");
+  }
+
+  function copyLink(slug: string) {
+    const url = `${window.location.origin}/forms/${slug}`;
+    navigator.clipboard.writeText(url);
+    alert("Link copied to clipboard!");
+  }
+
+  function downloadQR(slug: string) {
+    const canvas = qrRefs.current[slug];
+    if (canvas) {
+      const url = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `sase-form-${slug}-qr.png`;
+      a.click();
+    }
   }
 
   useEffect(() => {
@@ -143,26 +163,54 @@ export default function Admin() {
               Status: {form.is_open ? "Open" : "Closed"}
             </p>
 
-            <button
-              className="sase-primary-button"
-              onClick={() => editForm(form.id)}
-            >
-              Edit Form
-            </button>
+            <div className="flex flex-col gap-2 mt-2">
+              <button
+                className="sase-primary-button"
+                onClick={() => editForm(form.id)}
+              >
+                Edit Form
+              </button>
 
-            <button
-              className="sase-secondary-button"
-              onClick={() => viewResponses(form.id)}
-            >
-              View Responses
-            </button>
+              <button
+                className="sase-secondary-button"
+                onClick={() => viewResponses(form.id)}
+              >
+                View Responses
+              </button>
 
-            <button
-              className="sase-danger-button"
-              onClick={() => deleteForm(form.id)}
-            >
-              Delete Form
-            </button>
+              <div className="flex gap-2 w-full">
+                <button
+                  className="sase-secondary-button flex-1 text-xs px-2"
+                  onClick={() => copyLink(form.slug)}
+                >
+                  Copy Link
+                </button>
+                <button
+                  className="sase-secondary-button flex-1 text-xs px-2"
+                  onClick={() => downloadQR(form.slug)}
+                >
+                  Download QR
+                </button>
+              </div>
+              
+              {/* Hidden QR Code for downloading */}
+              <div className="hidden">
+                <QRCodeCanvas
+                  value={typeof window !== "undefined" ? `${window.location.origin}/forms/${form.slug}` : ""}
+                  size={512}
+                  ref={(el) => {
+                    qrRefs.current[form.slug] = el;
+                  }}
+                />
+              </div>
+
+              <button
+                className="sase-danger-button mt-2"
+                onClick={() => deleteForm(form.id)}
+              >
+                Delete Form
+              </button>
+            </div>
           </div>
         ))}
       </div>
