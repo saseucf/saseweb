@@ -114,6 +114,7 @@ export default function GlobalNav() {
         <>
           <NavItem href="/" active={pathname === "/"}>Home</NavItem>
           <NavItem href="/admin/users" active={!!pathname?.includes('/admin/users')}>Manage Users</NavItem>
+          <NavItem href="/admin/logs" active={!!pathname?.includes('/admin/logs')}>Master Logs</NavItem>
           <NavItem href="/admin/events" active={!!pathname?.includes('/admin/events')}>Manage Events</NavItem>
           <NavItem href="/admin/membership" active={!!pathname?.includes('/admin/membership')}>Membership</NavItem>
           <NavItem href="/forms/admin" active={!!pathname?.includes('/forms/admin')}>Manage Forms</NavItem>
