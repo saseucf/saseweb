@@ -2,6 +2,18 @@
 ALTER TABLE public.profiles
 ADD COLUMN IF NOT EXISTS paid_member BOOLEAN NOT NULL DEFAULT FALSE;
 
+-- The column may already exist from an earlier manual setup. Normalize that
+-- shape so this migration guarantees the same contract in every environment.
+UPDATE public.profiles
+SET paid_member = FALSE
+WHERE paid_member IS NULL;
+
+ALTER TABLE public.profiles
+ALTER COLUMN paid_member SET DEFAULT FALSE;
+
+ALTER TABLE public.profiles
+ALTER COLUMN paid_member SET NOT NULL;
+
 -- Members can edit their own profiles, so protect the server-controlled
 -- membership flag from being changed through the normal profile update path.
 CREATE OR REPLACE FUNCTION public.protect_profile_paid_member()
