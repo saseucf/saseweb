@@ -2,9 +2,18 @@ const DEFAULT_BASE_URL = "https://api.zeffy.com";
 const PAGE_SIZE = 100;
 const MAX_PAGES = 100;
 
-export const ZEFFY_ENV_KEYS = ["ZEFFY_API_KEY", "ZEFFY_CAMPAIGN_ID"] as const;
+export const ZEFFY_ENV_KEYS = ["ZEFFY_API", "ZEFFY_CAMPAIGN_ID"] as const;
 
 export type ZeffyEnvKey = (typeof ZEFFY_ENV_KEYS)[number];
+
+export type ZeffyApiEnvironment = {
+  ZEFFY_API?: string;
+  ZEFFY_API_KEY?: string;
+};
+
+export function resolveZeffyApiKey(environment: ZeffyApiEnvironment): string | undefined {
+  return environment.ZEFFY_API?.trim() || environment.ZEFFY_API_KEY?.trim() || undefined;
+}
 
 export type ZeffyQuestionAnswer = {
   question: string;
@@ -258,7 +267,7 @@ export function createZeffyClient(options: ZeffyClientOptions) {
   const baseUrl = (options.baseUrl?.trim() || DEFAULT_BASE_URL).replace(/\/$/, "");
   const fetchImpl = options.fetchImpl ?? fetch;
   const missing: ZeffyEnvKey[] = [];
-  if (!apiKey) missing.push("ZEFFY_API_KEY");
+  if (!apiKey) missing.push("ZEFFY_API");
   if (!campaignId) missing.push("ZEFFY_CAMPAIGN_ID");
 
   function getConfiguration(): ZeffyConfiguration {
