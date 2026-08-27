@@ -144,16 +144,18 @@ export default function GlobalNav() {
           src="/logo-white-horizontal.png" 
           alt="SASE Logo" 
           width={120} 
-          height={40} 
+          height={26}
           className="w-[90px] md:w-[120px] h-auto object-contain hidden dark:block"
+          style={{ height: "auto" }}
           priority
         />
         <Image 
           src="/logo-dark-horizontal.png" 
           alt="SASE Logo" 
           width={120} 
-          height={40} 
+          height={26}
           className="w-[90px] md:w-[120px] h-auto object-contain block dark:hidden"
+          style={{ height: "auto" }}
           priority
         />
       </Link>
