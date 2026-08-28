@@ -96,11 +96,11 @@ function ConfirmName() {
     }
 
     return (
-        <main className="sase-login-page">
-            <div className="sase-login-card p-8 md:p-12">
+        <main className="sase-login-page p-4">
+            <div className="sase-login-card p-8 md:p-12 w-full max-w-2xl mx-auto">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold">Complete your profile</h1>
-                    <p className="mt-2 text-sm">Confirm your info before continuing.</p>
+                    <h1 className="text-3xl font-bold dark:text-white">Complete your profile</h1>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">Confirm your info before continuing.</p>
                 </div>
 
                 <form className="space-y-5" onSubmit={handleSubmit}>
@@ -110,26 +110,26 @@ function ConfirmName() {
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
-                            <label className="text-sm font-semibold text-[#171d52]" htmlFor="firstName">
+                            <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="firstName">
                                 First name
                             </label>
                             <input
                                 id="firstName"
-                                className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+                                className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white"
                                 value={firstName}
                                 onChange={(event) => setFirstName(event.target.value)}
                                 required
                             />
                         </div>
                         <div className="flex flex-col gap-1">
-                            <label className="text-sm font-semibold text-[#171d52]" htmlFor="lastName">
+                            <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="lastName">
                                 Last name
                             </label>
                             <input
                                 id="lastName"
-                                className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+                                className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white"
                                 value={lastName}
                                 onChange={(event) => setLastName(event.target.value)}
                                 required
@@ -138,12 +138,12 @@ function ConfirmName() {
                     </div>
 
                     <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-[#171d52]" htmlFor="major">
+                        <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="major">
                             Major
                         </label>
                         <input
                             id="major"
-                            className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+                            className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white"
                             value={major}
                             onChange={(event) => setMajor(event.target.value)}
                             placeholder="e.g. Computer Science"
@@ -151,42 +151,45 @@ function ConfirmName() {
                         />
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-[#171d52]" htmlFor="school">
-                            School
-                        </label>
-                        <input
-                            id="school"
-                            className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
-                            value={school}
-                            onChange={(event) => setSchool(event.target.value)}
-                            placeholder="e.g. University of Central Florida"
-                            required
-                        />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1">
+                            <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="school">
+                                School
+                            </label>
+                            <input
+                                id="school"
+                                className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white"
+                                value={school}
+                                onChange={(event) => setSchool(event.target.value)}
+                                placeholder="e.g. University of Central Florida"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="graduationYear">
+                                Graduation Year
+                            </label>
+                            <input
+                                id="graduationYear"
+                                className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white"
+                                value={graduationYear}
+                                onChange={(event) => setGraduationYear(event.target.value)}
+                                placeholder="e.g. 2027"
+                                required
+                            />
+                        </div>
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-[#171d52]" htmlFor="graduationYear">
-                            Graduation Year
-                        </label>
-                        <input
-                            id="graduationYear"
-                            className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
-                            value={graduationYear}
-                            onChange={(event) => setGraduationYear(event.target.value)}
-                            placeholder="e.g. 2027"
-                            required
-                        />
-                    </div>
+
 
                     <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-[#171d52]" htmlFor="phoneNumber">
+                        <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="phoneNumber">
                             Phone number
                         </label>
                         <input
                             id="phoneNumber"
                             type="tel"
-                            className="w-full rounded border border-[#cbd5e8] p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
+                            className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white"
                             value={phoneNumber}
                             onChange={(event) => setPhoneNumber(event.target.value)}
                             placeholder="e.g. (407) 555-1234"
