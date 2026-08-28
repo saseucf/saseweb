@@ -126,7 +126,7 @@ export default async function MembershipPage() {
         </div>
       </section>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(280px,0.85fr)]">
+      <div className="mx-auto mt-6 grid w-full max-w-[1180px] gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(280px,0.85fr)]">
         <section className="order-2 border border-border bg-card p-5 sm:p-8 lg:order-1 lg:row-span-2" aria-labelledby="member-qr-heading">
           <h2 id="member-qr-heading" className="text-2xl font-black tracking-tight">
             Your member QR
