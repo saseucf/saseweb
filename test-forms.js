@@ -8,11 +8,11 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function testForms() {
-  const { data, error } = await supabase.from("forms").select("*").limit(1);
+  const { data, error } = await supabase.from("forms").select("id, title, events(event_type)");
   if (error) {
     console.error("Error:", JSON.stringify(error, null, 2));
   } else {
-    console.log("Forms data:", data);
+    console.log("Forms data:", JSON.stringify(data, null, 2));
   }
 }
 testForms();

@@ -113,6 +113,8 @@ export default function GlobalNav() {
       return (
         <>
           <NavItem href="/" active={pathname === "/"}>Home</NavItem>
+          <NavItem href="/admin/users" active={!!pathname?.includes('/admin/users')}>Manage Users</NavItem>
+          <NavItem href="/admin/logs" active={!!pathname?.includes('/admin/logs')}>Master Logs</NavItem>
           <NavItem href="/admin/events" active={!!pathname?.includes('/admin/events')}>Manage Events</NavItem>
           <NavItem href="/admin/membership" active={!!pathname?.includes('/admin/membership')}>Membership</NavItem>
           <NavItem href="/forms/admin" active={!!pathname?.includes('/forms/admin')}>Manage Forms</NavItem>
@@ -129,8 +131,7 @@ export default function GlobalNav() {
         <NavItem href="/events" active={!!pathname?.includes('/events')}>Events</NavItem>
         <NavItem href="/programs" active={!!pathname?.includes('/programs')}>Programs</NavItem>
         <NavItem href="/team" active={!!pathname?.includes('/team')}>Team</NavItem>
-        <NavItem href="/forms" active={!!pathname?.includes('/forms') && !pathname?.includes('/admin')}>Forms</NavItem>
-        <NavItem href="/membership" active={pathname === '/membership'}>Membership</NavItem>
+        <NavItem href="/profile" active={!!pathname?.includes('/profile')}>Profile</NavItem>
         <NavItem href="/checkin" active={!!pathname?.includes('/checkin') && !pathname?.includes('/admin')}>Check-in</NavItem>
       </>
     );
