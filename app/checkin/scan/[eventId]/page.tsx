@@ -101,7 +101,7 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
             <p className="text-muted-foreground font-medium mt-2">{status.msg}</p>
           </div>
           <button
-            onClick={() => router.push('/checkin/member')}
+            onClick={() => router.push('/membership')}
             className="w-full bg-[#171d52] text-white py-3 rounded-lg font-bold hover:bg-[#5579bd] transition-colors"
           >
             Go to Dashboard
@@ -131,7 +131,7 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
         <div className="text-center space-y-4">
           <XCircle className="w-12 h-12 text-red-600 mx-auto" />
           <h2 className="text-xl font-bold text-[#171d52]">Event Not Found</h2>
-          <button onClick={() => router.push('/checkin/member')} className="text-[#5579bd] font-bold hover:underline">
+          <button onClick={() => router.push('/membership')} className="text-[#5579bd] font-bold hover:underline">
             Return to Dashboard
           </button>
         </div>

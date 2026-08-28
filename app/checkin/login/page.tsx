@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { getSafeAuthRedirect } from "@/lib/auth-redirect";
+import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "@/lib/auth-redirect";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ function LoginForm() {
   const [checkingSession, setCheckingSession] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = getSafeAuthRedirect(searchParams.get('redirect'), '/checkin/member');
+  const redirectUrl = getSafeAuthRedirect(searchParams.get('redirect'), DEFAULT_MEMBER_DESTINATION);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -29,7 +29,7 @@ function LoginForm() {
 
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('*')
+        .select('name_confirmed, role')
         .eq('id', user.id)
         .single();
 
@@ -72,7 +72,7 @@ function LoginForm() {
     // Check if the user is an admin
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('*')
+      .select('name_confirmed, role')
       .eq('id', data.user.id)
       .single();
 

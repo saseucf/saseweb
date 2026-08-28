@@ -47,7 +47,7 @@ export default function GlobalNav() {
   const isAdminLogin = pathname?.includes("/checkin/admin/login");
 
   useEffect(() => {
-    const checkUser = async (userId: string | undefined, event?: string) => {
+    const checkUser = async (userId: string | undefined) => {
       if (!userId) {
         setRole(null);
         setLoading(false);
@@ -55,32 +55,19 @@ export default function GlobalNav() {
       }
       const { data: profile } = await supabase
         .from("profiles")
-        .select("*")
+        .select("role")
         .eq("id", userId)
         .single();
       setRole(profile?.role ?? "member");
       setLoading(false);
-
-      // On a fresh sign-in (OAuth or password), redirect to the name-
-      // confirmation page if the user hasn't confirmed their name yet.
-      // Using SIGNED_IN (not INITIAL_SESSION / TOKEN_REFRESHED) so this
-      // only fires once per actual login, not on every page load.
-      if (
-        event === "SIGNED_IN" &&
-        profile &&
-        profile.name_confirmed === false &&
-        window.location.pathname !== "/confirm-name"
-      ) {
-        window.location.href = `/confirm-name?redirect=${encodeURIComponent(window.location.pathname)}`;
-      }
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       checkUser(session?.user?.id);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      checkUser(session?.user?.id, event);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      checkUser(session?.user?.id);
     });
 
     return () => subscription.unsubscribe();
@@ -131,8 +118,7 @@ export default function GlobalNav() {
         <NavItem href="/events" active={!!pathname?.includes('/events')}>Events</NavItem>
         <NavItem href="/programs" active={!!pathname?.includes('/programs')}>Programs</NavItem>
         <NavItem href="/team" active={!!pathname?.includes('/team')}>Team</NavItem>
-        <NavItem href="/profile" active={!!pathname?.includes('/profile')}>Profile</NavItem>
-        <NavItem href="/checkin" active={!!pathname?.includes('/checkin') && !pathname?.includes('/admin')}>Check-in</NavItem>
+        <NavItem href="/membership" active={!!pathname?.startsWith('/membership')}>Membership</NavItem>
       </>
     );
   };
@@ -204,13 +190,13 @@ export default function GlobalNav() {
           </div>
         )}
 
-        {/* Mobile Check-in Button */}
+        {/* Mobile member action */}
         <Link 
-          href={isAdmin ? "/checkin/admin" : "/checkin"}
+          href={isAdmin ? "/checkin/admin" : "/membership"}
           className="lg:hidden bg-[#89abe3] text-[#141b4d] px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors mr-1 flex items-center"
           onClick={() => setIsMobileMenuOpen(false)}
         >
-          Check-in
+          {isAdmin ? "Check-in" : "Membership"}
         </Link>
 
         {/* Mobile Hamburger Toggle */}

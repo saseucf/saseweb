@@ -19,12 +19,12 @@ export default function TopNav({ isAdmin = false }: TopNavProps) {
     },
     {
       name: isAdmin ? 'Scanner' : 'My QR',
-      href: isAdmin ? '/checkin/admin' : '/checkin/member',
+      href: isAdmin ? '/checkin/admin' : '/membership',
       icon: <QrCode className="w-4 h-4 mr-2" />
     },
     {
       name: 'Profile',
-      href: isAdmin ? '/checkin/admin' : '/checkin/member',
+      href: isAdmin ? '/checkin/admin' : '/membership/profile',
       icon: <User className="w-4 h-4 mr-2" />
     },
   ]

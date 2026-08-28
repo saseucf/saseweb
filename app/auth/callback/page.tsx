@@ -4,12 +4,12 @@ import { Suspense, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 import supabase from "@/lib/auth"
-import { getSafeAuthRedirect } from "@/lib/auth-redirect"
+import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 function AuthCallback() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"))
+    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"), DEFAULT_MEMBER_DESTINATION)
 
     useEffect(() => {
         // The cookie-backed browser client completes the PKCE callback during
@@ -62,7 +62,7 @@ function AuthCallback() {
 
                 const { data: profile } = await supabase
                     .from("profiles")
-                    .select("*")
+                    .select("name_confirmed")
                     .eq("id", user.id)
                     .single()
 

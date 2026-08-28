@@ -4,12 +4,12 @@ import { FormEvent, Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import supabase from "@/lib/auth"
-import { getSafeAuthRedirect } from "@/lib/auth-redirect"
+import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 function ConfirmName() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"))
+    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"), DEFAULT_MEMBER_DESTINATION)
 
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
@@ -184,7 +184,7 @@ function ConfirmName() {
 
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="phoneNumber">
-                            Phone number
+                            Phone number <span className="font-normal text-[#667085] dark:text-gray-400">(optional)</span>
                         </label>
                         <input
                             id="phoneNumber"
@@ -193,7 +193,6 @@ function ConfirmName() {
                             value={phoneNumber}
                             onChange={(event) => setPhoneNumber(event.target.value)}
                             placeholder="e.g. (407) 555-1234"
-                            required
                         />
                     </div>
 
