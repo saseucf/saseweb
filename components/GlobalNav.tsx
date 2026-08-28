@@ -131,8 +131,7 @@ export default function GlobalNav() {
         <NavItem href="/events" active={!!pathname?.includes('/events')}>Events</NavItem>
         <NavItem href="/programs" active={!!pathname?.includes('/programs')}>Programs</NavItem>
         <NavItem href="/team" active={!!pathname?.includes('/team')}>Team</NavItem>
-        <NavItem href="/forms" active={!!pathname?.includes('/forms') && !pathname?.includes('/admin')}>Forms</NavItem>
-        <NavItem href="/membership" active={pathname === '/membership'}>Membership</NavItem>
+        <NavItem href="/profile" active={!!pathname?.includes('/profile')}>Profile</NavItem>
         <NavItem href="/checkin" active={!!pathname?.includes('/checkin') && !pathname?.includes('/admin')}>Check-in</NavItem>
       </>
     );
