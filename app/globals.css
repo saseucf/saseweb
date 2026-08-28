@@ -224,7 +224,7 @@
 .sase-table-wrap th { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .sase-table-wrap tbody tr:nth-child(even) { background: #f5f7fc; }
 .sase-login-page { align-items: center; background: linear-gradient(135deg, #141b4d 0%, #24336e 60%, #89abe3 100%); display: flex; justify-content: center; min-height: 100svh; padding: 24px; }
-.sase-login-card { background: #e9e8e8; border: 0; border-radius: 5px; box-shadow: 0 24px 70px rgba(4, 8, 34, 0.3); max-width: 430px; width: 100%; }
+.sase-login-card { background: #e9e8e8; border: 0; border-radius: 5px; box-shadow: 0 24px 70px rgba(4, 8, 34, 0.3); color: #141b4d; max-width: 430px; width: 100%; }
 .sase-login-card h1 { color: #141b4d; letter-spacing: -0.03em; }
 .sase-login-card p { color: #64708c; }
 .sase-login-card input { background: #fff; border-color: #cbd5e8; }

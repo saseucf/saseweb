@@ -47,7 +47,7 @@ export default function GlobalNav() {
   const isAdminLogin = pathname?.includes("/checkin/admin/login");
 
   useEffect(() => {
-    const checkUser = async (userId: string | undefined) => {
+    const checkUser = async (userId: string | undefined, event?: string) => {
       if (!userId) {
         setRole(null);
         setLoading(false);
@@ -55,19 +55,32 @@ export default function GlobalNav() {
       }
       const { data: profile } = await supabase
         .from("profiles")
-        .select("role")
+        .select("*")
         .eq("id", userId)
         .single();
       setRole(profile?.role ?? "member");
       setLoading(false);
+
+      // On a fresh sign-in (OAuth or password), redirect to the name-
+      // confirmation page if the user hasn't confirmed their name yet.
+      // Using SIGNED_IN (not INITIAL_SESSION / TOKEN_REFRESHED) so this
+      // only fires once per actual login, not on every page load.
+      if (
+        event === "SIGNED_IN" &&
+        profile &&
+        profile.name_confirmed === false &&
+        window.location.pathname !== "/confirm-name"
+      ) {
+        window.location.href = `/confirm-name?redirect=${encodeURIComponent(window.location.pathname)}`;
+      }
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       checkUser(session?.user?.id);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      checkUser(session?.user?.id);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      checkUser(session?.user?.id, event);
     });
 
     return () => subscription.unsubscribe();
@@ -85,7 +98,7 @@ export default function GlobalNav() {
 
     const NavItem = ({ href, active, onClick, children }: { href: string; active: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }) => (
       <Link
-        className={`${isMobile ? 'text-sm py-3 border-b border-border w-full block' : 'text-xs whitespace-nowrap'} font-bold tracking-widest uppercase transition-colors ${active ? "text-[#89abe3]" : "text-foreground hover:text-[#89abe3]"}`}
+        className={`${isMobile ? 'text-sm py-3 border-b border-border w-full block' : 'text-xs whitespace-nowrap'} font-bold tracking-widest uppercase transition-colors ${active ? "text-[#4266a4] dark:text-[#89abe3]" : "text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3]"}`}
         href={href}
         onClick={(e) => {
           if (onClick) onClick(e);
@@ -100,7 +113,10 @@ export default function GlobalNav() {
       return (
         <>
           <NavItem href="/" active={pathname === "/"}>Home</NavItem>
+          <NavItem href="/admin/users" active={!!pathname?.includes('/admin/users')}>Manage Users</NavItem>
+          <NavItem href="/admin/logs" active={!!pathname?.includes('/admin/logs')}>Master Logs</NavItem>
           <NavItem href="/admin/events" active={!!pathname?.includes('/admin/events')}>Manage Events</NavItem>
+          <NavItem href="/admin/membership" active={!!pathname?.includes('/admin/membership')}>Membership</NavItem>
           <NavItem href="/forms/admin" active={!!pathname?.includes('/forms/admin')}>Manage Forms</NavItem>
           <NavItem href="/admin/demographics" active={!!pathname?.includes('/admin/demographics')}>Demographics</NavItem>
           <NavItem href="/checkin/admin" active={!!pathname?.includes('/checkin/admin')}>Check-in Admin</NavItem>
@@ -115,7 +131,7 @@ export default function GlobalNav() {
         <NavItem href="/events" active={!!pathname?.includes('/events')}>Events</NavItem>
         <NavItem href="/programs" active={!!pathname?.includes('/programs')}>Programs</NavItem>
         <NavItem href="/team" active={!!pathname?.includes('/team')}>Team</NavItem>
-        <NavItem href="/forms" active={!!pathname?.includes('/forms') && !pathname?.includes('/admin')}>Forms</NavItem>
+        <NavItem href="/profile" active={!!pathname?.includes('/profile')}>Profile</NavItem>
         <NavItem href="/checkin" active={!!pathname?.includes('/checkin') && !pathname?.includes('/admin')}>Check-in</NavItem>
       </>
     );
@@ -129,22 +145,24 @@ export default function GlobalNav() {
           src="/logo-white-horizontal.png" 
           alt="SASE Logo" 
           width={120} 
-          height={40} 
+          height={26}
           className="w-[90px] md:w-[120px] h-auto object-contain hidden dark:block"
+          style={{ height: "auto" }}
           priority
         />
         <Image 
           src="/logo-dark-horizontal.png" 
           alt="SASE Logo" 
           width={120} 
-          height={40} 
+          height={26}
           className="w-[90px] md:w-[120px] h-auto object-contain block dark:hidden"
+          style={{ height: "auto" }}
           priority
         />
       </Link>
 
       {/* Desktop Links */}
-      <div className="hidden md:flex flex-1 items-center gap-6 mx-8 justify-end">
+      <div className="hidden lg:flex flex-1 items-center gap-4 xl:gap-6 mx-8 justify-end">
         {renderLinks()}
       </div>
 
@@ -153,7 +171,7 @@ export default function GlobalNav() {
         {mounted && (
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 text-foreground hover:text-[#89abe3] transition-colors"
+            className="p-2 text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3] transition-colors"
             aria-label="Toggle Dark Mode"
           >
             {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
@@ -171,7 +189,7 @@ export default function GlobalNav() {
                 onClick={() => setViewAsUser(!viewAsUser)}
                 className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-colors ${viewAsUser
                     ? "bg-foreground text-background border-foreground"
-                    : "text-[#89abe3] border-border hover:border-[#89abe3]"
+                    : "text-[#4266a4] dark:text-[#89abe3] border-border hover:border-[#4266a4] dark:hover:border-[#89abe3]"
                   }`}
               >
                 {viewAsUser ? "Admin View" : "View as User"}
@@ -189,7 +207,7 @@ export default function GlobalNav() {
         {/* Mobile Check-in Button */}
         <Link 
           href={isAdmin ? "/checkin/admin" : "/checkin"}
-          className="md:hidden bg-[#89abe3] text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-foreground transition-colors mr-1 flex items-center"
+          className="lg:hidden bg-[#89abe3] text-[#141b4d] px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors mr-1 flex items-center"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           Check-in
@@ -197,7 +215,7 @@ export default function GlobalNav() {
 
         {/* Mobile Hamburger Toggle */}
         <button 
-          className="md:hidden p-2 text-foreground hover:text-[#89abe3] transition-colors"
+          className="lg:hidden p-2 text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3] transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle Menu"
         >
@@ -207,7 +225,7 @@ export default function GlobalNav() {
 
       {/* Mobile Dropdown Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-[100%] left-0 right-0 bg-background border-b border-border shadow-lg md:hidden flex flex-col p-6 animate-in slide-in-from-top-2">
+        <div className="absolute top-[100%] left-0 right-0 bg-background border-b border-border shadow-lg lg:hidden flex flex-col p-6 animate-in slide-in-from-top-2">
           {renderLinks(true)}
           
           <div className="mt-6 flex flex-col gap-4 sm:hidden">
@@ -221,7 +239,7 @@ export default function GlobalNav() {
                     onClick={() => { setViewAsUser(!viewAsUser); setIsMobileMenuOpen(false); }}
                     className={`w-full text-center text-[10px] font-bold uppercase tracking-widest px-4 py-3 rounded-lg border transition-colors ${viewAsUser
                         ? "bg-foreground text-background border-foreground"
-                        : "text-[#89abe3] border-border hover:border-[#89abe3]"
+                        : "text-[#4266a4] dark:text-[#89abe3] border-border hover:border-[#4266a4] dark:hover:border-[#89abe3]"
                       }`}
                   >
                     {viewAsUser ? "Admin View" : "View as User"}
@@ -241,4 +259,3 @@ export default function GlobalNav() {
     </nav>
   );
 }
-

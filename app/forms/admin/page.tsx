@@ -20,6 +20,7 @@ export default function Admin() {
 
   const [forms, setForms] = useState<Form[]>([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
   
   const qrRefs = useRef<Record<string, HTMLCanvasElement | null>>({});
 
@@ -31,21 +32,52 @@ export default function Admin() {
     router.push("/forms");
   }
 
-  function copyLink(slug: string) {
+  async function copyLink(slug: string) {
     const url = `${window.location.origin}/forms/${slug}`;
-    navigator.clipboard.writeText(url);
-    alert("Link copied to clipboard!");
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = url;
+        textArea.style.position = "absolute";
+        textArea.style.left = "-999999px";
+        document.body.prepend(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+      }
+      setCopiedSlug(slug);
+      setTimeout(() => setCopiedSlug(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+    }
   }
 
-  function downloadQR(slug: string) {
+  async function downloadQR(slug: string) {
     const canvas = qrRefs.current[slug];
-    if (canvas) {
-      const url = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `sase-form-${slug}-qr.png`;
-      a.click();
+    if (!canvas) return;
+    
+    const url = canvas.toDataURL("image/png");
+    try {
+      const blob = await (await fetch(url)).blob();
+      const file = new File([blob], `sase-form-${slug}-qr.png`, { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Form QR Code",
+        });
+        return;
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
     }
+
+    // Fallback to traditional download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `sase-form-${slug}-qr.png`;
+    a.click();
   }
 
   useEffect(() => {
@@ -183,7 +215,7 @@ export default function Admin() {
                   className="sase-secondary-button flex-1 text-xs px-2"
                   onClick={() => copyLink(form.slug)}
                 >
-                  Copy Link
+                  {copiedSlug === form.slug ? "Copied!" : "Copy Link"}
                 </button>
                 <button
                   className="sase-secondary-button flex-1 text-xs px-2"

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { getSafeAuthRedirect } from "@/lib/auth-redirect";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ function LoginForm() {
   const [checkingSession, setCheckingSession] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirect');
+  const redirectUrl = getSafeAuthRedirect(searchParams.get('redirect'), '/checkin/member');
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -28,15 +29,18 @@ function LoginForm() {
 
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('role')
+        .select('*')
         .eq('id', user.id)
         .single();
 
-      if (profileData?.role === 'admin') {
-        router.replace('/checkin/admin');
-      } else {
-        router.replace(redirectUrl || '/checkin/member');
+      const destination = profileData?.role === 'admin' ? '/checkin/admin' : redirectUrl;
+
+      if (profileData && !profileData.name_confirmed) {
+        router.replace(`/confirm-name?redirect=${encodeURIComponent(destination)}`);
+        return;
       }
+
+      router.replace(destination);
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -68,19 +72,18 @@ function LoginForm() {
     // Check if the user is an admin
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('role')
+      .select('*')
       .eq('id', data.user.id)
       .single();
 
-    if (profileData?.role === 'admin') {
-      router.push('/checkin/admin');
-    } else {
-      if (redirectUrl) {
-        router.push(redirectUrl);
-      } else {
-        router.push('/checkin/member');
-      }
+    const destination = profileData?.role === 'admin' ? '/checkin/admin' : redirectUrl;
+
+    if (profileData && !profileData.name_confirmed) {
+      router.push(`/confirm-name?redirect=${encodeURIComponent(destination)}`);
+      return;
     }
+
+    router.push(destination);
   };
 
   const handleOAuthLogin = async (provider: "discord" | "google") => {
@@ -88,7 +91,7 @@ function LoginForm() {
     const { error: authError } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/checkin/login${redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : ""}`,
+        redirectTo: `${window.location.origin}/checkin/login?redirect=${encodeURIComponent(redirectUrl)}`,
       },
     });
 
