@@ -5,12 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { FaDiscord } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
 import supabase from "@/lib/auth"
-import { getSafeAuthRedirect } from "@/lib/auth-redirect"
+import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 export function LoginForm() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"))
+    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"), DEFAULT_MEMBER_DESTINATION)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
@@ -22,7 +22,7 @@ export function LoginForm() {
             if (session) {
                 const { data: profile } = await supabase
                     .from("profiles")
-                    .select("*")
+                    .select("name_confirmed")
                     .eq("id", session.user.id)
                     .single()
 
@@ -45,7 +45,7 @@ export function LoginForm() {
         setError("")
         setIsLoading(true)
 
-        const { error: loginError } = await supabase.auth.signInWithPassword({
+        const { data, error: loginError } = await supabase.auth.signInWithPassword({
             email,
             password,
         })
@@ -53,6 +53,17 @@ export function LoginForm() {
         if (loginError) {
             setError(loginError.message)
             setIsLoading(false)
+            return
+        }
+
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("name_confirmed")
+            .eq("id", data.user.id)
+            .single()
+
+        if (profile?.name_confirmed === false) {
+            router.replace(`/confirm-name?redirect=${encodeURIComponent(redirectUrl)}`)
             return
         }
 

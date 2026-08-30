@@ -19,12 +19,12 @@ export default function BottomNav({ isAdmin = false }: BottomNavProps) {
     },
     {
       name: isAdmin ? 'Scanner' : 'My QR',
-      href: isAdmin ? '/checkin/admin' : '/checkin/member',
+      href: isAdmin ? '/checkin/admin' : '/membership',
       icon: <QrCode className="w-5 h-5" />
     },
     {
       name: 'Profile',
-      href: isAdmin ? '/checkin/admin' : '/checkin/member', // Profile merged with dash for now
+      href: isAdmin ? '/checkin/admin' : '/membership/profile',
       icon: <User className="w-5 h-5" />
     },
   ]

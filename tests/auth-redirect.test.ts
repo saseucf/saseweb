@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { getSafeAuthRedirect } from "../lib/auth-redirect";
+import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "../lib/auth-redirect";
 
 test("keeps normal internal auth destinations", () => {
+  assert.equal(DEFAULT_MEMBER_DESTINATION, "/membership");
+  assert.equal(getSafeAuthRedirect(null, DEFAULT_MEMBER_DESTINATION), "/membership");
   assert.equal(getSafeAuthRedirect("/membership"), "/membership");
   assert.equal(
     getSafeAuthRedirect("/forms/example?step=2#response"),
@@ -30,5 +32,5 @@ test("prevents redirects back into auth entry pages", () => {
   ]) {
     assert.equal(getSafeAuthRedirect(path), "/");
   }
-  assert.equal(getSafeAuthRedirect(null, "/checkin/member"), "/checkin/member");
+  assert.equal(getSafeAuthRedirect(null, "/events"), "/events");
 });

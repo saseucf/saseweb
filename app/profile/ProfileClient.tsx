@@ -190,7 +190,7 @@ export default function ProfileClient({ initialProfile, checkout }: { initialPro
 
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="phoneNumber">
-                                Phone number
+                                Phone number <span className="font-normal text-gray-500 dark:text-gray-400">(optional)</span>
                             </label>
                             <input
                                 id="phoneNumber"
@@ -199,7 +199,6 @@ export default function ProfileClient({ initialProfile, checkout }: { initialPro
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
                                 placeholder="e.g. (407) 555-1234"
-                                required
                             />
                         </div>
 

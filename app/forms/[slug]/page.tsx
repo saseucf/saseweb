@@ -50,7 +50,8 @@ export default function FormResponsePage() {
       if (data.requires_login) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
-          router.replace("/login");
+          const formDestination = `/forms/${params.slug}`;
+          router.replace(`/login?redirect=${encodeURIComponent(formDestination)}`);
           return;
         }
 

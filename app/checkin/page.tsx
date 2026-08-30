@@ -11,7 +11,7 @@ export default function CheckinLandingPage() {
       </div>
 
       <div className="w-full space-y-4">
-        <Link href="/checkin/login" className="block">
+        <Link href="/membership" className="block">
           <div className="w-full p-6 bg-card border border-border hover:border-[#89abe3] transition-colors rounded-xl shadow-sm flex items-center space-x-4">
             <div className="p-3 bg-[#e9eef8] text-[#89abe3] rounded-full">
               <User className="w-6 h-6" />
