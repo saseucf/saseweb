@@ -40,10 +40,10 @@ export default async function ProfilePage() {
     }
 
     const checkout = getMembershipCheckoutConfiguration({
-        checkoutUrl: process.env.NEXT_PUBLIC_ZEFFY_MEMBERSHIP_URL,
-        membershipPeriod: process.env.MEMBERSHIP_PERIOD,
-        amountCents: process.env.ZEFFY_EXPECTED_AMOUNT_CENTS,
-        currency: process.env.ZEFFY_EXPECTED_CURRENCY,
+        checkoutUrl: "https://www.zeffy.com/en-US/ticketing/society-of-asian-scientists-and-engineerss-memberships",
+        membershipPeriod: "2026-2027",
+        amountCents: "2500",
+        currency: "USD",
     });
 
     return <ProfileClient initialProfile={profile} checkout={checkout} />;

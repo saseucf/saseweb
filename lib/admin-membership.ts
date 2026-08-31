@@ -68,10 +68,10 @@ export type MembershipConfigurationResult =
   | { ok: false; missing: string[] };
 
 export function getMembershipConfiguration(): MembershipConfigurationResult {
-  const membershipPeriod = process.env.MEMBERSHIP_PERIOD?.trim() ?? "";
-  const amountText = process.env.ZEFFY_EXPECTED_AMOUNT_CENTS?.trim() ?? "";
+  const membershipPeriod = "2026-2027";
+  const amountText = "2500";
   const expectedAmountCents = Number(amountText);
-  const expectedCurrency = process.env.ZEFFY_EXPECTED_CURRENCY?.trim().toUpperCase() ?? "";
+  const expectedCurrency = "USD";
   const missing: string[] = [];
   if (!membershipPeriod) missing.push("MEMBERSHIP_PERIOD");
   if (!amountText || !Number.isSafeInteger(expectedAmountCents) || expectedAmountCents <= 0) {

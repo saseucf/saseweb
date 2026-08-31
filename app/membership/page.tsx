@@ -55,15 +55,15 @@ export default async function MembershipPage() {
   }
 
   const checkout = getMembershipCheckoutConfiguration({
-    checkoutUrl: process.env.NEXT_PUBLIC_ZEFFY_MEMBERSHIP_URL,
-    membershipPeriod: process.env.MEMBERSHIP_PERIOD,
-    amountCents: process.env.ZEFFY_EXPECTED_AMOUNT_CENTS,
-    currency: process.env.ZEFFY_EXPECTED_CURRENCY,
+    checkoutUrl: "https://www.zeffy.com/en-US/ticketing/society-of-asian-scientists-and-engineerss-memberships",
+    membershipPeriod: "2026-2027",
+    amountCents: "2500",
+    currency: "USD",
   });
   const { displayName, greetingName } = getMemberNames(profile);
   const membershipPeriod = checkout.ok
     ? checkout.configuration.membershipPeriod
-    : process.env.MEMBERSHIP_PERIOD?.trim() || "Current school year";
+    : "2026-2027";
   const totalPoints = profile.total_points ?? 0;
 
   return (

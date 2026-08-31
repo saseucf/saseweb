@@ -7,6 +7,6 @@ export const zeffy = createZeffyClient({
     ZEFFY_API: process.env.ZEFFY_API,
     ZEFFY_API_KEY: process.env.ZEFFY_API_KEY,
   }),
-  campaignId: process.env.ZEFFY_CAMPAIGN_ID,
-  currency: process.env.ZEFFY_EXPECTED_CURRENCY,
+  campaignId: "c1f40aba-bcb9-4da8-9f6e-2cc57ad71e3a",
+  currency: "USD",
 });
