@@ -23,7 +23,7 @@ import type {
 type Workspace = {
   configuration: MembershipConfiguration;
   payments: AdminPayment[];
-  unpaidMembers: AdminMember[];
+  members: AdminMember[];
 };
 
 type ApiError = { kind: string; message: string };
@@ -80,6 +80,7 @@ export default function MembershipReconciliation() {
   const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [memberFilter, setMemberFilter] = useState<"unpaid" | "paid" | "all">("unpaid");
   const [unlinkMode, setUnlinkMode] = useState(false);
   const [unlinkReason, setUnlinkReason] = useState("");
   const [loading, setLoading] = useState(true);
@@ -125,19 +126,31 @@ export default function MembershipReconciliation() {
     [selectedPaymentId, workspace],
   );
   const selectedMember = useMemo(
-    () => workspace?.unpaidMembers.find(({ id }) => id === selectedMemberId) ?? null,
+    () => workspace?.members.find(({ id }) => id === selectedMemberId) ?? null,
     [selectedMemberId, workspace],
   );
   const filteredMembers = useMemo(() => {
+    if (!workspace) return [];
+    
+    // First apply paid status filter
+    let members = workspace.members;
+    if (memberFilter === "unpaid") {
+      members = members.filter(m => !m.paidMember);
+    } else if (memberFilter === "paid") {
+      members = members.filter(m => m.paidMember);
+    }
+    
+    // Then apply search query
     const query = search.trim().toLowerCase();
-    if (!workspace || !query) return workspace?.unpaidMembers ?? [];
-    return workspace.unpaidMembers.filter((member) =>
+    if (!query) return members;
+    
+    return members.filter((member) =>
       [memberName(member), member.email, member.phoneNumber ?? ""]
         .join(" ")
         .toLowerCase()
         .includes(query),
     );
-  }, [search, workspace]);
+  }, [search, memberFilter, workspace]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -420,17 +433,49 @@ export default function MembershipReconciliation() {
           </div>
         </div>
         <div className="mt-6 border border-border bg-card p-6 shadow-[0_12px_30px_rgba(23,29,82,0.06)]">
-          <label className="relative block max-w-md mb-4">
-            <span className="sr-only">Search unpaid members</span>
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-            <input
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by name, email, or phone..."
-              className="min-h-11 w-full border border-input bg-background py-2 pl-10 pr-3 text-sm outline-none focus:border-[#4266a4] focus:ring-2 focus:ring-[#4266a4]/25 dark:focus:border-[#89abe3] dark:focus:ring-[#89abe3]/25"
-            />
-          </label>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between mb-4">
+            <label className="relative block w-full max-w-md">
+              <span className="sr-only">Search members</span>
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search by name, email, or phone..."
+                className="min-h-11 w-full border border-input bg-background py-2 pl-10 pr-3 text-sm outline-none focus:border-[#4266a4] focus:ring-2 focus:ring-[#4266a4]/25 dark:focus:border-[#89abe3] dark:focus:ring-[#89abe3]/25"
+              />
+            </label>
+            
+            <div className="flex rounded-md shadow-sm" role="group">
+              <button
+                type="button"
+                onClick={() => setMemberFilter("unpaid")}
+                className={`px-4 py-2 text-sm font-medium border rounded-l-lg focus:z-10 focus:ring-2 focus:ring-[#4266a4] dark:focus:ring-[#89abe3] ${
+                  memberFilter === "unpaid" ? "bg-[#e9eef8] text-[#4266a4] border-[#4266a4]" : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+              >
+                Unpaid
+              </button>
+              <button
+                type="button"
+                onClick={() => setMemberFilter("paid")}
+                className={`px-4 py-2 text-sm font-medium border-t border-b focus:z-10 focus:ring-2 focus:ring-[#4266a4] dark:focus:ring-[#89abe3] ${
+                  memberFilter === "paid" ? "bg-[#e9eef8] text-[#4266a4] border-[#4266a4]" : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+              >
+                Paid
+              </button>
+              <button
+                type="button"
+                onClick={() => setMemberFilter("all")}
+                className={`px-4 py-2 text-sm font-medium border rounded-r-lg focus:z-10 focus:ring-2 focus:ring-[#4266a4] dark:focus:ring-[#89abe3] ${
+                  memberFilter === "all" ? "bg-[#e9eef8] text-[#4266a4] border-[#4266a4]" : "bg-background text-foreground border-border hover:bg-muted"
+                }`}
+              >
+                All
+              </button>
+            </div>
+          </div>
 
           <div className="max-h-64 overflow-y-auto border border-border bg-background" aria-label="Unpaid members">
             {filteredMembers.length ? (
@@ -440,24 +485,39 @@ export default function MembershipReconciliation() {
                   className="flex min-h-14 w-full items-center justify-between gap-4 border-b border-border px-4 py-3 text-left last:border-b-0 hover:bg-muted/55"
                 >
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-bold">{memberName(member)}</span>
+                    <span className="flex items-center gap-2">
+                      <span className="block truncate text-sm font-bold">{memberName(member)}</span>
+                      {member.paidMember && (
+                        <span className="text-[0.6rem] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded uppercase font-bold tracking-widest border border-emerald-200">Paid</span>
+                      )}
+                    </span>
                     <span className="mt-0.5 block truncate text-xs text-muted-foreground">
                       {member.email}{member.phoneNumber ? ` · ${member.phoneNumber}` : ""}
                     </span>
                   </span>
-                  <button
-                    type="button"
-                    disabled={saving}
-                    onClick={() => void markAsPaid(member.id)}
-                    className="sase-primary-button whitespace-nowrap text-xs px-3 py-1.5 min-h-0 !text-[#141b4d] disabled:opacity-50"
-                  >
-                    Mark as Paid
-                  </button>
+                  {!member.paidMember ? (
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => void markAsPaid(member.id)}
+                      className="sase-primary-button whitespace-nowrap text-xs px-3 py-1.5 min-h-0 !text-[#141b4d] disabled:opacity-50"
+                    >
+                      Mark as Paid
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled
+                      className="sase-secondary-button whitespace-nowrap text-xs px-3 py-1.5 min-h-0 opacity-50 cursor-not-allowed"
+                    >
+                      Already Paid
+                    </button>
+                  )}
                 </div>
               ))
             ) : (
               <p className="px-5 py-8 text-center text-sm text-muted-foreground">
-                No unpaid members match that search.
+                No members match that search.
               </p>
             )}
           </div>
@@ -603,7 +663,7 @@ export default function MembershipReconciliation() {
                 <div className="mt-6">
                   <div className="flex items-end justify-between gap-4">
                     <div>
-                      <h3 className="text-lg font-extrabold">Choose an unpaid member</h3>
+                      <h3 className="text-lg font-extrabold">Choose a member</h3>
                       <p className="mt-1 text-sm text-muted-foreground">
                         Search by name, email, or phone number.
                       </p>
@@ -614,7 +674,7 @@ export default function MembershipReconciliation() {
                   </div>
 
                   <label className="relative mt-4 block">
-                    <span className="sr-only">Search unpaid members</span>
+                    <span className="sr-only">Search members</span>
                     <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
                     <input
                       autoFocus
@@ -626,7 +686,7 @@ export default function MembershipReconciliation() {
                     />
                   </label>
 
-                  <div className="mt-4 max-h-64 overflow-y-auto border border-border" aria-label="Unpaid members">
+                  <div className="mt-4 max-h-64 overflow-y-auto border border-border" aria-label="Members">
                     {filteredMembers.length ? (
                       filteredMembers.map((member) => {
                         const selected = selectedMemberId === member.id;
@@ -641,7 +701,12 @@ export default function MembershipReconciliation() {
                             }`}
                           >
                             <span className="min-w-0">
-                              <span className="block truncate text-sm font-bold">{memberName(member)}</span>
+                              <span className="flex items-center gap-2">
+                                <span className="block truncate text-sm font-bold">{memberName(member)}</span>
+                                {member.paidMember && (
+                                  <span className="text-[0.6rem] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded uppercase font-bold tracking-widest border border-emerald-200">Paid</span>
+                                )}
+                              </span>
                               <span className="mt-0.5 block truncate text-xs text-muted-foreground">
                                 {member.email}{member.phoneNumber ? ` · ${member.phoneNumber}` : ""}
                               </span>
@@ -654,7 +719,7 @@ export default function MembershipReconciliation() {
                       })
                     ) : (
                       <p className="px-5 py-8 text-center text-sm text-muted-foreground">
-                        No unpaid members match that search.
+                        No members match that search.
                       </p>
                     )}
                   </div>

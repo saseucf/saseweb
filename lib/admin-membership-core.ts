@@ -170,7 +170,7 @@ export async function getAdminMembershipWorkspace(
   AdminMembershipResult<{
     configuration: MembershipConfiguration;
     payments: AdminPayment[];
-    unpaidMembers: AdminMember[];
+    members: AdminMember[];
   }>
 > {
   const authorization = await dependencies.authorizeAdmin();
@@ -228,7 +228,7 @@ export async function getAdminMembershipWorkspace(
     data: {
       configuration: dependencies.configuration,
       payments,
-      unpaidMembers: memberResult.data.filter((member) => !member.paidMember),
+      members: memberResult.data,
     },
   };
 }
