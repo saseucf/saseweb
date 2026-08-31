@@ -6,6 +6,37 @@ import { ArrowLeft, Calendar, MapPin, Users, Award, User } from "lucide-react";
 
 export const revalidate = 60;
 
+function generateGoogleCalendarUrl(event: { start_time: string; end_time: string; title: string; description?: string | null; location?: string | null; [key: string]: unknown }) {
+    const start = new Date(event.start_time).toISOString().replace(/-|:|\.\d+/g, "");
+    const end = new Date(event.end_time).toISOString().replace(/-|:|\.\d+/g, "");
+    const params = new URLSearchParams({
+        action: "TEMPLATE",
+        text: event.title,
+        dates: `${start}/${end}`,
+        details: event.description || "",
+        location: event.location || "",
+    });
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function generateIcsDataUrl(event: { start_time: string; end_time: string; title: string; description?: string | null; location?: string | null; [key: string]: unknown }) {
+    const start = new Date(event.start_time).toISOString().replace(/-|:|\.\d+/g, "");
+    const end = new Date(event.end_time).toISOString().replace(/-|:|\.\d+/g, "");
+    const icsContent = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        `DTSTART:${start}`,
+        `DTEND:${end}`,
+        `SUMMARY:${event.title}`,
+        `DESCRIPTION:${event.description ? event.description.replace(/\n/g, "\\n") : ""}`,
+        `LOCATION:${event.location || ""}`,
+        "END:VEVENT",
+        "END:VCALENDAR"
+    ].join("\r\n");
+    return `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
+}
+
 export default async function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const supabase = createPublicSupabase();
     const resolvedParams = await params;
@@ -71,6 +102,25 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                                     <a href={externalUrl} target="_blank" rel="noopener noreferrer" className="bg-[#171d52] hover:bg-[#2a3473] text-white px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-black shadow-sm transition-colors text-center w-full">
                                         RSVP Now
                                     </a>
+                                )}
+                                {!isPast && (
+                                    <div className="flex items-center gap-2 w-full">
+                                        <a 
+                                            href={generateGoogleCalendarUrl(event)} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="flex-1 text-center py-2 bg-[#f6f8fc] hover:bg-[#e9eef8] text-[#4266A4] rounded-lg text-[0.65rem] sm:text-xs font-bold transition-colors uppercase tracking-wider"
+                                        >
+                                            + Google Cal
+                                        </a>
+                                        <a 
+                                            href={generateIcsDataUrl(event)} 
+                                            download={`${event.title.replace(/\s+/g, '_')}.ics`}
+                                            className="flex-1 text-center py-2 bg-[#f6f8fc] hover:bg-[#e9eef8] text-[#4266A4] rounded-lg text-[0.65rem] sm:text-xs font-bold transition-colors uppercase tracking-wider"
+                                        >
+                                            + Apple/ICS
+                                        </a>
+                                    </div>
                                 )}
                             </div>
                         </div>

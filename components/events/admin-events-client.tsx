@@ -19,6 +19,7 @@ type Event = {
     created_at: string;
     forms?: { id: string, title: string }[];
     checkin_count?: number;
+    rsvp_count?: number;
 };
 
 export default function AdminEventsClient({ events }: { events: Event[] }) {
@@ -87,10 +88,15 @@ export default function AdminEventsClient({ events }: { events: Event[] }) {
                                             {event.location ?? "Not specified"}
                                         </span>
                                     </div>
-                                    <div className="flex items-start gap-2">
+                                    <div className="flex items-center gap-2">
                                         <span className="font-semibold text-[#344674] min-w-[50px]">Check-ins:</span>
-                                        <span className="text-gray-600">
+                                        <span className="text-gray-600 flex items-center gap-3">
                                             {event.checkin_count}
+                                            {event.forms && event.forms.length > 0 && (
+                                                <span className="text-[0.65rem] bg-[#e9eef8] text-[#344674] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-[#89abe3]">
+                                                    RSVPs: {event.rsvp_count}
+                                                </span>
+                                            )}
                                         </span>
                                     </div>
                                     {event.forms && event.forms.length > 0 && (
