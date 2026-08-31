@@ -6,7 +6,7 @@ import { ArrowLeft, Calendar, MapPin, Users, Award, User } from "lucide-react";
 
 export const revalidate = 60;
 
-function generateGoogleCalendarUrl(event: any) {
+function generateGoogleCalendarUrl(event: { start_time: string; end_time: string; title: string; description?: string | null; location?: string | null; [key: string]: unknown }) {
     const start = new Date(event.start_time).toISOString().replace(/-|:|\.\d+/g, "");
     const end = new Date(event.end_time).toISOString().replace(/-|:|\.\d+/g, "");
     const params = new URLSearchParams({
@@ -19,7 +19,7 @@ function generateGoogleCalendarUrl(event: any) {
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-function generateIcsDataUrl(event: any) {
+function generateIcsDataUrl(event: { start_time: string; end_time: string; title: string; description?: string | null; location?: string | null; [key: string]: unknown }) {
     const start = new Date(event.start_time).toISOString().replace(/-|:|\.\d+/g, "");
     const end = new Date(event.end_time).toISOString().replace(/-|:|\.\d+/g, "");
     const icsContent = [

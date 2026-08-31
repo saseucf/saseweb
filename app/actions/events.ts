@@ -9,7 +9,7 @@ export async function clearEventsCache() {
     revalidatePath("/", "layout");
 }
 
-export async function saveEvent(eventData: any, existingId?: string) {
+export async function saveEvent(eventData: Record<string, unknown>, existingId?: string) {
     const supabase = createAdminSupabase();
     
     if (existingId) {

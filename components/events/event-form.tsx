@@ -1,6 +1,6 @@
 "use client";
 
-import supabase from "@/lib/auth";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -174,7 +174,7 @@ export default function EventForm({
             // After creating or editing, return to the admin event management page.
             router.push("/admin/events");
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Could not save event:", error);
             setErrorMessage("Could not save event. Check your dates and fields.");
             setIsSubmitting(false);

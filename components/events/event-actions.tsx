@@ -31,7 +31,7 @@ export default function EventActions({
         try {
             await deleteEvent(eventId);
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Could not delete event:", error);
             setErrorMessage("Could not delete event.");
             setIsSubmitting(false);
@@ -51,7 +51,7 @@ export default function EventActions({
         try {
             await cancelEvent(eventId);
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Could not cancel event:", error);
             setErrorMessage("Could not cancel event.");
             setIsSubmitting(false);
