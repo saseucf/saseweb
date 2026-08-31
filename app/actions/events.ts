@@ -30,3 +30,29 @@ export async function saveEvent(eventData: any, existingId?: string) {
     // Clear cache immediately after saving
     await clearEventsCache();
 }
+
+export async function deleteEvent(eventId: string) {
+    const supabase = createAdminSupabase();
+    
+    const { error } = await supabase
+        .from("events")
+        .delete()
+        .eq("id", eventId);
+        
+    if (error) throw new Error(error.message);
+    
+    await clearEventsCache();
+}
+
+export async function cancelEvent(eventId: string) {
+    const supabase = createAdminSupabase();
+    
+    const { error } = await supabase
+        .from("events")
+        .update({ status: "cancelled" })
+        .eq("id", eventId);
+        
+    if (error) throw new Error(error.message);
+    
+    await clearEventsCache();
+}
