@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase, createAdminSupabase } from "@/lib/supabase-server";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,8 @@ export async function POST(req: Request) {
         if (updateError) {
             return NextResponse.json({ ok: false, error: { kind: "database_error", message: "Failed to update member status" } }, { status: 500 });
         }
+
+        revalidatePath("/admin/membership");
 
         return NextResponse.json({ ok: true, data: { success: true } });
         
