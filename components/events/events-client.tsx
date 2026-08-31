@@ -32,7 +32,18 @@ export default function EventsClient({ events }: { events: Event[] }) {
         return Array.from(types).sort();
     }, [events]);
 
-    const filteredEvents = events.filter(e => {
+    const sortedEvents = useMemo(() => {
+        const now = new Date();
+        return [...events].sort((a, b) => {
+            const aIsPast = new Date(a.end_time) < now;
+            const bIsPast = new Date(b.end_time) < now;
+            if (aIsPast && !bIsPast) return 1; // a goes to bottom
+            if (!aIsPast && bIsPast) return -1; // b goes to bottom
+            return 0; // retain original order (which is by start_time ascending)
+        });
+    }, [events]);
+
+    const filteredEvents = sortedEvents.filter(e => {
         const matchesType = selectedType ? e.event_type === selectedType : true;
         const matchesSearch = e.title.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesType && matchesSearch;
@@ -104,32 +115,51 @@ export default function EventsClient({ events }: { events: Event[] }) {
             ) : (
                 <div className="sase-form-grid">
                     {filteredEvents.map((event) => {
+                        const now = new Date();
                         const eventColor = getEventTypeColor(event.event_type);
                         const isToday = new Date().toDateString() === new Date(event.start_time).toDateString();
+                        const isPast = new Date(event.end_time) < now;
+                        
+                        let cleanDescription = event.description ?? "";
+                        let externalUrl = "";
+                        const EXT_URL_DELIMITER = "\n\n===EXTERNAL_URL===";
+                        if (cleanDescription.includes(EXT_URL_DELIMITER)) {
+                            const parts = cleanDescription.split(EXT_URL_DELIMITER);
+                            cleanDescription = parts[0];
+                            externalUrl = parts[1] ?? "";
+                        }
+
                         const openForm = event.forms?.find(f => f.is_open);
                         
                         return (
                             <Link 
                                 key={event.id} 
                                 href={`/events/${event.id}`}
-                                className="sase-form-card flex flex-col justify-between relative overflow-hidden hover:ring-2 hover:ring-[#89ABE3] hover:-translate-y-1 transition-all duration-200"
-                                style={{ borderLeft: `6px solid ${eventColor}` }}
+                                className={`sase-form-card flex flex-col justify-between relative overflow-hidden transition-all duration-200 ${isPast ? "opacity-75 grayscale-[0.2]" : "hover:ring-2 hover:ring-[#89ABE3] hover:-translate-y-1"}`}
+                                style={{ borderLeft: `6px solid ${isPast ? "#ACA39A" : eventColor}` }}
                             >
                                 <div>
                                     <div className="flex justify-between items-start gap-2 mb-2">
-                                        <h2 className="text-foreground font-bold text-xl">{event.title}</h2>
+                                        <h2 className="text-foreground font-bold text-xl flex items-center gap-2">
+                                            {event.title}
+                                            {isPast && (
+                                                <span className="bg-[#ACA39A]/20 text-[#ACA39A] text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded border border-[#ACA39A]/30">
+                                                    Finished
+                                                </span>
+                                            )}
+                                        </h2>
                                         <span className="bg-background text-foreground text-xs font-bold px-2 py-1 rounded whitespace-nowrap">
                                             {event.points} pt{event.points === 1 ? "" : "s"}
                                         </span>
                                     </div>
                                     
                                     <div className="flex items-center gap-2 mb-3">
-                                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: eventColor }} />
+                                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: isPast ? "#ACA39A" : eventColor }} />
                                         <p className="sase-eyebrow !m-0 !text-muted-foreground">{event.event_type}</p>
                                     </div>
                                     
-                                    {event.description && (
-                                        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{event.description}</p>
+                                    {cleanDescription && (
+                                        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{cleanDescription}</p>
                                     )}
 
                                     <div className="flex flex-col gap-2 mt-4 border-t border-[#D0D0CE] pt-4">
@@ -160,20 +190,24 @@ export default function EventsClient({ events }: { events: Event[] }) {
                                         )}
                                     </div>
                                     
-                                    {(openForm || isToday) && (
+                                    {((openForm || externalUrl) || (isToday && !isPast)) && !isPast && (
                                         <div className="flex items-center gap-3 mt-4 pt-4 border-t border-[#D0D0CE]">
-                                            {openForm && (
+                                            {(externalUrl || openForm) && (
                                                 <button 
                                                     onClick={(e) => {
                                                         e.preventDefault();
-                                                        router.push(`/forms/${openForm.slug}`);
+                                                        if (externalUrl) {
+                                                            window.open(externalUrl, "_blank");
+                                                        } else {
+                                                            router.push(`/forms/${openForm?.slug}`);
+                                                        }
                                                     }}
                                                     className="px-4 py-2 bg-[#171d52] text-white rounded-lg text-sm font-bold hover:bg-[#2a3473] transition-colors w-full text-center"
                                                 >
                                                     RSVP Now
                                                 </button>
                                             )}
-                                            {isToday && (
+                                            {isToday && !isPast && (
                                                 <button 
                                                     onClick={(e) => {
                                                         e.preventDefault();
