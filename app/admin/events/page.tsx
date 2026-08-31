@@ -16,6 +16,7 @@ type Event = {
     status: "draft" | "published" | "cancelled";
     created_at: string;
     forms?: { id: string, title: string }[];
+    checkin_count?: number;
 };
 
 export default async function AdminEventsPage() {
@@ -32,6 +33,11 @@ export default async function AdminEventsPage() {
         .from("forms")
         .select("id, title, event_id")
         .not("event_id", "is", null);
+
+    // Fetch check-in counts
+    const { data: attendancesData } = await supabase
+        .from("event_attendances")
+        .select("event_id");
 
     if (eventsError) {
         console.error("Could not load admin events:", eventsError);
@@ -50,6 +56,19 @@ export default async function AdminEventsPage() {
     }
 
     const events = (eventsData ?? []) as Event[];
+
+    const checkinCounts: Record<string, number> = {};
+    if (attendancesData) {
+        attendancesData.forEach(att => {
+            if (att.event_id) {
+                checkinCounts[att.event_id] = (checkinCounts[att.event_id] || 0) + 1;
+            }
+        });
+    }
+
+    events.forEach(event => {
+        event.checkin_count = checkinCounts[event.id] || 0;
+    });
 
     // Manually map forms to events
     if (formsData) {
@@ -125,6 +144,12 @@ export default async function AdminEventsPage() {
                                             <span className="font-semibold text-[#344674] min-w-[50px]">Place:</span>
                                             <span className="text-gray-600">
                                                 {event.location ?? "Not specified"}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="font-semibold text-[#344674] min-w-[50px]">Check-ins:</span>
+                                            <span className="text-gray-600">
+                                                {event.checkin_count}
                                             </span>
                                         </div>
                                         {event.forms && event.forms.length > 0 && (
