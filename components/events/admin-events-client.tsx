@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import EventActions from "@/components/events/event-actions";
+import supabase from "@/lib/auth";
+import { useEffect } from "react";
 
 type Event = {
     id: string;
@@ -22,8 +24,33 @@ type Event = {
     rsvp_count?: number;
 };
 
-export default function AdminEventsClient({ events }: { events: Event[] }) {
+export default function AdminEventsClient({ events: initialEvents }: { events: Event[] }) {
+    const [events, setEvents] = useState<Event[]>(initialEvents);
     const [searchQuery, setSearchQuery] = useState("");
+
+    useEffect(() => {
+        const channel = supabase.channel('realtime_admin_checkins')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'event_attendances' },
+                (payload) => {
+                    const newCheckin = payload.new;
+                    setEvents((prevEvents) => 
+                        prevEvents.map(event => {
+                            if (event.id === newCheckin.event_id) {
+                                return { ...event, checkin_count: (event.checkin_count || 0) + 1 };
+                            }
+                            return event;
+                        })
+                    );
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
 
     const filteredEvents = events.filter(event => 
         event.title.toLowerCase().includes(searchQuery.toLowerCase())
