@@ -101,10 +101,6 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
           Point your phone camera at this code to automatically check in.
         </p>
         <div className="inline-flex items-center gap-3 bg-[#e9eef8] px-6 py-3 rounded-full border border-[#89abe3] shadow-inner">
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-          </span>
           <span className="text-[#171d52] font-black text-xl">
             {checkInCount} {checkInCount === 1 ? 'member has' : 'members have'} checked in
           </span>
