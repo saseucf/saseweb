@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createServerSupabase } from "@/lib/supabase-server";
 import AdminEventsClient from "@/components/events/admin-events-client";
 
+export const dynamic = "force-dynamic";
+
 type Event = {
     id: string;
     title: string;
