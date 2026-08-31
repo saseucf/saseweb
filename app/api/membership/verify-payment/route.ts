@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase, createAdminSupabase } from "@/lib/supabase-server";
 import { getMembershipConfiguration, createAdminMembershipDependencies } from "@/lib/admin-membership";
-import { getAdminMembershipWorkspace } from "@/lib/admin-membership-core";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req: Request) {
+export async function POST() {
     try {
         const supabase = createServerSupabase();
         const { data: { user } } = await supabase.auth.getUser();
@@ -54,8 +53,6 @@ export async function POST(req: Request) {
         const profileFirstName = (profile.first_name || "").trim().toLowerCase();
         const profileLastName = (profile.last_name || "").trim().toLowerCase();
         
-        const unmatchedPayments = paymentsResult.data.filter(p => !matchedPaymentIds.has(p.id));
-
         // Find an eligible unmatched payment
         const matchingPayment = paymentsResult.data.find(p => {
             // Must not be already matched
@@ -114,7 +111,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true, message: "Payment verified and assigned!" });
         
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 });
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 });
     }
 }

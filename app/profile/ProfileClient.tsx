@@ -147,7 +147,7 @@ export default function ProfileClient({ initialProfile, checkout, initialAttenda
             } else {
                 toast.error("Payment not found yet. An officer may still need to review it.");
             }
-        } catch (err) {
+        } catch {
             toast.error("Failed to verify payment status.");
         } finally {
             setIsVerifying(false);
