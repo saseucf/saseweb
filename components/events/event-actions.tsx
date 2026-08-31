@@ -1,8 +1,8 @@
 "use client";
 
-import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { deleteEvent, cancelEvent } from "@/app/actions/events";
 
 type EventActionsProps = {
     eventId: string;
@@ -28,19 +28,14 @@ export default function EventActions({
         setErrorMessage(null);
         setIsSubmitting(true);
 
-        const { error } = await supabase
-            .from("events")
-            .delete()
-            .eq("id", eventId);
-
-        if (error) {
+        try {
+            await deleteEvent(eventId);
+            router.refresh();
+        } catch (error: unknown) {
             console.error("Could not delete event:", error);
             setErrorMessage("Could not delete event.");
             setIsSubmitting(false);
-            return;
         }
-
-        router.refresh();
     }
 
     async function handleCancel() {
@@ -53,21 +48,14 @@ export default function EventActions({
         setErrorMessage(null);
         setIsSubmitting(true);
 
-        const { error } = await supabase
-            .from("events")
-            .update({
-                status: "cancelled",
-            })
-            .eq("id", eventId);
-
-        if (error) {
+        try {
+            await cancelEvent(eventId);
+            router.refresh();
+        } catch (error: unknown) {
             console.error("Could not cancel event:", error);
             setErrorMessage("Could not cancel event.");
             setIsSubmitting(false);
-            return;
         }
-
-        router.refresh();
     }
 
     return (

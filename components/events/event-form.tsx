@@ -1,10 +1,11 @@
 "use client";
 
-import supabase from "@/lib/auth";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { PRESET_EVENT_TYPES, getEventTypeColor } from "@/lib/event-type-colors";
+import { saveEvent } from "@/app/actions/events";
 
 type EventData = {
     id: string;
@@ -46,6 +47,7 @@ export default function EventForm({
     // Track submission errors and prevent duplicate submissions.
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitAction, setSubmitAction] = useState<"publish" | "draft">("draft");
 
     let initialDescription = existingEvent?.description ?? "";
     let initialExternalUrl = "";
@@ -73,17 +75,7 @@ export default function EventForm({
         setErrorMessage(null);
         setIsSubmitting(true);
 
-        // Determine which submit button was clicked.
-        // Publishing and saving as a draft use the same form,
-        // but result in different event statuses.
-        const submitter = (
-            submitEvent.nativeEvent as SubmitEvent
-        ).submitter as HTMLButtonElement | null;
-
-        const action = submitter?.value;
-
-        const status =
-            action === "publish" ? "published" : "draft";
+        const status = submitAction === "publish" ? "published" : "draft";
 
         const formData = new FormData(submitEvent.currentTarget);
 
@@ -176,46 +168,17 @@ export default function EventForm({
             status,
         };
 
-        let error;
-
-        if (existingEvent) {
-            // Existing event: update the matching database row.
-            const result = await supabase
-                .from("events")
-                .update(eventData)
-                .eq("id", existingEvent.id);
-
-            error = result.error;
-        } else {
-            // New event: create a new database row.
-            const result = await supabase
-                .from("events")
-                .insert(eventData);
-
-            error = result.error;
-        }
-
-        if (error) {
-            console.error(
-                existingEvent
-                    ? "Could not update event:"
-                    : "Could not create event:",
-                error
-            );
-
-            setErrorMessage(
-                existingEvent
-                    ? "Could not update event."
-                    : "Could not create event."
-            );
-
+        try {
+            await saveEvent(eventData, existingEvent?.id);
+            
+            // After creating or editing, return to the admin event management page.
+            router.push("/admin/events");
+            router.refresh();
+        } catch (error: unknown) {
+            console.error("Could not save event:", error);
+            setErrorMessage("Could not save event. Check your dates and fields.");
             setIsSubmitting(false);
-            return;
         }
-
-        // After creating or editing, return to the admin event management page.
-        router.push("/admin/events");
-        router.refresh();
         }
 
     return (
@@ -457,8 +420,7 @@ export default function EventForm({
                 
                 <button
                     type="submit"
-                    name="action"
-                    value="draft"
+                    onClick={() => setSubmitAction("draft")}
                     disabled={isSubmitting}
                     className="sase-secondary-button w-full sm:w-auto disabled:opacity-50"
                 >
@@ -467,8 +429,7 @@ export default function EventForm({
 
                 <button
                     type="submit"
-                    name="action"
-                    value="publish"
+                    onClick={() => setSubmitAction("publish")}
                     disabled={isSubmitting}
                     className="sase-primary-button w-full sm:w-auto disabled:opacity-50"
                 >

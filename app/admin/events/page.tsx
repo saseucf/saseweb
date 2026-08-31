@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createServerSupabase } from "@/lib/supabase-server";
 import AdminEventsClient from "@/components/events/admin-events-client";
 
+export const dynamic = "force-dynamic";
+
 type Event = {
     id: string;
     title: string;
@@ -17,6 +19,7 @@ type Event = {
     created_at: string;
     forms?: { id: string, title: string }[];
     checkin_count?: number;
+    rsvp_count?: number;
 };
 
 export default async function AdminEventsPage() {
@@ -38,6 +41,11 @@ export default async function AdminEventsPage() {
     const { data: attendancesData } = await supabase
         .from("event_attendances")
         .select("event_id");
+
+    // Fetch form responses for RSVP counts
+    const { data: formResponsesData } = await supabase
+        .from("form_responses")
+        .select("form_id");
 
     if (eventsError) {
         console.error("Could not load admin events:", eventsError);
@@ -70,12 +78,23 @@ export default async function AdminEventsPage() {
         event.checkin_count = checkinCounts[event.id] || 0;
     });
 
+    const rsvpCounts: Record<string, number> = {};
+    if (formResponsesData) {
+        formResponsesData.forEach(resp => {
+            if (resp.form_id) {
+                rsvpCounts[resp.form_id] = (rsvpCounts[resp.form_id] || 0) + 1;
+            }
+        });
+    }
+
     // Manually map forms to events
     if (formsData) {
         events.forEach(event => {
             event.forms = formsData
                 .filter(form => form.event_id === event.id)
                 .map(form => ({ id: form.id, title: form.title }));
+            
+            event.rsvp_count = event.forms.reduce((total, form) => total + (rsvpCounts[form.id] || 0), 0);
         });
     }
 
