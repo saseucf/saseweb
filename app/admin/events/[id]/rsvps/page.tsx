@@ -122,6 +122,7 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
               let lastName = "";
               let fullName = "";
               
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               for (const question of formUsed.schema as any[]) {
                 if (!question.label) continue;
                 const label = question.label.toLowerCase();
