@@ -21,6 +21,37 @@ type Event = {
     forms?: { slug: string, is_open: boolean }[];
 };
 
+function generateGoogleCalendarUrl(event: Event) {
+    const start = new Date(event.start_time).toISOString().replace(/-|:|\.\d+/g, "");
+    const end = new Date(event.end_time).toISOString().replace(/-|:|\.\d+/g, "");
+    const params = new URLSearchParams({
+        action: "TEMPLATE",
+        text: event.title,
+        dates: `${start}/${end}`,
+        details: event.description || "",
+        location: event.location || "",
+    });
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function generateIcsDataUrl(event: Event) {
+    const start = new Date(event.start_time).toISOString().replace(/-|:|\.\d+/g, "");
+    const end = new Date(event.end_time).toISOString().replace(/-|:|\.\d+/g, "");
+    const icsContent = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "BEGIN:VEVENT",
+        `DTSTART:${start}`,
+        `DTEND:${end}`,
+        `SUMMARY:${event.title}`,
+        `DESCRIPTION:${event.description ? event.description.replace(/\n/g, "\\n") : ""}`,
+        `LOCATION:${event.location || ""}`,
+        "END:VEVENT",
+        "END:VCALENDAR"
+    ].join("\r\n");
+    return `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
+}
+
 export default function EventsClient({ events }: { events: Event[] }) {
     const router = useRouter();
     const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -190,33 +221,59 @@ export default function EventsClient({ events }: { events: Event[] }) {
                                         )}
                                     </div>
                                     
-                                    {((openForm || externalUrl) || (isToday && !isPast)) && !isPast && (
-                                        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-[#D0D0CE]">
-                                            {(externalUrl || openForm) && (
-                                                <button 
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        if (externalUrl) {
-                                                            window.open(externalUrl, "_blank");
-                                                        } else {
-                                                            router.push(`/forms/${openForm?.slug}`);
-                                                        }
-                                                    }}
-                                                    className="px-4 py-2 bg-[#171d52] text-white rounded-lg text-sm font-bold hover:bg-[#2a3473] transition-colors w-full text-center"
+                                    {!isPast && (
+                                        <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-[#D0D0CE]">
+                                            <div className="flex items-center gap-2">
+                                                <a 
+                                                    href={generateGoogleCalendarUrl(event)} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="flex-1 text-center py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[0.65rem] sm:text-xs font-bold transition-colors uppercase tracking-wider"
                                                 >
-                                                    RSVP Now
-                                                </button>
-                                            )}
-                                            {isToday && !isPast && (
-                                                <button 
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        router.push(`/checkin/scan/${event.id}`);
-                                                    }}
-                                                    className="px-4 py-2 bg-[#89abe3] text-[#171d52] rounded-lg text-sm font-bold hover:bg-[#a6c1ee] transition-colors w-full text-center"
+                                                    + Google Cal
+                                                </a>
+                                                <a 
+                                                    href={generateIcsDataUrl(event)} 
+                                                    download={`${event.title.replace(/\s+/g, '_')}.ics`}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="flex-1 text-center py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[0.65rem] sm:text-xs font-bold transition-colors uppercase tracking-wider"
                                                 >
-                                                    Check In
-                                                </button>
+                                                    + Apple/ICS
+                                                </a>
+                                            </div>
+
+                                            {((openForm || externalUrl) || isToday) && (
+                                                <div className="flex items-center gap-3">
+                                                    {(externalUrl || openForm) && (
+                                                        <button 
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                if (externalUrl) {
+                                                                    window.open(externalUrl, "_blank");
+                                                                } else {
+                                                                    router.push(`/forms/${openForm?.slug}`);
+                                                                }
+                                                            }}
+                                                            className="px-4 py-2 bg-[#171d52] text-white rounded-lg text-sm font-bold hover:bg-[#2a3473] transition-colors w-full text-center"
+                                                        >
+                                                            RSVP Now
+                                                        </button>
+                                                    )}
+                                                    {isToday && (
+                                                        <button 
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                router.push(`/checkin/scan/${event.id}`);
+                                                            }}
+                                                            className="px-4 py-2 bg-[#89abe3] text-[#171d52] rounded-lg text-sm font-bold hover:bg-[#a6c1ee] transition-colors w-full text-center"
+                                                        >
+                                                            Check In
+                                                        </button>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
                                     )}
