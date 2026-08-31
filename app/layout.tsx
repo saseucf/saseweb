@@ -28,6 +28,7 @@ export const viewport = {
 import GlobalNav from "@/components/GlobalNav";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -42,8 +43,8 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
-          forcedTheme="light"
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           <GlobalNav />
@@ -51,6 +52,7 @@ export default function RootLayout({
             {children}
           </div>
           <Footer />
+          <Toaster position="bottom-right" richColors />
         </ThemeProvider>
       </body>
     </html>

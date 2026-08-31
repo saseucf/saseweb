@@ -41,8 +41,8 @@ export default function Home() {
             </div>
             
             <div className="flex flex-wrap items-center gap-4 mt-4 md:pl-[60px]">
-              <Link href="/forms" className="bg-[#89abe3] hover:bg-foreground hover:text-background text-foreground font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
-                Explore Forms
+              <Link href="/checkin" className="bg-[#89abe3] hover:bg-foreground hover:text-background text-foreground font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
+                Check-in
               </Link>
               <Link href="/events" className="bg-foreground text-background hover:bg-[#89abe3] hover:text-foreground font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
                 See Events
@@ -56,7 +56,7 @@ export default function Home() {
       <section id="about" className="relative z-10 bg-background text-foreground py-24 px-6 md:px-12 mt-32">
         <div className="max-w-4xl mx-auto text-center space-y-8" data-aos="fade-up">
           <h2 className="text-3xl md:text-5xl font-black tracking-tight">
-            Welcome to the UCF <span className="text-[#89abe3]">SASE</span> Website
+            Welcome to the <span className="text-[#fbbf24]">UCF</span> <span className="text-[#89abe3]">SASE</span> Website
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
             Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage scientific and engineering professionals achieve their full potential. The University of Central Florida SASE Chapter was founded in 2020, shortly before the pandemic. With only 5 years under our belt, we have made tremendous strides towards the development of our members centered around core values of career, diversity, and service. Our events and programs not only advance professional pursuits, but also foster a supportive community that celebrates each and every member’s story.
@@ -119,7 +119,7 @@ export default function Home() {
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-background tracking-tight">Our Sponsors</h2>
             <p className="mt-3 text-[#89abe3] max-w-xl mx-auto text-sm leading-relaxed">
-              UCF SASE is made possible by the generous support of our sponsors. Interested in partnering with us?
+              <span className="text-[#fbbf24]">UCF</span> SASE is made possible by the generous support of our sponsors. Interested in partnering with us?
               Reach out to our External VP at{" "}
               <a href="mailto:ucfsase.evp@gmail.com" className="underline hover:text-[#dbc8b6] transition-colors">ucfsase.evp@gmail.com</a>.
             </p>
