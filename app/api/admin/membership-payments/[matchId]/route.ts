@@ -8,6 +8,7 @@ import {
   getAdminAuthorization,
   getMembershipConfiguration,
 } from "@/lib/admin-membership";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -32,5 +33,10 @@ export async function DELETE(
     { matchId, reason },
     createAdminMembershipDependencies(configuration.configuration, authorization),
   );
+
+  if (result.ok) {
+    revalidatePath("/admin/membership");
+  }
+
   return adminMembershipResponse(result);
 }

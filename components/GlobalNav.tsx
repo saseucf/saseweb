@@ -180,11 +180,11 @@ export default function GlobalNav() {
 
         {/* Mobile member action */}
         <Link 
-          href={isAdmin ? "/checkin/admin" : "/membership"}
+          href={isAdmin ? "/checkin/admin" : "/checkin"}
           className="lg:hidden bg-[#89abe3] text-[#141b4d] px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors mr-1 flex items-center"
           onClick={() => setIsMobileMenuOpen(false)}
         >
-          {isAdmin ? "Check-in" : "Membership"}
+          Check-in
         </Link>
 
         {/* Mobile Hamburger Toggle */}
