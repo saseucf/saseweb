@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 export async function clearEventsCache() {
-    revalidatePath("/events");
-    revalidatePath("/admin/events");
+    revalidatePath("/events", "layout");
+    revalidatePath("/admin/events", "layout");
+    revalidatePath("/", "layout");
 }
