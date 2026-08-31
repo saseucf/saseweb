@@ -154,15 +154,7 @@ export default function GlobalNav() {
 
       {/* Fixed Actions: Theme Toggle & Auth & Mobile Menu Toggle */}
       <div className="flex items-center gap-3 shrink-0 ml-auto md:ml-0">
-        {mounted && (
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3] transition-colors"
-            aria-label="Toggle Dark Mode"
-          >
-            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-        )}
+
 
         {!role && !loading && (
           <Link className="border border-border rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-foreground hover:bg-foreground hover:text-background transition-colors hidden sm:block" href="/login">Log in</Link>

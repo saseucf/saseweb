@@ -67,9 +67,6 @@ export default async function AboutPage() {
         <main className="sase-page">
             {/* ── Hero Banner ── */}
             <div className="relative overflow-hidden py-20 px-6 text-center">
-                {/* Decorative blobs */}
-                <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-[#89abe3]/15 blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" aria-hidden />
-                <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-[#dbc8b6]/10 blur-2xl translate-x-1/4 translate-y-1/4 pointer-events-none" aria-hidden />
                 <div className="relative z-10 max-w-3xl mx-auto">
                     <p className="sase-eyebrow text-[#89abe3]">UCF SASE / About</p>
                     <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tight mt-2 mb-6">
@@ -103,8 +100,6 @@ export default async function AboutPage() {
                     <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Mission Statement</h2>
                 </div>
                 <div className="relative bg-card border border-border rounded-2xl p-8 md:p-12 max-w-4xl mx-auto shadow-[0_16px_48px_rgba(23,29,82,0.1)] overflow-hidden">
-                    <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-[#89abe3]/10 blur-2xl translate-x-1/3 -translate-y-1/3 pointer-events-none" aria-hidden />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-[#dbc8b6]/10 blur-xl -translate-x-1/4 translate-y-1/4 pointer-events-none" aria-hidden />
                     <div className="relative z-10">
                         <div className="w-12 h-1 bg-[#89abe3] rounded-full mb-6 mx-auto" />
                         <p className="text-foreground text-lg md:text-xl leading-relaxed text-center italic">
@@ -116,7 +111,7 @@ export default async function AboutPage() {
             </section>
 
             {/* ── Member Demographics ── */}
-            <section className="sase-content-section">
+            <section className="sase-content-section hidden">
                 <div className="text-center mb-10">
                     <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">Community</span>
                     <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Member Demographics</h2>
