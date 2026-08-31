@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { PRESET_EVENT_TYPES, getEventTypeColor } from "@/lib/event-type-colors";
-import { clearEventsCache } from "@/app/actions/events";
+import { saveEvent } from "@/app/actions/events";
 
 type EventData = {
     id: string;
@@ -168,49 +168,17 @@ export default function EventForm({
             status,
         };
 
-        let error;
-
-        if (existingEvent) {
-            // Existing event: update the matching database row.
-            const result = await supabase
-                .from("events")
-                .update(eventData)
-                .eq("id", existingEvent.id);
-
-            error = result.error;
-        } else {
-            // New event: create a new database row.
-            const result = await supabase
-                .from("events")
-                .insert(eventData);
-
-            error = result.error;
-        }
-
-        if (error) {
-            console.error(
-                existingEvent
-                    ? "Could not update event:"
-                    : "Could not create event:",
-                error
-            );
-
-            setErrorMessage(
-                existingEvent
-                    ? "Could not update event."
-                    : "Could not create event."
-            );
-
+        try {
+            await saveEvent(eventData, existingEvent?.id);
+            
+            // After creating or editing, return to the admin event management page.
+            router.push("/admin/events");
+            router.refresh();
+        } catch (error: any) {
+            console.error("Could not save event:", error);
+            setErrorMessage("Could not save event. Check your dates and fields.");
             setIsSubmitting(false);
-            return;
         }
-
-        // Clear the server cache so the changes appear immediately
-        await clearEventsCache();
-
-        // After creating or editing, return to the admin event management page.
-        router.push("/admin/events");
-        router.refresh();
         }
 
     return (
