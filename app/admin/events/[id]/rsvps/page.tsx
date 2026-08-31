@@ -112,10 +112,44 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
 
         const mappedSubmissions = submissionsData.map(sub => {
           const prof = sub.user_id ? profilesDict[sub.user_id] : null;
+          
+          let guestName = "Unknown Guest";
+          if (!prof && sub.responses) {
+            // Attempt to extract name from form responses
+            const formUsed = formsData.find(f => f.id === sub.form_id);
+            if (formUsed && Array.isArray(formUsed.schema)) {
+              let firstName = "";
+              let lastName = "";
+              let fullName = "";
+              
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              for (const question of formUsed.schema as any[]) {
+                if (!question.label) continue;
+                const label = question.label.toLowerCase();
+                const answer = sub.responses[question.id] as string;
+                if (!answer) continue;
+
+                if (label.includes("first name")) {
+                  firstName = answer;
+                } else if (label.includes("last name")) {
+                  lastName = answer;
+                } else if (label === "name" || label.includes("full name")) {
+                  fullName = answer;
+                }
+              }
+
+              if (firstName || lastName) {
+                guestName = `${firstName} ${lastName}`.trim();
+              } else if (fullName) {
+                guestName = fullName.trim();
+              }
+            }
+          }
+
           return {
             ...sub,
             email: prof?.email || "Guest",
-            name: prof ? `${prof.first_name} ${prof.last_name}` : "Unknown Guest"
+            name: prof ? `${prof.first_name} ${prof.last_name}` : guestName
           };
         });
 

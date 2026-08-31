@@ -79,16 +79,18 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-8">
-      <div className="text-center space-y-4 mb-12">
-        <h1 className="text-5xl font-black text-[#171d52] tracking-tight uppercase">{event.title}</h1>
-        <p className="text-2xl text-[#5579bd] font-bold">Scan to Check-In!</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background px-4 py-8 gap-6">
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-[#171d52] tracking-tight uppercase leading-tight">{event.title}</h1>
+        <p className="text-lg sm:text-2xl text-[#5579bd] font-bold">Scan to Check-In!</p>
       </div>
 
-      <div className="bg-[#fffde9] p-8 rounded-3xl shadow-2xl border-4 border-[#171d52] animate-in zoom-in duration-700">
+      {/* QR code box: fills the available screen space */}
+      <div className="bg-[#fffde9] p-4 sm:p-8 rounded-3xl shadow-2xl border-4 border-[#171d52] w-full max-w-[min(80vw,80vh,480px)] aspect-square flex items-center justify-center">
         <QRCodeSVG 
           value={qrUrl}
-          size={500}
+          size={undefined}
+          style={{ width: "100%", height: "100%", maxWidth: "100%", maxHeight: "100%" }}
           level={"H"}
           includeMargin={false}
           fgColor="#171d52"
@@ -96,16 +98,12 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
         />
       </div>
       
-      <div className="mt-12 text-center">
-        <p className="text-muted-foreground font-bold tracking-wide uppercase mb-6">
+      <div className="text-center">
+        <p className="text-muted-foreground font-bold tracking-wide uppercase text-xs sm:text-sm mb-4">
           Point your phone camera at this code to automatically check in.
         </p>
-        <div className="inline-flex items-center gap-3 bg-[#e9eef8] px-6 py-3 rounded-full border border-[#89abe3] shadow-inner">
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-          </span>
-          <span className="text-[#171d52] font-black text-xl">
+        <div className="inline-flex items-center gap-3 bg-[#e9eef8] px-4 sm:px-6 py-2 sm:py-3 rounded-full border border-[#89abe3] shadow-inner">
+          <span className="text-[#171d52] font-black text-base sm:text-xl">
             {checkInCount} {checkInCount === 1 ? 'member has' : 'members have'} checked in
           </span>
         </div>

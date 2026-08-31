@@ -227,6 +227,29 @@ export default function MembershipReconciliation() {
     }
   }
 
+  async function markAsPaid(profileId: string) {
+    if (!confirm("Are you sure you want to mark this member as paid?")) return;
+    setSaving(true);
+    setActionError(null);
+    try {
+      const response = await fetch("/api/admin/manual-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profileId }),
+      });
+      const result = await readEnvelope<{ success: boolean }>(response);
+      if (!result.ok) {
+        setAnnouncement(result.error.message);
+        return;
+      }
+      await refreshAfterAction("Member manually marked as paid.");
+    } catch {
+      setAnnouncement("Could not mark as paid. Check your connection.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <main className="sase-page sase-admin-page pt-[120px]">
       <p className="sr-only" role="status" aria-live="polite">
@@ -380,6 +403,65 @@ export default function MembershipReconciliation() {
             )}
           </div>
         )}
+      </section>
+
+      <section
+        className="mx-auto mt-10 max-w-[1180px]"
+        aria-labelledby="manual-override-heading"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
+          <div>
+            <h2 id="manual-override-heading" className="text-xl font-extrabold tracking-tight">
+              Manual Override (Cash / Other)
+            </h2>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              Search for an unpaid member to manually mark their dues as paid.
+            </p>
+          </div>
+        </div>
+        <div className="mt-6 border border-border bg-card p-6 shadow-[0_12px_30px_rgba(23,29,82,0.06)]">
+          <label className="relative block max-w-md mb-4">
+            <span className="sr-only">Search unpaid members</span>
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search by name, email, or phone..."
+              className="min-h-11 w-full border border-input bg-background py-2 pl-10 pr-3 text-sm outline-none focus:border-[#4266a4] focus:ring-2 focus:ring-[#4266a4]/25 dark:focus:border-[#89abe3] dark:focus:ring-[#89abe3]/25"
+            />
+          </label>
+
+          <div className="max-h-64 overflow-y-auto border border-border bg-background" aria-label="Unpaid members">
+            {filteredMembers.length ? (
+              filteredMembers.slice(0, 50).map((member) => (
+                <div
+                  key={member.id}
+                  className="flex min-h-14 w-full items-center justify-between gap-4 border-b border-border px-4 py-3 text-left last:border-b-0 hover:bg-muted/55"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-bold">{memberName(member)}</span>
+                    <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                      {member.email}{member.phoneNumber ? ` · ${member.phoneNumber}` : ""}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => void markAsPaid(member.id)}
+                    className="sase-primary-button whitespace-nowrap text-xs px-3 py-1.5 min-h-0 !text-[#141b4d] disabled:opacity-50"
+                  >
+                    Mark as Paid
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="px-5 py-8 text-center text-sm text-muted-foreground">
+                No unpaid members match that search.
+              </p>
+            )}
+          </div>
+        </div>
       </section>
 
       <dialog

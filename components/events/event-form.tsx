@@ -47,6 +47,16 @@ export default function EventForm({
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    let initialDescription = existingEvent?.description ?? "";
+    let initialExternalUrl = "";
+
+    const EXT_URL_DELIMITER = "\n\n===EXTERNAL_URL===";
+    if (initialDescription.includes(EXT_URL_DELIMITER)) {
+        const parts = initialDescription.split(EXT_URL_DELIMITER);
+        initialDescription = parts[0];
+        initialExternalUrl = parts[1] ?? "";
+    }
+
     // Event type logic
     const initialType = existingEvent?.event_type ?? "";
     const isPreset = initialType === "" ? false : PRESET_EVENT_TYPES.some(p => p.label === initialType);
@@ -82,9 +92,17 @@ export default function EventForm({
             formData.get("title") ?? ""
         ).trim();
 
-        const description = String(
+        let description = String(
             formData.get("description") ?? ""
         ).trim();
+
+        const externalUrl = String(
+            formData.get("external_url") ?? ""
+        ).trim();
+
+        if (externalUrl) {
+            description = `${description}${EXT_URL_DELIMITER}${externalUrl}`;
+        }
 
         let eventType = eventTypeSelection;
         if (eventType === "custom") {
@@ -236,9 +254,27 @@ export default function EventForm({
                     id="description"
                     name="description"
                     rows={4}
-                    defaultValue={existingEvent?.description ?? ""}
+                    defaultValue={initialDescription}
                     className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa] resize-y"
                 />
+            </div>
+
+            <div className="flex flex-col gap-1">
+                <label
+                    htmlFor="external_url"
+                    className="text-sm font-semibold text-foreground"
+                >
+                    External RSVP Link (e.g. Google Forms)
+                </label>
+                <input
+                    id="external_url"
+                    name="external_url"
+                    type="url"
+                    placeholder="https://forms.gle/..."
+                    defaultValue={initialExternalUrl}
+                    className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                />
+                <p className="text-xs text-muted-foreground mt-1">If provided, this link will replace any built-in forms and users will be redirected here to RSVP.</p>
             </div>
 
             <div className="flex flex-col gap-1">
