@@ -22,6 +22,17 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
     }
 
     const eventColor = getEventTypeColor(event.event_type);
+    
+    let cleanDescription = event.description ?? "";
+    let externalUrl = "";
+    const EXT_URL_DELIMITER = "\n\n===EXTERNAL_URL===";
+    if (cleanDescription.includes(EXT_URL_DELIMITER)) {
+        const parts = cleanDescription.split(EXT_URL_DELIMITER);
+        cleanDescription = parts[0];
+        externalUrl = parts[1] ?? "";
+    }
+    
+    const isPast = new Date(event.end_time) < new Date();
 
     return (
         <main className="min-h-screen flex flex-col bg-background pt-8 pb-20">
@@ -43,12 +54,24 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
 
                     <div className="p-6 sm:p-10">
                         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 mb-8">
-                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-tight max-w-2xl">
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-tight max-w-2xl flex flex-wrap items-center gap-4">
                                 {event.title}
+                                {isPast && (
+                                    <span className="bg-[#ACA39A]/20 text-[#ACA39A] text-sm uppercase tracking-wider font-bold px-3 py-1 rounded-lg border border-[#ACA39A]/30 self-center">
+                                        Finished
+                                    </span>
+                                )}
                             </h1>
-                            <div className="shrink-0 bg-[#F4F6FB] border border-[#89ABE3]/30 text-[#4266A4] px-4 py-2 rounded-xl flex items-center justify-center gap-2 font-black shadow-sm self-start">
-                                <Award className="w-5 h-5 text-[#89ABE3]" />
-                                <span>{event.points} PT{event.points === 1 ? "" : "S"}</span>
+                            <div className="flex flex-col gap-3 shrink-0 self-start">
+                                <div className="bg-[#F4F6FB] border border-[#89ABE3]/30 text-[#4266A4] px-4 py-2 rounded-xl flex items-center justify-center gap-2 font-black shadow-sm w-full">
+                                    <Award className="w-5 h-5 text-[#89ABE3]" />
+                                    <span>{event.points} PT{event.points === 1 ? "" : "S"}</span>
+                                </div>
+                                {externalUrl && !isPast && (
+                                    <a href={externalUrl} target="_blank" rel="noopener noreferrer" className="bg-[#171d52] hover:bg-[#2a3473] text-white px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-black shadow-sm transition-colors text-center w-full">
+                                        RSVP Now
+                                    </a>
+                                )}
                             </div>
                         </div>
 
@@ -120,9 +143,9 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
 
                         <div>
                             <h2 className="text-xl font-black text-foreground mb-4">About this Event</h2>
-                            {event.description ? (
+                            {cleanDescription ? (
                                 <div className="prose prose-sm sm:prose-base max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                                    {event.description}
+                                    {cleanDescription}
                                 </div>
                             ) : (
                                 <p className="text-muted-foreground italic">No description provided.</p>

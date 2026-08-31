@@ -1,6 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase-server";
 import AwardsTimeline from "@/components/AwardsTimeline";
-import { Users, CalendarDays, Globe2 } from "lucide-react";
+import { CalendarDays, Globe2 } from "lucide-react";
 
 export const metadata = {
     title: "About – UCF SASE",
@@ -61,7 +61,6 @@ export default async function AboutPage() {
 
     chartData.sort((a, b) => b.percent - a.percent);
     const maxPercent = Math.max(...chartData.map((d) => d.percent), 1);
-    const totalMembers = profiles?.length ?? 0;
 
     return (
         <main className="sase-page">
@@ -78,9 +77,9 @@ export default async function AboutPage() {
                 </div>
 
                 {/* Stats row */}
-                <div className="relative z-10 mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                <div className="relative z-10 mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
                     {[
-                        { icon: <Users className="w-6 h-6" />, value: totalMembers > 0 ? `${totalMembers}+` : "200+", label: "Registered Members" },
+                        // { icon: <Users className="w-6 h-6" />, value: totalMembers > 0 ? `${totalMembers}+` : "200+", label: "Registered Members" },
                         { icon: <CalendarDays className="w-6 h-6" />, value: "2020", label: "Chapter Founded" },
                         { icon: <Globe2 className="w-6 h-6" />, value: "20K+", label: "National SASE Members" },
                     ].map(({ icon, value, label }) => (
