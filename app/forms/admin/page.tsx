@@ -147,10 +147,11 @@ export default function Admin() {
         <p>Publish forms, manage the response flow, and review submissions.</p>
       </div>
 
-      <div className="flex flex-wrap gap-3 mt-4">
-        <button className="sase-secondary-button" onClick={backToForms}>
-          Back to Forms
-        </button>
+      <div className="max-w-[1180px] mx-auto w-full flex flex-col">
+        <div className="flex flex-wrap gap-3 mt-4">
+          <button className="sase-secondary-button" onClick={backToForms}>
+            Back to Forms
+          </button>
 
         <button
           className="sase-secondary-button"
@@ -254,10 +255,11 @@ export default function Admin() {
                 Delete Form
               </button>
             </div>
-          </div>
-        ))}
+            </div>
+          ))}
+        </div>
+        )}
       </div>
-      )}
     </main>
   );
 }
