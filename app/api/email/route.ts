@@ -1,94 +1,64 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
-// ---------------------------------------------------------------------------
-// Shared helper: send an email via Resend
-// ---------------------------------------------------------------------------
-async function sendViaResend(payload: {
-  from: string;
-  to: string[];
-  subject: string;
-  text: string;
-  html: string;
-}) {
-  return fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-}
 
-// ---------------------------------------------------------------------------
-// GET /api/email — Health check
-// ---------------------------------------------------------------------------
-export async function GET() {
-  return NextResponse.json({
-    ok: true,
-    message: "Email API is ready",
-    configured: Boolean(process.env.RESEND_API_KEY),
-  });
-}
+export async function POST(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { email, eventTitle, firstName } = body;
 
-// ---------------------------------------------------------------------------
-// POST /api/email — Send general-purpose email
-// ---------------------------------------------------------------------------
-export async function POST(request: Request) {
-  try {
-    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+        if (!email || !eventTitle) {
+            return NextResponse.json(
+                { error: "Missing required fields" },
+                { status: 400 }
+            );
+        }
 
-    const toInput = body.to;
-    const to = Array.isArray(toInput)
-      ? toInput.filter((v): v is string => typeof v === "string" && v.trim().length > 0)
-      : typeof toInput === "string" && toInput.trim().length > 0
-        ? [toInput.trim()]
-        : [];
+        if (!process.env.RESEND_API_KEY) {
+            console.warn("RESEND_API_KEY is missing. Skipping email sending.");
+            return NextResponse.json({ success: true, warning: "Email skipped because API key is missing" });
+        }
 
-    const subject = typeof body.subject === "string" ? body.subject : "New message from UCF SASE";
-    const text = typeof body.text === "string" ? body.text : "Hello from UCF SASE.";
-    const html =
-      typeof body.html === "string"
-        ? body.html
-        : `<div style="font-family: Arial, sans-serif; line-height: 1.6;">
-            <h2 style="margin-bottom: 12px;">UCF SASE</h2>
-            <p>${text.replace(/\n/g, "<br />")}</p>
-          </div>`;
-    const from =
-      typeof body.from === "string"
-        ? body.from
-        : process.env.EMAIL_FROM || "UCF SASE <noreply@ucfsase.com>";
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
-    if (!to.length) {
-      return NextResponse.json(
-        { error: "Missing email recipient: 'to' is required." },
-        { status: 400 }
-      );
+        const nameDisplay = firstName ? ` ${firstName}` : "";
+
+        const { data, error } = await resend.emails.send({
+            from: "UCF SASE <hello@ucfsase.com>",
+            to: [email],
+            subject: `RSVP Confirmed: ${eventTitle}`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                    <div style="background-color: #171d52; padding: 24px; text-align: center;">
+                        <h1 style="color: white; margin: 0; font-size: 24px;">UCF SASE</h1>
+                    </div>
+                    <div style="padding: 32px; background-color: #ffffff;">
+                        <h2 style="color: #171d52; margin-top: 0;">You're on the list!</h2>
+                        <p style="color: #4b5563; font-size: 16px; line-height: 1.5;">
+                            Hi${nameDisplay},
+                        </p>
+                        <p style="color: #4b5563; font-size: 16px; line-height: 1.5;">
+                            This email is to confirm your RSVP for <strong>${eventTitle}</strong>. 
+                        </p>
+                        <p style="color: #4b5563; font-size: 16px; line-height: 1.5;">
+                            We can't wait to see you there! If you have any questions, feel free to reach out to an officer.
+                        </p>
+                    </div>
+                </div>
+            `,
+        });
+
+        if (error) {
+            console.error("Resend error:", error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true, data });
+    } catch (error) {
+        console.error("Failed to send email:", error);
+        return NextResponse.json(
+            { error: "Internal server error" },
+            { status: 500 }
+        );
     }
-    if (!process.env.RESEND_API_KEY) {
-      return NextResponse.json(
-        { error: "RESEND_API_KEY is not set. Add it to your environment before sending email." },
-        { status: 500 }
-      );
-    }
-
-    const response = await sendViaResend({ from, to, subject, text, html });
-    const data = await response.json();
-
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: data?.message || "Failed to send email.", details: data },
-        { status: response.status }
-      );
-    }
-
-    return NextResponse.json({ ok: true, message: "Email sent successfully.", id: data?.id });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown email error.";
-    return NextResponse.json(
-      { error: "Email request failed.", details: message },
-      { status: 500 }
-    );
-  }
 }
-

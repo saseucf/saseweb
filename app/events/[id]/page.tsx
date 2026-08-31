@@ -6,13 +6,14 @@ import { ArrowLeft, Calendar, MapPin, Users, Award, User } from "lucide-react";
 
 export const revalidate = 60;
 
-export default async function EventDetailsPage({ params }: { params: { id: string } }) {
+export default async function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const supabase = createPublicSupabase();
+    const resolvedParams = await params;
 
     const { data: event, error } = await supabase
         .from("events")
         .select("*")
-        .eq("id", params.id)
+        .eq("id", resolvedParams.id)
         .eq("status", "published")
         .single();
 

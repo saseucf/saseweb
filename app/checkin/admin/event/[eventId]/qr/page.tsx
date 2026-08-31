@@ -11,6 +11,7 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [qrUrl, setQrUrl] = useState("");
+  const [checkInCount, setCheckInCount] = useState(0);
 
   const { eventId } = React.use(params);
 
@@ -29,9 +30,36 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
         // We use window.location.origin to get the current base URL (e.g., https://sase-web.vercel.app)
         setQrUrl(`${window.location.origin}/checkin/scan/${data.id}`);
       }
+
+      // Fetch initial checkin count
+      const { count } = await supabase
+        .from('event_attendances')
+        .select('*', { count: 'exact', head: true })
+        .eq('event_id', eventId);
+      
+      setCheckInCount(count || 0);
+
+      // Subscribe to real-time changes
+      const channel = supabase.channel('realtime_checkins')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'event_attendances', filter: `event_id=eq.${eventId}` },
+          () => {
+            setCheckInCount((prev) => prev + 1);
+          }
+        )
+        .subscribe();
+
       setLoading(false);
+
+      return () => {
+         supabase.removeChannel(channel);
+      };
     };
-    init();
+    const cleanup = init();
+    return () => {
+      cleanup.then(fn => fn && fn());
+    };
   }, [eventId]);
 
   if (loading) {
@@ -68,8 +96,19 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
         />
       </div>
       
-      <div className="mt-12 text-center text-muted-foreground font-bold tracking-wide uppercase">
-        <p>Point your phone camera at this code to automatically check in.</p>
+      <div className="mt-12 text-center">
+        <p className="text-muted-foreground font-bold tracking-wide uppercase mb-6">
+          Point your phone camera at this code to automatically check in.
+        </p>
+        <div className="inline-flex items-center gap-3 bg-[#e9eef8] px-6 py-3 rounded-full border border-[#89abe3] shadow-inner">
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+          </span>
+          <span className="text-[#171d52] font-black text-xl">
+            {checkInCount} {checkInCount === 1 ? 'member has' : 'members have'} checked in
+          </span>
+        </div>
       </div>
     </div>
   );

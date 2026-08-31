@@ -29,7 +29,7 @@ export default async function EventsPage() {
     // Draft and cancelled events should not be visible on the public events page.
     const { data, error } = await supabase
         .from("events")
-        .select("*")
+        .select("*, forms(slug, is_open)")
         .eq("status", "published")
         .order("start_time", { ascending: true });
 

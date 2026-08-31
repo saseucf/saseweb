@@ -41,6 +41,23 @@ function Responses() {
     // UI State
     const [currentTab, setCurrentTab] = useState<"summary" | "individual">("summary");
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const filteredSubmissions = submissions.filter(sub => {
+        if (searchQuery.trim() === "") return true;
+        const query = searchQuery.toLowerCase();
+        if (sub.email?.toLowerCase().includes(query)) return true;
+        
+        for (const key in sub.responses) {
+            const val = sub.responses[key];
+            if (Array.isArray(val)) {
+                if (val.some(v => String(v).toLowerCase().includes(query))) return true;
+            } else {
+                if (String(val).toLowerCase().includes(query)) return true;
+            }
+        }
+        return false;
+    });
 
     // Editing State (Only for individual view)
     const [editingResponseId, setEditingResponseId] = useState<string | null>(null);
@@ -121,11 +138,11 @@ function Responses() {
 
     // CSV Export
     function exportToCSV() {
-        if (!form || submissions.length === 0) return;
+        if (!form || filteredSubmissions.length === 0) return;
         
         const headers = ["Submitted At", "Email", ...form.schema.map(q => q.label || "Untitled")];
         
-        const rows = submissions.map(sub => {
+        const rows = filteredSubmissions.map(sub => {
             const time = new Date(sub.created_at).toLocaleString();
             const email = sub.email || "Unknown";
             const answers = form.schema.map(q => {
@@ -213,12 +230,13 @@ function Responses() {
             <div className="sase-page-header">
                 <p className="sase-eyebrow">UCF SASE / Response archive</p>
                 <h1>{form.title}</h1>
-                <p>{submissions.length} response{submissions.length === 1 ? "" : "s"}</p>
+                <p>{filteredSubmissions.length} response{filteredSubmissions.length === 1 ? "" : "s"} {searchQuery ? `(filtered from ${submissions.length})` : ""}</p>
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-8 border-b border-border mt-8 mb-8">
-                <button 
+            {/* Search and Tabs */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border mt-8 mb-8 gap-4">
+                <div className="flex gap-8">
+                    <button 
                     className={`pb-4 font-bold uppercase tracking-wider text-sm transition-colors relative ${currentTab === "summary" ? "text-[#89abe3]" : "text-muted-foreground hover:text-foreground"}`}
                     onClick={() => setCurrentTab("summary")}
                 >
@@ -232,11 +250,33 @@ function Responses() {
                     Individual
                     {currentTab === "individual" && <div className="absolute bottom-[-1px] left-0 right-0 h-0.5 bg-[#89abe3]"></div>}
                 </button>
+                </div>
+                
+                {/* Search Bar */}
+                <div className="relative w-full max-w-sm mb-2">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Search by email or answer..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentIndex(0); // Reset index on search
+                        }}
+                        className="block w-full pl-10 pr-3 py-2 border border-[#D0D0CE] rounded-lg leading-5 bg-card placeholder-[#ACA39A] focus:outline-none focus:ring-2 focus:ring-[#e9eef8] focus:border-[#89abe3] transition-all sm:text-sm shadow-sm"
+                    />
+                </div>
             </div>
 
-            {submissions.length === 0 ? (
+            {filteredSubmissions.length === 0 ? (
                 <div className="sase-form-card mt-8">
-                    <p className="text-muted-foreground font-medium text-center py-12">No responses have been submitted yet.</p>
+                    <p className="text-muted-foreground font-medium text-center py-12">
+                        {searchQuery ? "No responses matched your search." : "No responses have been submitted yet."}
+                    </p>
                 </div>
             ) : currentTab === "summary" ? (
                 <div className="space-y-8 max-w-4xl mx-auto">
@@ -250,7 +290,7 @@ function Responses() {
                             const counts: Record<string, number> = {};
                             question.options?.forEach(opt => counts[opt] = 0);
                             
-                            submissions.forEach(sub => {
+                            filteredSubmissions.forEach(sub => {
                                 const ans = sub.responses[question.id];
                                 if (!ans) return;
                                 if (Array.isArray(ans)) {
@@ -264,7 +304,7 @@ function Responses() {
                                 .map(([name, count]) => ({ name, count }))
                                 .sort((a, b) => b.count - a.count);
                         } else {
-                            textResponses = submissions
+                            textResponses = filteredSubmissions
                                 .map(sub => (sub.responses[question.id] as string) || "")
                                 .filter(ans => ans.trim().length > 0);
                         }
@@ -272,7 +312,7 @@ function Responses() {
                         return (
                             <div key={question.id} className="bg-card rounded-2xl border border-border shadow-sm p-6 overflow-hidden">
                                 <h3 className="font-bold text-lg text-foreground mb-6">{question.label || "Untitled Question"}</h3>
-                                <div className="text-sm text-muted-foreground mb-4">{isChartable ? `${submissions.length} responses` : `${textResponses.length} responses`}</div>
+                                <div className="text-sm text-muted-foreground mb-4">{isChartable ? `${filteredSubmissions.length} responses` : `${textResponses.length} responses`}</div>
 
                                 {isChartable ? (
                                     <div className="h-[300px] w-full">
@@ -322,11 +362,11 @@ function Responses() {
                             <ChevronLeft size={24} />
                         </button>
                         <div className="font-bold text-foreground">
-                            {currentIndex + 1} of {submissions.length}
+                            {currentIndex + 1} of {filteredSubmissions.length}
                         </div>
                         <button 
-                            onClick={() => setCurrentIndex(c => Math.min(submissions.length - 1, c + 1))}
-                            disabled={currentIndex === submissions.length - 1}
+                            onClick={() => setCurrentIndex(c => Math.min(filteredSubmissions.length - 1, c + 1))}
+                            disabled={currentIndex === filteredSubmissions.length - 1}
                             className="p-2 rounded-full hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
                         >
                             <ChevronRight size={24} />
@@ -334,7 +374,7 @@ function Responses() {
                     </div>
 
                     {/* Individual Submission Card */}
-                    {submissions[currentIndex] && (
+                    {filteredSubmissions[currentIndex] && (
                         <div className="sase-form-card">
                             <div className="flex flex-col gap-4 mb-8 pb-6 border-b border-border">
                                 <div className="flex justify-between items-start">
@@ -342,9 +382,9 @@ function Responses() {
                                         <Users className="text-[#89abe3]" size={20} />
                                         Response {currentIndex + 1}
                                     </h2>
-                                    {editingResponseId !== submissions[currentIndex].id && (
+                                    {editingResponseId !== filteredSubmissions[currentIndex].id && (
                                         <button 
-                                            onClick={() => handleEdit(submissions[currentIndex])}
+                                            onClick={() => handleEdit(filteredSubmissions[currentIndex])}
                                             className="text-xs bg-[#e9eef8] text-[#89abe3] hover:bg-[#89abe3] hover:text-white px-4 py-2 rounded-lg font-bold uppercase tracking-wider transition-colors"
                                         >
                                             Edit Response
@@ -354,12 +394,12 @@ function Responses() {
                                 <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                                     <div className="flex items-center gap-2">
                                         <Mail size={16} />
-                                        <span className="font-semibold text-foreground">{submissions[currentIndex].email}</span>
+                                        <span className="font-semibold text-foreground">{filteredSubmissions[currentIndex].email}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Clock size={16} />
                                         <span>
-                                            {new Date(submissions[currentIndex].created_at).toLocaleString('en-US', {
+                                            {new Date(filteredSubmissions[currentIndex].created_at).toLocaleString('en-US', {
                                                 dateStyle: "long",
                                                 timeStyle: "short"
                                             })}
@@ -370,7 +410,7 @@ function Responses() {
                             
                             <div className="space-y-8">
                                 {form.schema.map((question) => {
-                                    const submission = submissions[currentIndex];
+                                    const submission = filteredSubmissions[currentIndex];
                                     const isEditing = editingResponseId === submission.id;
                                     const answer = isEditing ? editedResponses[question.id] : submission.responses?.[question.id];
                                     const isArray = Array.isArray(answer) || question.type === 'checkbox';
@@ -403,10 +443,10 @@ function Responses() {
                                     );
                                 })}
                                 
-                                {editingResponseId === submissions[currentIndex].id && (
+                                {editingResponseId === filteredSubmissions[currentIndex].id && (
                                     <div className="flex gap-4 pt-6 mt-6 border-t border-border">
                                         <button 
-                                            onClick={() => handleSaveEdit(submissions[currentIndex].id)}
+                                            onClick={() => handleSaveEdit(filteredSubmissions[currentIndex].id)}
                                             className="bg-[#89abe3] hover:bg-[#26355f] text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-colors w-full sm:w-auto"
                                         >
                                             Save Changes

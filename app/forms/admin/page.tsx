@@ -62,19 +62,6 @@ export default function Admin() {
     if (!canvas) return;
     
     const url = canvas.toDataURL("image/png");
-    try {
-      const blob = await (await fetch(url)).blob();
-      const file = new File([blob], `sase-form-${slug}-qr.png`, { type: "image/png" });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: "Form QR Code",
-        });
-        return;
-      }
-    } catch (err) {
-      console.error("Error sharing:", err);
-    }
 
     // Fallback to traditional download
     const a = document.createElement("a");

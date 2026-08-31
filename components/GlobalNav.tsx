@@ -4,14 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Sun, Moon, Menu, X } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Menu, X } from "lucide-react";
 import supabase from "@/lib/auth";
 
 export default function GlobalNav() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [viewAsUser, setViewAsUser] = useState(false);
@@ -19,7 +16,6 @@ export default function GlobalNav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const updateHash = () => setHash(window.location.hash);
     updateHash();
     window.addEventListener("hashchange", updateHash);
@@ -154,15 +150,7 @@ export default function GlobalNav() {
 
       {/* Fixed Actions: Theme Toggle & Auth & Mobile Menu Toggle */}
       <div className="flex items-center gap-3 shrink-0 ml-auto md:ml-0">
-        {mounted && (
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3] transition-colors"
-            aria-label="Toggle Dark Mode"
-          >
-            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-        )}
+
 
         {!role && !loading && (
           <Link className="border border-border rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-foreground hover:bg-foreground hover:text-background transition-colors hidden sm:block" href="/login">Log in</Link>

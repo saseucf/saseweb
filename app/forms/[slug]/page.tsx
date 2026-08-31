@@ -131,6 +131,29 @@ export default function FormResponsePage() {
       
       if (!rsvpError) {
          rsvpMessage = " You have also been RSVP'd to the associated event!";
+         
+         // Trigger Confirmation Email
+         try {
+             // Fetch Event Title and User Info
+             const [eventRes, profileRes] = await Promise.all([
+                 supabase.from("events").select("title").eq("id", form.event_id).single(),
+                 supabase.from("profiles").select("first_name, email, wants_email_notifications").eq("id", user.id).single()
+             ]);
+
+             if (eventRes.data && profileRes.data?.email && profileRes.data.wants_email_notifications !== false) {
+                 await fetch("/api/email", {
+                     method: "POST",
+                     headers: { "Content-Type": "application/json" },
+                     body: JSON.stringify({
+                         email: profileRes.data.email,
+                         firstName: profileRes.data.first_name,
+                         eventTitle: eventRes.data.title,
+                     }),
+                 });
+             }
+         } catch (e) {
+             console.error("Failed to send RSVP email", e);
+         }
       } else if (rsvpError.code !== '23505') {
          // 23505 is unique violation, meaning they are already RSVP'd
          console.error("Error auto-RSVPing user:", rsvpError);

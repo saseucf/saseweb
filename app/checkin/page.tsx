@@ -1,7 +1,25 @@
 import Link from "next/link";
 import { User, ShieldCheck } from "lucide-react";
+import { createServerSupabase } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 
-export default function CheckinLandingPage() {
+export default async function CheckinLandingPage() {
+  const supabase = createServerSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role === "admin") {
+      redirect("/checkin/admin");
+    } else {
+      redirect("/membership");
+    }
+  }
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-sm mx-auto">
       

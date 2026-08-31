@@ -138,9 +138,6 @@ function paymentEligibility(
   if (payment.currency !== configuration.expectedCurrency) {
     return `Payment currency must be ${configuration.expectedCurrency}.`;
   }
-  if (payment.amountCents !== configuration.expectedAmountCents) {
-    return `Payment amount must be ${configuration.expectedAmountCents} cents.`;
-  }
   if (payment.refundedAmountCents > 0 || payment.netAmountCents !== payment.amountCents) {
     return "Refunded payments cannot be assigned.";
   }

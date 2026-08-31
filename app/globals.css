@@ -48,8 +48,8 @@
 .dark {
   --background: #141b4d;
   --foreground: #e9e8e8;
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
+  --card: #24336e; /* Lighter navy blue for cards */
+  --card-foreground: #e9e8e8;
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.985 0 0);
@@ -205,9 +205,9 @@
 .sase-content-section { margin: 48px auto 0; max-width: 1180px; }
 .sase-content-section h2 { font-size: 1.7rem; letter-spacing: -0.03em; }
 .sase-form-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 18px; }
-.sase-form-card { background: #fff; border: 1px solid #dbe2f0; border-radius: 5px; box-shadow: 0 12px 30px rgba(23, 29, 82, 0.06); padding: 22px; }
-.sase-form-card h2, .sase-form-card h3 { font-size: 1.25rem; letter-spacing: -0.02em; }
-.sase-form-card p { color: #68738f; font-size: 0.9rem; line-height: 1.6; margin-top: 9px; }
+.sase-form-card { background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: 5px; box-shadow: 0 12px 30px rgba(23, 29, 82, 0.06); padding: 22px; }
+.sase-form-card h2, .sase-form-card h3 { font-size: 1.25rem; letter-spacing: -0.02em; color: var(--foreground); }
+.sase-form-card p { color: var(--muted-foreground); font-size: 0.9rem; line-height: 1.6; margin-top: 9px; }
 .sase-form-card .sase-primary-button { margin-top: 20px; }
 .sase-meta { color: #73809e; font-family: var(--font-geist-mono); font-size: 0.72rem; margin-top: 12px; }
 .sase-status { color: #89abe3; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; margin-top: 12px; text-transform: uppercase; }
