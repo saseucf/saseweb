@@ -252,12 +252,12 @@ export default function MembershipReconciliation() {
       });
       const result = await readEnvelope<{ success: boolean }>(response);
       if (!result.ok) {
-        setAnnouncement(result.error.message);
+        alert("Failed to mark as paid: " + result.error.message);
         return;
       }
       await refreshAfterAction("Member manually marked as paid.");
     } catch {
-      setAnnouncement("Could not mark as paid. Check your connection.");
+      alert("Could not mark as paid. Check your connection.");
     } finally {
       setSaving(false);
     }
