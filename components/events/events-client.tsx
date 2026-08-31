@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { getEventTypeColor } from "@/lib/event-type-colors";
 
 type Event = {
@@ -102,9 +103,10 @@ export default function EventsClient({ events }: { events: Event[] }) {
                     {filteredEvents.map((event) => {
                         const eventColor = getEventTypeColor(event.event_type);
                         return (
-                            <div 
+                            <Link 
                                 key={event.id} 
-                                className="sase-form-card flex flex-col justify-between relative overflow-hidden"
+                                href={`/events/${event.id}`}
+                                className="sase-form-card flex flex-col justify-between relative overflow-hidden hover:ring-2 hover:ring-[#89ABE3] hover:-translate-y-1 transition-all duration-200"
                                 style={{ borderLeft: `6px solid ${eventColor}` }}
                             >
                                 <div>
@@ -152,7 +154,7 @@ export default function EventsClient({ events }: { events: Event[] }) {
                                         )}
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         );
                     })}
                 </div>
@@ -272,15 +274,17 @@ function EventCalendar({ events }: { events: Event[] }) {
                     ) : (
                         <ul className="space-y-3">
                             {selectedEvents.map(e => (
-                                <li key={e.id} className="flex items-start gap-3 bg-card p-3 rounded shadow-sm border border-background">
-                                    <div className="w-1.5 min-h-[40px] self-stretch rounded-full" style={{ backgroundColor: getEventTypeColor(e.event_type) }} />
-                                    <div>
-                                        <p className="font-bold text-foreground text-sm">{e.title}</p>
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                            {new Date(e.start_time).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' })} 
-                                            {" • "} <span className="font-semibold" style={{ color: getEventTypeColor(e.event_type) }}>{e.event_type}</span>
-                                        </p>
-                                    </div>
+                                <li key={e.id}>
+                                    <Link href={`/events/${e.id}`} className="flex items-start gap-3 bg-card p-3 rounded shadow-sm border border-background hover:border-[#89ABE3] hover:-translate-y-0.5 transition-all duration-200">
+                                        <div className="w-1.5 min-h-[40px] self-stretch rounded-full" style={{ backgroundColor: getEventTypeColor(e.event_type) }} />
+                                        <div>
+                                            <p className="font-bold text-foreground text-sm">{e.title}</p>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                {new Date(e.start_time).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' })} 
+                                                {" • "} <span className="font-semibold" style={{ color: getEventTypeColor(e.event_type) }}>{e.event_type}</span>
+                                            </p>
+                                        </div>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>
