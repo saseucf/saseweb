@@ -18,7 +18,7 @@ export default function Home() {
         </div>
 
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 relative z-10 mb-[15vh] md:mb-[25vh]" data-aos="fade-up">
-          <div className="flex flex-col items-start gap-2 max-w-2xl">
+          <div className="flex flex-col items-center md:items-start gap-2 max-w-2xl md:mx-0 mx-auto text-center md:text-left">
             <div className="flex items-center gap-4 md:gap-6 mb-4 md:pl-[60px]">
               {/* Dark Mode Logo */}
               <Image 
@@ -26,7 +26,7 @@ export default function Home() {
                 alt="SASE Society of Asian Scientists & Engineers" 
                 width={800} 
                 height={200} 
-                className="w-[320px] md:w-[600px] h-auto object-contain drop-shadow-lg hidden dark:block" 
+                className="w-[260px] sm:w-[320px] md:w-[600px] h-auto object-contain drop-shadow-lg hidden dark:block" 
                 priority
               />
               {/* Light Mode Logo */}
@@ -35,12 +35,12 @@ export default function Home() {
                 alt="SASE Society of Asian Scientists & Engineers" 
                 width={800} 
                 height={200} 
-                className="w-[320px] md:w-[600px] h-auto object-contain drop-shadow-lg block dark:hidden" 
+                className="w-[260px] sm:w-[320px] md:w-[600px] h-auto object-contain drop-shadow-lg block dark:hidden" 
                 priority
               />
             </div>
             
-            <div className="flex flex-wrap items-center gap-4 mt-4 md:pl-[60px]">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-4 md:pl-[60px]">
               <Link href="/checkin" className="bg-[#89abe3] hover:bg-foreground hover:text-background text-foreground font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
                 Check-in
               </Link>

@@ -179,9 +179,9 @@
   .sase-nav-links a { font-size: 0.58rem; letter-spacing: 0.08em; }
   .sase-nav-links a:nth-child(2) { display: none; }
   .sase-login { padding: 9px 12px; }
-  .sase-sun { height: 300px; right: -95px; top: 34%; width: 300px; }
-  .sase-cloud-top { top: 25%; }
-  .sase-cloud-middle { right: 24%; top: 50%; }
+  .sase-sun { height: 220px; right: -60px; top: 10%; width: 220px; opacity: 0.5; }
+  .sase-cloud-top { top: 20%; right: 2%; }
+  .sase-cloud-middle { right: 24%; top: 50%; display: none; }
   .sase-bottom-note { bottom: 14px; }
 }
 
