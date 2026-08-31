@@ -91,11 +91,6 @@ export default function TeamPage() {
         <main className="sase-page">
             {/* Hero Header */}
             <div className="sase-page-header relative overflow-hidden">
-                {/* subtle background decoration */}
-                <div className="absolute inset-0 pointer-events-none" aria-hidden>
-                    <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#89abe3]/10 blur-3xl -translate-y-1/2 translate-x-1/2" />
-                    <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full bg-[#dbc8b6]/20 blur-2xl translate-y-1/2 -translate-x-1/4" />
-                </div>
                 <p className="sase-eyebrow relative z-10">UCF SASE / Team</p>
                 <h1 className="relative z-10">Meet the Team</h1>
                 <p className="relative z-10 mt-2 text-muted-foreground max-w-xl mx-auto">

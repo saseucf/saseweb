@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { toast } from "sonner";
 import React from "react";
 
 export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventId: string }> }) {
@@ -64,11 +65,14 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
     if (error) {
       if (error.code === '23505') {
         setStatus({ success: false, msg: "You are already checked in!" });
+        toast.error("You are already checked in!");
       } else {
         setStatus({ success: false, msg: "Failed to check in. Please try again." });
+        toast.error("Failed to check in. Please try again.");
       }
     } else {
       setStatus({ success: true, msg: "Successfully checked in to " + event.title + "!" });
+      toast.success("Successfully checked in to " + event.title + "!");
     }
     
     setCheckingIn(false);

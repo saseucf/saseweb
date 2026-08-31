@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getEventTypeColor } from "@/lib/event-type-colors";
 
 type Event = {
@@ -16,9 +18,11 @@ type Event = {
     host: string | null;
     created_at: string;
     status: "draft" | "published" | "cancelled";
+    forms?: { slug: string, is_open: boolean }[];
 };
 
 export default function EventsClient({ events }: { events: Event[] }) {
+    const router = useRouter();
     const [selectedType, setSelectedType] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     
@@ -101,10 +105,14 @@ export default function EventsClient({ events }: { events: Event[] }) {
                 <div className="sase-form-grid">
                     {filteredEvents.map((event) => {
                         const eventColor = getEventTypeColor(event.event_type);
+                        const isToday = new Date().toDateString() === new Date(event.start_time).toDateString();
+                        const openForm = event.forms?.find(f => f.is_open);
+                        
                         return (
-                            <div 
+                            <Link 
                                 key={event.id} 
-                                className="sase-form-card flex flex-col justify-between relative overflow-hidden"
+                                href={`/events/${event.id}`}
+                                className="sase-form-card flex flex-col justify-between relative overflow-hidden hover:ring-2 hover:ring-[#89ABE3] hover:-translate-y-1 transition-all duration-200"
                                 style={{ borderLeft: `6px solid ${eventColor}` }}
                             >
                                 <div>
@@ -151,8 +159,35 @@ export default function EventsClient({ events }: { events: Event[] }) {
                                             </div>
                                         )}
                                     </div>
+                                    
+                                    {(openForm || isToday) && (
+                                        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-[#D0D0CE]">
+                                            {openForm && (
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        router.push(`/forms/${openForm.slug}`);
+                                                    }}
+                                                    className="px-4 py-2 bg-[#171d52] text-white rounded-lg text-sm font-bold hover:bg-[#2a3473] transition-colors w-full text-center"
+                                                >
+                                                    RSVP Now
+                                                </button>
+                                            )}
+                                            {isToday && (
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        router.push(`/checkin/scan/${event.id}`);
+                                                    }}
+                                                    className="px-4 py-2 bg-[#89abe3] text-[#171d52] rounded-lg text-sm font-bold hover:bg-[#a6c1ee] transition-colors w-full text-center"
+                                                >
+                                                    Check In
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
+                            </Link>
                         );
                     })}
                 </div>
@@ -213,8 +248,8 @@ function EventCalendar({ events }: { events: Event[] }) {
             <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-black text-foreground">{monthName} {year}</h3>
                 <div className="flex gap-2">
-                    <button onClick={prevMonth} className="px-3 py-1 bg-background hover:bg-[#D0D0CE] rounded text-foreground font-bold">&larr;</button>
-                    <button onClick={nextMonth} className="px-3 py-1 bg-background hover:bg-[#D0D0CE] rounded text-foreground font-bold">&rarr;</button>
+                    <button onClick={prevMonth} className="px-3 py-1 bg-background hover:bg-muted border border-border rounded text-foreground font-bold">&larr;</button>
+                    <button onClick={nextMonth} className="px-3 py-1 bg-background hover:bg-muted border border-border rounded text-foreground font-bold">&rarr;</button>
                 </div>
             </div>
 
@@ -239,7 +274,7 @@ function EventCalendar({ events }: { events: Event[] }) {
                             key={i} 
                             onClick={() => setSelectedDate(date)}
                             className={`p-2 min-h-20 rounded border cursor-pointer hover:border-[#89ABE3] transition-colors relative flex flex-col ${
-                                isSelected ? 'border-foreground bg-[#F4F6FB] shadow-inner' : 'border-background bg-card'
+                                isSelected ? 'border-[#89abe3] bg-[#F4F6FB] dark:bg-muted shadow-inner' : 'border-border bg-card'
                             }`}
                         >
                             <span className={`text-sm font-semibold mb-1 ${isSelected ? 'text-foreground' : 'text-muted-foreground'}`}>
@@ -263,7 +298,7 @@ function EventCalendar({ events }: { events: Event[] }) {
 
             {/* Selected Date Details */}
             {selectedDate && (
-                <div className="mt-6 p-4 bg-[#F4F6FB] rounded-lg border border-[#89ABE3]">
+                <div className="mt-6 p-4 bg-[#F4F6FB] dark:bg-muted/30 rounded-lg border border-[#89ABE3]">
                     <h4 className="font-bold text-foreground mb-3">
                         Events on {selectedDate.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
                     </h4>
@@ -272,15 +307,17 @@ function EventCalendar({ events }: { events: Event[] }) {
                     ) : (
                         <ul className="space-y-3">
                             {selectedEvents.map(e => (
-                                <li key={e.id} className="flex items-start gap-3 bg-card p-3 rounded shadow-sm border border-background">
-                                    <div className="w-1.5 min-h-[40px] self-stretch rounded-full" style={{ backgroundColor: getEventTypeColor(e.event_type) }} />
-                                    <div>
-                                        <p className="font-bold text-foreground text-sm">{e.title}</p>
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                            {new Date(e.start_time).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' })} 
-                                            {" • "} <span className="font-semibold" style={{ color: getEventTypeColor(e.event_type) }}>{e.event_type}</span>
-                                        </p>
-                                    </div>
+                                <li key={e.id}>
+                                    <Link href={`/events/${e.id}`} className="flex items-start gap-3 bg-card p-3 rounded shadow-sm border border-background hover:border-[#89ABE3] hover:-translate-y-0.5 transition-all duration-200">
+                                        <div className="w-1.5 min-h-[40px] self-stretch rounded-full" style={{ backgroundColor: getEventTypeColor(e.event_type) }} />
+                                        <div>
+                                            <p className="font-bold text-foreground text-sm">{e.title}</p>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                {new Date(e.start_time).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' })} 
+                                                {" • "} <span className="font-semibold" style={{ color: getEventTypeColor(e.event_type) }}>{e.event_type}</span>
+                                            </p>
+                                        </div>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

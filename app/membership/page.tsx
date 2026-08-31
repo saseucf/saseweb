@@ -8,6 +8,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import MemberQr from "@/components/membership/member-qr";
+import VerifyPaymentButton from "@/components/membership/verify-payment-button";
 import { getMemberNames } from "@/lib/member-names";
 import { getMembershipCheckoutConfiguration } from "@/lib/membership-checkout";
 import { createServerSupabase } from "@/lib/supabase-server";
@@ -106,6 +107,7 @@ export default async function MembershipPage() {
                   Pay {formatMoney(checkout.configuration.amountCents, checkout.configuration.currency)} dues
                   <ExternalLink className="size-4" aria-hidden="true" />
                 </a>
+                <VerifyPaymentButton userId={user.id} />
               </div>
             ) : (
               <div className="flex max-w-sm gap-3 border border-destructive/35 bg-destructive/10 p-4" role="alert">

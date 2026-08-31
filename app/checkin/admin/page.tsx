@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { Loader2, LogOut, CheckCircle, XCircle, Camera, QrCode } from "lucide-react";
+import { toast } from "sonner";
 import QRScanner from "@/components/checkin/QRScanner";
 
 export default function AdminDashboard() {
@@ -17,6 +18,7 @@ export default function AdminDashboard() {
   const [scannedUser, setScannedUser] = useState<any>(null);
   const [checkInStatus, setCheckInStatus] = useState<{success: boolean; msg: string} | null>(null);
   const [checkInLoading, setCheckInLoading] = useState(false);
+  const [checkInCount, setCheckInCount] = useState(0);
 
   const router = useRouter();
 
@@ -58,6 +60,41 @@ export default function AdminDashboard() {
     };
     init();
   }, [router]);
+
+  // Real-time Check-in Count
+  useEffect(() => {
+    if (!selectedEvent) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let channel: any;
+
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from('event_attendances')
+        .select('*', { count: 'exact', head: true })
+        .eq('event_id', selectedEvent);
+      
+      setCheckInCount(count || 0);
+
+      channel = supabase.channel(`realtime_admin_checkins_${selectedEvent}`)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'event_attendances', filter: `event_id=eq.${selectedEvent}` },
+          () => {
+            setCheckInCount((prev) => prev + 1);
+          }
+        )
+        .subscribe();
+    };
+
+    fetchCount();
+
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [selectedEvent]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -102,11 +139,14 @@ export default function AdminDashboard() {
     if (checkInError) {
       if (checkInError.code === '23505') { // Unique violation
         setCheckInStatus({ success: false, msg: "User is already checked in to this event." });
+        toast.error("User is already checked in to this event.");
       } else {
         setCheckInStatus({ success: false, msg: "Failed to check in. Please try again." });
+        toast.error("Failed to check in. Please try again.");
       }
     } else {
       setCheckInStatus({ success: true, msg: "Successfully checked in!" });
+      toast.success("Successfully checked in!");
     }
     
     setCheckInLoading(false);
@@ -139,7 +179,18 @@ export default function AdminDashboard() {
 
       {/* Event Selector */}
       <div className="w-full space-y-2">
-        <label className="text-sm font-bold text-foreground ml-1">Check-in Destination:</label>
+        <div className="flex items-center justify-between ml-1 mb-1">
+          <label className="text-sm font-bold text-foreground">Check-in Destination:</label>
+          {selectedEvent && (
+            <div className="flex items-center gap-2 bg-[#e9eef8] px-3 py-1 rounded-full border border-[#89abe3]">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              <span className="text-xs font-black text-[#171d52]">{checkInCount} Checked In</span>
+            </div>
+          )}
+        </div>
         <select
           value={selectedEvent}
           onChange={(e) => setSelectedEvent(e.target.value)}

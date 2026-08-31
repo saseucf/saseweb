@@ -15,9 +15,23 @@ export default async function ProfilePage() {
 
     const { data: profile, error } = await supabase
         .from("profiles")
-        .select("first_name, last_name, email, phone_number, major, school, year, paid_member, role")
+        .select("id, first_name, last_name, email, phone_number, major, school, year, paid_member, role, wants_email_notifications")
         .eq("id", user.id)
         .single();
+
+    const { data: rawAttendances } = await supabase
+        .from("event_attendances")
+        .select(`
+            event_id,
+            events ( id, title, start_time, event_type, points )
+        `)
+        .eq("user_id", user.id);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const attendances = (rawAttendances || []).map((row: any) => ({
+        event_id: row.event_id,
+        events: Array.isArray(row.events) ? row.events[0] : row.events
+    }));
 
     if (error || !profile) {
         return (
@@ -46,5 +60,5 @@ export default async function ProfilePage() {
         currency: "USD",
     });
 
-    return <ProfileClient initialProfile={profile} checkout={checkout} />;
+    return <ProfileClient initialProfile={profile} checkout={checkout} initialAttendances={attendances || []} />;
 }
