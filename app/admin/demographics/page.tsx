@@ -112,7 +112,7 @@ export default async function DemographicsPage() {
                 {/* Top Metrics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                     <MetricCard 
-                        title="Total Members" 
+                        title="Total Registered Members" 
                         value={totalMembers || 0} 
                         icon={<Users className="w-5 h-5 text-[#5579bd]" />} 
                         subtitle="Registered in system"
