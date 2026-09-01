@@ -176,7 +176,8 @@ export default function EventForm({
             router.refresh();
         } catch (error: unknown) {
             console.error("Could not save event:", error);
-            setErrorMessage("Could not save event. Check your dates and fields.");
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            setErrorMessage(`Could not save event: ${errorMessage}`);
             setIsSubmitting(false);
         }
         }

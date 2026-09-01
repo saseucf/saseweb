@@ -60,5 +60,18 @@ export default async function ProfilePage() {
         currency: "USD",
     });
 
-    return <ProfileClient initialProfile={profile} checkout={checkout} initialAttendances={attendances || []} />;
+    const discordIdentity = user.identities?.find(id => id.provider === 'discord');
+    const hasDiscordLinked = !!discordIdentity;
+    const discordUsername = discordIdentity?.identity_data?.full_name 
+                            || discordIdentity?.identity_data?.name 
+                            || discordIdentity?.identity_data?.custom_claims?.global_name 
+                            || null;
+
+    return <ProfileClient 
+        initialProfile={profile} 
+        checkout={checkout} 
+        initialAttendances={attendances || []} 
+        discordLinked={hasDiscordLinked}
+        discordUsername={discordUsername}
+    />;
 }

@@ -189,6 +189,7 @@ CREATE TABLE public.events (
     capacity INTEGER,
     points INTEGER DEFAULT 1 NOT NULL,
     host TEXT,
+    status TEXT DEFAULT 'draft' NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
@@ -325,6 +326,10 @@ ALTER TABLE public.membership_payment_matches ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Admins can view all profiles"
     ON public.profiles FOR SELECT
+    USING (public.is_admin());
+
+CREATE POLICY "Admins can update all profiles"
+    ON public.profiles FOR UPDATE
     USING (public.is_admin());
 
 CREATE POLICY "Admins can view membership payment matches"

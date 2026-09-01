@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import { Loader2, LogOut, CheckCircle, XCircle, Camera, QrCode } from "lucide-react";
+import { Loader2, LogOut, CheckCircle, XCircle, Camera, QrCode, Users } from "lucide-react";
 import { toast } from "sonner";
 import QRScanner from "@/components/checkin/QRScanner";
 
@@ -19,6 +19,12 @@ export default function AdminDashboard() {
   const [checkInStatus, setCheckInStatus] = useState<{success: boolean; msg: string} | null>(null);
   const [checkInLoading, setCheckInLoading] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
+
+  const [showAttendees, setShowAttendees] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [attendees, setAttendees] = useState<any[]>([]);
+  const [attendeesLoading, setAttendeesLoading] = useState(false);
+  const [attendeeSearch, setAttendeeSearch] = useState("");
 
   const router = useRouter();
 
@@ -152,6 +158,33 @@ export default function AdminDashboard() {
     setCheckInLoading(false);
   };
 
+  const fetchAttendees = async () => {
+    if (!selectedEvent) return;
+    setAttendeesLoading(true);
+    setShowAttendees(true);
+    
+    const { data, error } = await supabase
+      .from('event_attendances')
+      .select('*, profiles(first_name, last_name, email, major, year, total_points)')
+      .eq('event_id', selectedEvent)
+      .order('checked_in_at', { ascending: false });
+      
+    if (data && !error) {
+      setAttendees(data);
+    } else {
+      toast.error("Failed to load attendees");
+    }
+    setAttendeesLoading(false);
+  };
+
+  const filteredAttendees = attendees.filter(att => {
+    const profile = att.profiles || {};
+    const search = attendeeSearch.toLowerCase();
+    const fullName = `${profile.first_name} ${profile.last_name}`.toLowerCase();
+    const email = (profile.email || "").toLowerCase();
+    return fullName.includes(search) || email.includes(search);
+  });
+
   if (loading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
@@ -242,6 +275,69 @@ export default function AdminDashboard() {
           </button>
         )}
       </div>
+
+      {!scanning && (
+        <button
+          onClick={fetchAttendees}
+          disabled={!selectedEvent}
+          className="w-full flex items-center justify-center space-x-2 bg-card text-foreground border border-border p-4 rounded-xl font-bold shadow-sm hover:bg-[#e9eef8] transition-all active:scale-[0.98] disabled:opacity-50"
+        >
+          <Users className="w-6 h-6" />
+          <span className="text-sm tracking-wide">View Check-ins</span>
+        </button>
+      )}
+
+      {/* Attendees List Modal / Section */}
+      {showAttendees && (
+        <div className="w-full bg-card border border-border rounded-xl shadow-md overflow-hidden animate-in fade-in zoom-in-95">
+          <div className="p-4 border-b border-border flex justify-between items-center bg-[#f8fafc]">
+            <h3 className="font-bold text-lg text-foreground">Checked-in Members</h3>
+            <button 
+              onClick={() => setShowAttendees(false)}
+              className="text-muted-foreground hover:text-red-600 transition-colors"
+            >
+              <XCircle className="w-6 h-6" />
+            </button>
+          </div>
+          
+          <div className="p-4">
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={attendeeSearch}
+              onChange={(e) => setAttendeeSearch(e.target.value)}
+              className="w-full mb-4 px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#89abe3]"
+            />
+            
+            {attendeesLoading ? (
+              <div className="flex justify-center p-8">
+                <Loader2 className="w-8 h-8 animate-spin text-[#89abe3]" />
+              </div>
+            ) : filteredAttendees.length === 0 ? (
+              <div className="text-center p-8 text-muted-foreground font-medium">
+                No attendees found.
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
+                {filteredAttendees.map(att => {
+                  const profile = att.profiles || {};
+                  return (
+                    <div key={att.id} className="flex justify-between items-center p-3 rounded-lg border border-[#e9eef8] bg-background hover:bg-[#f8fafc] transition-colors">
+                      <div>
+                        <div className="font-bold text-foreground">{profile.first_name} {profile.last_name}</div>
+                        <div className="text-xs text-muted-foreground">{profile.email}</div>
+                      </div>
+                      <div className="text-xs font-semibold bg-[#e9eef8] text-[#171d52] px-2 py-1 rounded-full">
+                        {new Date(att.checked_in_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Results / Status Card */}
       {checkInLoading && (

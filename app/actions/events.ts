@@ -18,13 +18,19 @@ export async function saveEvent(eventData: Record<string, unknown>, existingId?:
             .update(eventData)
             .eq("id", existingId);
             
-        if (error) throw new Error(error.message);
+        if (error) {
+            console.error("Supabase update error:", error);
+            throw new Error(error.message);
+        }
     } else {
         const { error } = await supabase
             .from("events")
             .insert(eventData);
             
-        if (error) throw new Error(error.message);
+        if (error) {
+            console.error("Supabase insert error:", error);
+            throw new Error(error.message);
+        }
     }
     
     // Clear cache immediately after saving
