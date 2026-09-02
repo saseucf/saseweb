@@ -44,6 +44,13 @@ CREATE POLICY "Users can view their own profile"
     ON public.profiles FOR SELECT
     USING (auth.uid() = id);
 
+-- Allow users to insert their own profile (needed when a profile row was
+-- deleted but the auth.users row still exists, so handle_new_user() doesn't
+-- re-fire and the app must re-create the row client-side).
+CREATE POLICY "Users can insert their own profile"
+    ON public.profiles FOR INSERT
+    WITH CHECK (auth.uid() = id);
+
 -- Allow users to update their own profile
 CREATE POLICY "Users can update their own profile"
     ON public.profiles FOR UPDATE
@@ -164,6 +171,7 @@ CREATE TABLE public.events (
     capacity INTEGER,
     points INTEGER DEFAULT 1 NOT NULL,
     host TEXT,
+    reminded BOOLEAN DEFAULT FALSE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 

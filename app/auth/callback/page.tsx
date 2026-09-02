@@ -25,11 +25,53 @@ function AuthCallback() {
                 }
                 window.dispatchEvent(new CustomEvent("sase:auth", { detail: { user } }))
 
-                const { data: profile } = await supabase
+                const { data: profile, error: profileError } = await supabase
                     .from("profiles")
                     .select("*")
                     .eq("id", user.id)
                     .single()
+
+                // Profile row is missing (e.g. it was deleted while the
+                // auth.users row still exists, so handle_new_user() never
+                // re-fired). Re-create it from OAuth metadata so the user
+                // isn't stuck.
+                if (profileError?.code === "PGRST116") {
+                    const meta = user.user_metadata ?? {}
+                    let firstName = ""
+                    let lastName = ""
+
+                    if (meta.given_name) {
+                        firstName = meta.given_name
+                        lastName = meta.family_name ?? ""
+                    } else if (meta.first_name) {
+                        firstName = meta.first_name
+                        lastName = meta.last_name ?? ""
+                    } else {
+                        const displayName =
+                            meta.full_name || meta.name || meta.user_name || "New Member"
+                        const spaceIdx = displayName.indexOf(" ")
+                        if (spaceIdx > 0) {
+                            firstName = displayName.slice(0, spaceIdx)
+                            lastName = displayName.slice(spaceIdx + 1)
+                        } else {
+                            firstName = displayName
+                        }
+                    }
+
+                    await supabase.from("profiles").insert({
+                        id: user.id,
+                        first_name: firstName,
+                        last_name: lastName,
+                        email: user.email ?? "",
+                        major: "",
+                        year: "",
+                        school: "",
+                        name_confirmed: false,
+                    })
+
+                    router.replace(`/confirm-name?redirect=${encodeURIComponent(redirectUrl)}`)
+                    return
+                }
 
                 if (profile && !profile.name_confirmed) {
                     router.replace(`/confirm-name?redirect=${encodeURIComponent(redirectUrl)}`)

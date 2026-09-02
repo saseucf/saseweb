@@ -27,11 +27,46 @@ function ConfirmName() {
                 return
             }
 
-            const { data: profile } = await supabase
+            const { data: profile, error: profileError } = await supabase
                 .from("profiles")
                 .select("first_name, last_name, major, school, phone_number, name_confirmed")
                 .eq("id", user.id)
                 .single()
+
+            // Profile row missing — create a stub so the form can save.
+            if (profileError?.code === "PGRST116") {
+                const meta = user.user_metadata ?? {}
+                let fn = ""
+                let ln = ""
+                if (meta.given_name) {
+                    fn = meta.given_name
+                    ln = meta.family_name ?? ""
+                } else if (meta.first_name) {
+                    fn = meta.first_name
+                    ln = meta.last_name ?? ""
+                } else {
+                    const dn = meta.full_name || meta.name || meta.user_name || ""
+                    const sp = dn.indexOf(" ")
+                    if (sp > 0) { fn = dn.slice(0, sp); ln = dn.slice(sp + 1) }
+                    else { fn = dn }
+                }
+
+                await supabase.from("profiles").insert({
+                    id: user.id,
+                    first_name: fn,
+                    last_name: ln,
+                    email: user.email ?? "",
+                    major: "",
+                    year: "",
+                    school: "",
+                    name_confirmed: false,
+                })
+
+                setFirstName(fn)
+                setLastName(ln)
+                setLoading(false)
+                return
+            }
 
             if (!profile || profile.name_confirmed) {
                 router.replace(redirectUrl)
