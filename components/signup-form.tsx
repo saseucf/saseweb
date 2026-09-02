@@ -7,7 +7,7 @@ import { FcGoogle } from "react-icons/fc"
 import Link from "next/link"
 import supabase from "@/lib/auth"
 
-export function LoginForm() {
+export function SignupForm() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const redirectUrl = searchParams.get("redirect") || "/"
@@ -40,18 +40,21 @@ export function LoginForm() {
 
     if (checkingSession) return null
 
-    const handlePasswordLogin = async (event: FormEvent<HTMLFormElement>) => {
+    const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setError("")
         setIsLoading(true)
 
-        const { error: loginError } = await supabase.auth.signInWithPassword({
+        const { error: signupError } = await supabase.auth.signUp({
             email,
             password,
+            options: {
+                emailRedirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`,
+            },
         })
 
-        if (loginError) {
-            setError(loginError.message)
+        if (signupError) {
+            setError(signupError.message)
             setIsLoading(false)
             return
         }
@@ -74,11 +77,11 @@ export function LoginForm() {
     return (
         <div className="sase-login-card flex flex-col gap-4 p-6">
             <div>
-                <h1 className="text-2xl font-bold">Log in to SASE</h1>
-                <p className="mt-1 text-sm text-gray-500">Use your account to manage forms.</p>
+                <h1 className="text-2xl font-bold">Sign up for SASE</h1>
+                <p className="mt-1 text-sm text-gray-500">Create an account to get started.</p>
             </div>
 
-            <form className="flex flex-col gap-3" onSubmit={handlePasswordLogin}>
+            <form className="flex flex-col gap-3" onSubmit={handleSignup}>
                 <label className="flex flex-col gap-1 text-sm font-medium">
                     Email
                     <input
@@ -97,7 +100,7 @@ export function LoginForm() {
                         type="password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
-                        autoComplete="current-password"
+                        autoComplete="new-password"
                         required
                     />
                 </label>
@@ -106,7 +109,7 @@ export function LoginForm() {
                     type="submit"
                     disabled={isLoading}
                 >
-                    {isLoading ? "Logging in..." : "Log in"}
+                    {isLoading ? "Signing up..." : "Sign up"}
                 </button>
             </form>
 
@@ -140,9 +143,9 @@ export function LoginForm() {
             </button>
 
             <p className="text-center text-sm text-gray-500">
-                Don&apos;t have an account?{" "}
-                <Link href="/signup" className="font-medium text-blue-600 hover:underline">
-                    Sign up
+                Already have an account?{" "}
+                <Link href="/login" className="font-medium text-blue-600 hover:underline">
+                    Log in
                 </Link>
             </p>
         </div>
