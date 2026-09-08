@@ -1,0 +1,82 @@
+/* DESIGN STANDARD REFERENCE ONLY. Not imported by the application.
+ * Sources and adoption rules: ../../DESIGN.md
+ * Hex references preserve measured sRGB values; OKLCH values are converted equivalents.
+ */
+:root {
+  --sase-color-navy: oklch(25.115% 0.09193 271.957); /* #141b4d | Figma: 456:110, 465:155 */
+  --sase-color-blue: oklch(73.726% 0.08990 260.194); /* #89abe3 | Figma: 456:128 and logo accents */
+  --sase-color-cream: oklch(98.928% 0.03136 103.067); /* #fffde5 | Figma: 456:112 and logo fills */
+  --sase-color-slate: oklch(40.772% 0.07790 269.632); /* #394774 | Figma: 456:142, 465:187 */
+  --sase-color-aqua: oklch(88.824% 0.05093 210.300); /* #b4e4ed | Figma: 479:216 and event section headings */
+  --sase-color-gold: oklch(87.559% 0.14009 86.005); /* #ffcf5e | Figma: 456:120, 456:149 */
+  --sase-color-canvas-light: oklch(97.874% 0.00574 264.533); /* #f6f8fc | Current code: :root --background */
+  --sase-color-surface-light: oklch(99.115% 0.00411 271.371); /* #fbfcff | Proposed: tinted light surface */
+  --sase-color-surface-muted-light: oklch(96.013% 0.01031 261.789); /* #eef2f9 | Proposed: light secondary surface */
+  --sase-color-link-light: oklch(51.294% 0.10725 260.654); /* #4266a4 | Current code: GlobalNav */
+  --sase-color-text-muted-light: oklch(49.078% 0.04732 262.038); /* #52617c | Proposed: readable secondary text */
+  --sase-color-border-light: oklch(62.624% 0.04500 265.500); /* #7b88a4 | Proposed: control boundary */
+  --sase-color-text-muted-dark: oklch(79.862% 0.03709 268.217); /* #b3bdd6 | Proposed: readable dark secondary text */
+  --sase-color-border-dark: oklch(68.452% 0.05259 263.587); /* #899abb | Proposed: dark control boundary */
+  --sase-color-success-light: oklch(45.330% 0.07210 168.758); /* #25634f | Proposed: success text on light */
+  --sase-color-success-dark: oklch(83.062% 0.06280 164.450); /* #a2d5bd | Proposed: success text on dark */
+  --sase-color-warning-light: oklch(46.105% 0.08793 74.405); /* #755014 | Proposed: warning text on light */
+  --sase-color-error-light: oklch(46.803% 0.15114 17.254); /* #9d293a | Proposed: error text on light */
+  --sase-color-error-dark: oklch(84.126% 0.08770 16.451); /* #ffb4b7 | Proposed: error text on dark */
+  --sase-color-surface-dark: oklch(31.359% 0.06778 277.195); /* #292d53 | Figma: 456:139 */
+  --sase-canvas: var(--sase-color-canvas-light);
+  --sase-surface: var(--sase-color-surface-light);
+  --sase-surface-alt: var(--sase-color-surface-muted-light);
+  --sase-text: var(--sase-color-navy);
+  --sase-text-muted: var(--sase-color-text-muted-light);
+  --sase-action: var(--sase-color-blue);
+  --sase-action-text: var(--sase-color-navy);
+  --sase-link: var(--sase-color-link-light);
+  --sase-border: var(--sase-color-border-light);
+  --sase-focus: var(--sase-color-link-light);
+  --sase-success: var(--sase-color-success-light);
+  --sase-warning: var(--sase-color-warning-light);
+  --sase-error: var(--sase-color-error-light);
+  --sase-font-ui: "Inter", system-ui, sans-serif;
+  --sase-font-body: "Outfit", system-ui, sans-serif;
+  --sase-font-signature: "Space Mono", ui-monospace, monospace;
+  --sase-font-category: "Archivo", var(--sase-font-ui);
+  --sase-space-4: 0.25rem;
+  --sase-space-8: 0.5rem;
+  --sase-space-12: 0.75rem;
+  --sase-space-16: 1rem;
+  --sase-space-20: 1.25rem;
+  --sase-space-24: 1.5rem;
+  --sase-space-32: 2rem;
+  --sase-space-48: 3rem;
+  --sase-space-64: 4rem;
+  --sase-space-80: 5rem;
+  --sase-space-96: 6rem;
+  --sase-radius-control: 6px;
+  --sase-radius-panel: 10px;
+  --sase-radius-feature: 16px;
+  --sase-radius-pill: 999px;
+  --sase-duration-fast: 150ms;
+  --sase-duration-standard: 220ms;
+  --sase-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --sase-content-max: 1180px;
+  --sase-wide-max: 1280px;
+  --sase-form-max: 680px;
+  --sase-prose-max: 65ch;
+  --sase-touch-min: 44px;
+}
+
+.dark {
+  --sase-canvas: var(--sase-color-navy);
+  --sase-surface: var(--sase-color-surface-dark);
+  --sase-surface-alt: var(--sase-color-slate);
+  --sase-text: var(--sase-color-cream);
+  --sase-text-muted: var(--sase-color-text-muted-dark);
+  --sase-action: var(--sase-color-blue);
+  --sase-action-text: var(--sase-color-navy);
+  --sase-link: var(--sase-color-blue);
+  --sase-border: var(--sase-color-border-dark);
+  --sase-focus: var(--sase-color-blue);
+  --sase-success: var(--sase-color-success-dark);
+  --sase-warning: var(--sase-color-gold);
+  --sase-error: var(--sase-color-error-dark);
+}
