@@ -8,39 +8,42 @@ export default function Home() {
   return (
     <main className="sase-home">
       <AosInit />
-      <section className="relative flex flex-col justify-center min-h-[95vh] pt-20 pb-0 overflow-hidden bg-background">
-        {/* Background Elements (z-0) */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          {/* Sun and Clouds */}
-          <div className="sase-sun" aria-hidden="true" style={{ top: '15%', right: '5%', position: 'absolute' }} />
-          <div className="sase-cloud sase-cloud-top" aria-hidden="true" style={{ top: '25%', right: '12%', position: 'absolute' }} />
-          <div className="sase-cloud sase-cloud-middle" aria-hidden="true" style={{ top: '55%', right: '40%', position: 'absolute' }} />
-        </div>
+      <section className="sase-hero">
+        <div className="sase-hero-layout">
+          <div className="sase-hero-art" aria-hidden="true">
+            <div className="sase-sun" />
+            <div className="sase-cloud sase-cloud-top" />
+            <div className="sase-cloud sase-cloud-middle" />
+          </div>
 
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 relative z-10 mb-[15vh] md:mb-[25vh]" data-aos="fade-up">
-          <div className="flex flex-col items-center md:items-start gap-2 max-w-2xl md:mx-0 mx-auto text-center md:text-left">
-            <div className="flex items-center gap-4 md:gap-6 mb-4 md:pl-[60px]">
+          <div className="sase-hero-content">
+            <div className="sase-hero-brand">
               {/* Dark Mode Logo */}
               <Image 
                 src="/logo-hero.png" 
-                alt="SASE Society of Asian Scientists & Engineers" 
-                width={800} 
-                height={200} 
-                className="w-[260px] sm:w-[320px] md:w-[600px] h-auto object-contain drop-shadow-lg hidden dark:block" 
+                alt="SASE"
+                width={1000}
+                height={215}
+                sizes="(min-width: 1024px) 50vw, (min-width: 640px) 460px, 78vw"
+                className="w-full h-auto object-contain drop-shadow-lg hidden dark:block"
                 priority
               />
               {/* Light Mode Logo */}
               <Image 
                 src="/logo-dark-twotone.png" 
-                alt="SASE Society of Asian Scientists & Engineers" 
-                width={800} 
-                height={200} 
-                className="w-[260px] sm:w-[320px] md:w-[600px] h-auto object-contain drop-shadow-lg block dark:hidden" 
+                alt="SASE"
+                width={1000}
+                height={215}
+                sizes="(min-width: 1024px) 50vw, (min-width: 640px) 460px, 78vw"
+                className="w-full h-auto object-contain drop-shadow-lg block dark:hidden"
                 priority
               />
+              <p className="sase-hero-subtitle">
+                Society of Asian Scientists &amp; Engineers
+              </p>
             </div>
             
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-4 md:pl-[60px]">
+            <div className="sase-hero-actions">
               <Link href="/checkin" className="bg-[#89abe3] hover:bg-foreground hover:text-background text-foreground font-bold text-xs md:text-sm uppercase tracking-widest px-8 py-3 md:py-4 rounded shadow-lg transition-colors">
                 Check-in
               </Link>
@@ -49,6 +52,9 @@ export default function Home() {
               </Link>
             </div>
           </div>
+        </div>
+        <div className="sase-hero-waves" aria-hidden="true">
+          <span className="sase-hero-wave-back" />
         </div>
       </section>
 
