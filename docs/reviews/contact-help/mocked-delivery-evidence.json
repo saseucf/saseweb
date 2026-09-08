@@ -1,0 +1,41 @@
+{
+  "warning": "Local fake transport only. These records are not proof of real email delivery.",
+  "requests": [
+    {
+      "key": "contact/7a229183-3034-4db9-b13a-5f64f2559b44",
+      "to": [
+        "ucf@saseconnect.org"
+      ],
+      "replyTo": "student@example.org",
+      "subject": "[SASE Website problem] Retry test: camera does not open",
+      "identicalRetry": null
+    },
+    {
+      "key": "contact/7a229183-3034-4db9-b13a-5f64f2559b44",
+      "to": [
+        "ucf@saseconnect.org"
+      ],
+      "replyTo": "student@example.org",
+      "subject": "[SASE Website problem] Retry test: camera does not open",
+      "identicalRetry": true
+    },
+    {
+      "key": "contact/a54bf80f-92ba-4e27-a2ce-7fcc758418d0",
+      "to": [
+        "ucf@saseconnect.org"
+      ],
+      "replyTo": "student@example.org",
+      "subject": "[SASE Website problem] Mobile contact test",
+      "identicalRetry": null
+    },
+    {
+      "key": "contact/454d291a-eae9-4cbe-bc39-7adcb8d00bef",
+      "to": [
+        "ucf@saseconnect.org"
+      ],
+      "replyTo": "student@example.org",
+      "subject": "[SASE General question] Turnstile development test",
+      "identicalRetry": null
+    }
+  ]
+}
