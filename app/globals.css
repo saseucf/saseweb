@@ -204,7 +204,7 @@
 .sase-hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 24px; }
 .sase-hero-actions a { padding-inline: clamp(18px, 4vw, 32px); min-height: 44px; }
 .sase-hero-waves {
-  --sase-wave-bob: clamp(3px, 0.4vw, 6px);
+  --sase-wave-bob: clamp(5px, 0.8vw, 10px);
   position: absolute;
   inset: auto 0 0;
   height: clamp(76px, 11vw, 150px);
@@ -217,30 +217,30 @@
 .sase-hero-wave-back, .sase-hero-waves::before, .sase-hero-waves::after {
   content: "";
   position: absolute;
-  inset: 0 -5%;
+  inset: 0 -9%;
   z-index: 0;
   /* Preserve the rolling crests and crop the artwork's deeper navy base. */
   background: url("/wave1.png") center top / 100% 230% no-repeat;
-  animation: sase-wave-drift 14s ease-in-out -4s infinite alternate;
+  animation: sase-wave-drift 9s ease-in-out -4s infinite alternate;
 }
 .sase-hero-waves::before {
-  inset: 20% -6% -20%;
+  inset: 20% -10% -20%;
   z-index: 1;
   background-image: url("/wave2.png");
-  animation-duration: 11s;
+  animation-duration: 7s;
   animation-delay: -7s;
   animation-direction: alternate-reverse;
 }
 .sase-hero-waves::after {
-  inset: 40% -4% -40%;
+  inset: 40% -8% -40%;
   z-index: 2;
-  animation-duration: 9s;
+  animation-duration: 5.5s;
   animation-delay: -2s;
 }
 
 @keyframes sase-wave-drift {
-  from { transform: translate3d(-3%, 0, 0); }
-  to { transform: translate3d(3%, var(--sase-wave-bob), 0); }
+  from { transform: translate3d(-6%, calc(-1 * var(--sase-wave-bob)), 0); }
+  to { transform: translate3d(6%, var(--sase-wave-bob), 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
