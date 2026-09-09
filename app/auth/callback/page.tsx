@@ -30,16 +30,13 @@ function AuthCallback() {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                to: user.email,
-                                subject: "Welcome to UCF SASE",
-                                text: "Welcome to UCF SASE! Your account has been created successfully.",
-                                html: `
-                                    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
-                                        <h2 style="margin-bottom: 12px;">Welcome to UCF SASE</h2>
-                                        <p>Your account has been created successfully.</p>
-                                        <p>We are glad to have you with us.</p>
-                                    </div>
-                                `,
+                                type: "welcome",
+                                email: user.email,
+                                firstName:
+                                    user.user_metadata?.full_name?.split(" ")[0] ||
+                                    user.user_metadata?.name?.split(" ")[0] ||
+                                    user.user_metadata?.first_name ||
+                                    "",
                             }),
                         })
 
