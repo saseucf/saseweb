@@ -1,0 +1,68 @@
+/* This timeline is used only by /about and inherits its scoped brand tokens. */
+.timeline { min-width: 0; }
+.years { list-style: none; margin: 0; padding: 0; }
+.entry {
+  display: grid;
+  gap: 12px 24px;
+  padding-block: 28px;
+  border-top: 1px solid var(--about-line);
+}
+.entry:first-child { border-top: 0; padding-top: 0; }
+.year {
+  margin: 0;
+  color: var(--about-link);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.65;
+  font-variant-numeric: tabular-nums;
+}
+.groups { display: grid; gap: 20px; min-width: 0; }
+.organization {
+  margin: 0 0 6px;
+  color: var(--about-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.awards {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 400 1rem/1.6 var(--font-about-body), system-ui, sans-serif;
+  overflow-wrap: break-word;
+}
+.history { border-block: 1px solid var(--about-line); }
+.history summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  min-height: 56px;
+  padding-block: 16px;
+  color: var(--about-navy);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.history summary::-webkit-details-marker { display: none; }
+.history summary:hover { color: var(--about-link); }
+.history summary:focus-visible { outline: 2px solid var(--about-link); outline-offset: 5px; }
+.dateRange { margin-left: 8px; color: var(--about-muted); font-size: 0.875rem; font-weight: 400; white-space: nowrap; }
+.toggle { flex: none; width: 20px; text-align: center; font-size: 1.25rem; font-weight: 400; }
+.toggle::before { content: "+"; }
+.history[open] .toggle::before { content: "−"; }
+.history > .years { padding-top: 24px; }
+.note {
+  max-width: 65ch;
+  margin: 0;
+  padding-top: 20px;
+  color: var(--about-muted);
+  font: 400 0.875rem/1.65 var(--font-about-ui), system-ui, sans-serif;
+}
+
+@media (min-width: 640px) {
+  .entry { grid-template-columns: 100px minmax(0, 1fr); }
+}

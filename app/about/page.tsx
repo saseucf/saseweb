@@ -1,10 +1,17 @@
 import { createServerSupabase } from "@/lib/supabase-server";
 import AwardsTimeline from "@/components/AwardsTimeline";
-import { CalendarDays, Globe2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { Inter, Outfit } from "next/font/google";
+import styles from "./about.module.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-about-ui", display: "swap" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-about-body", display: "swap" });
 
 export const metadata = {
     title: "About – UCF SASE",
-    description: "Learn about the Society of Asian Scientists and Engineers at UCF — our story, mission, and impact.",
+    description: "Get to know UCF SASE: our community, our mission, and the milestones we've reached together. All backgrounds and majors are welcome.",
 };
 
 // Brand colors to assign dynamically to the top majors
@@ -63,48 +70,68 @@ export default async function AboutPage() {
     const maxPercent = Math.max(...chartData.map((d) => d.percent), 1);
 
     return (
-        <main className="sase-page">
-            {/* ── Hero Banner ── */}
-            <div className="relative overflow-hidden py-20 px-6 text-center">
-                <div className="relative z-10 max-w-3xl mx-auto">
-                    <p className="sase-eyebrow text-[#89abe3]">UCF SASE / About</p>
-                    <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tight mt-2 mb-6">
-                        Who We <span className="text-[#89abe3]">Are</span>
-                    </h1>
-                    <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
-                        Founded in 2020, UCF SASE is a nationally recognized chapter of the Society of Asian Scientists and Engineers — a community built on leadership, professionalism, diversity, and service.
-                    </p>
-                </div>
-
-                {/* Stats row */}
-                <div className="relative z-10 mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                    {[
-                        // { icon: <Users className="w-6 h-6" />, value: totalMembers > 0 ? `${totalMembers}+` : "200+", label: "Registered Members" },
-                        { icon: <CalendarDays className="w-6 h-6" />, value: "2020", label: "Chapter Founded" },
-                        { icon: <Globe2 className="w-6 h-6" />, value: "20K+", label: "National SASE Members" },
-                    ].map(({ icon, value, label }) => (
-                        <div key={label} className="bg-muted/50 border border-border rounded-2xl p-6 backdrop-blur-sm hover:bg-muted transition-all duration-300 group">
-                            <div className="text-[#89abe3] flex justify-center mb-3 group-hover:scale-110 transition-transform">{icon}</div>
-                            <div className="text-3xl font-black text-foreground">{value}</div>
-                            <div className="text-xs uppercase tracking-widest text-[#89abe3] mt-1">{label}</div>
+        <main className={`${styles.page} ${inter.variable} ${outfit.variable}`}>
+            <header className={styles.hero}>
+                <div className={styles.container}>
+                    <div className={styles.heroLayout}>
+                        <div className={styles.heroHeading}>
+                            <p className={styles.eyebrow}>About our chapter</p>
+                            <h1 className={styles.title}>This is<br />UCF SASE.</h1>
                         </div>
-                    ))}
+                        <div className={styles.heroCopy}>
+                            <p className={styles.introduction}>
+                                We&apos;re the Society of Asian Scientists and Engineers at the University of Central Florida.
+                            </p>
+                            <p className={styles.heroDescription}>
+                                Since 2020, we&apos;ve been building a community rooted in leadership, professionalism, diversity, and service. There&apos;s a place for you here.
+                            </p>
+                            <Link href="/events" className={styles.heroLink}>
+                                Find your next event <ArrowUpRight size={20} aria-hidden="true" />
+                            </Link>
+                        </div>
+                    </div>
+                    <figure className={styles.communityPhoto}>
+                        <Image
+                            src="/events/gbm1-1.JPG"
+                            alt="UCF SASE members posing together in front of their handmade Despicable SASE banner"
+                            width={6000}
+                            height={4000}
+                            sizes="(min-width: 1280px) 1180px, (min-width: 1024px) calc(100vw - 96px), calc(100vw - 40px)"
+                            className={styles.photo}
+                            priority
+                        />
+                        <figcaption>
+                            <span>A general body meeting, SASE style.</span>
+                            <span>Part of a national SASE community of 20,000+ members.</span>
+                        </figcaption>
+                    </figure>
                 </div>
-            </div>
+            </header>
 
             {/* ── Mission Statement ── */}
-            <section className="sase-content-section">
-                <div className="text-center mb-10">
-                    <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">Purpose</span>
-                    <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Mission Statement</h2>
-                </div>
-                <div className="relative bg-card border border-border rounded-2xl p-8 md:p-12 max-w-4xl mx-auto shadow-[0_16px_48px_rgba(23,29,82,0.1)] overflow-hidden">
-                    <div className="relative z-10">
-                        <div className="w-12 h-1 bg-[#89abe3] rounded-full mb-6 mx-auto" />
-                        <p className="text-foreground text-lg md:text-xl leading-relaxed text-center italic">
-                            &ldquo;We work to maintain and grow a safe and inclusive space for members that prioritizes pillars of professional development, culture, and community. We encourage members to leverage the experiences, knowledge, and skills gained through our organization to pursue their goals and aspirations. We aim to empower members by showcasing how their diverse cultural backgrounds can broaden perspectives and inspire collaborative efforts.&rdquo;
-                        </p>
-                        <p className="text-[#89abe3] text-sm font-bold tracking-widest uppercase text-center mt-6">UCF SASE welcomes everyone, regardless of background or major!</p>
+            <section className={styles.mission} aria-labelledby="about-mission-title">
+                <div className={`${styles.container} ${styles.missionLayout}`}>
+                    <figure className={styles.workshopPhoto}>
+                        <Image
+                            src="/events/breadboard1.jpg"
+                            alt="SASE members working on laptops during an Arduino and breadboard workshop"
+                            width={4032}
+                            height={3024}
+                            sizes="(min-width: 1280px) 550px, (min-width: 768px) 46vw, calc(100vw - 40px)"
+                            className={styles.photo}
+                        />
+                        <figcaption>Learning by doing, together.</figcaption>
+                    </figure>
+                    <div className={styles.missionCopy}>
+                        <h2 id="about-mission-title" className={styles.sectionTitle}>Different backgrounds.<br />Shared possibilities.</h2>
+                        <p className={styles.welcome}>Every background. Every major. You&apos;re welcome here.</p>
+                        <div className={styles.missionText}>
+                            <p>Our mission is to create a safe, inclusive space where professional development, culture, and community come together.</p>
+                            <p>We help each other build skills and pursue our goals. By sharing our experiences and cultural backgrounds, we broaden our perspectives, find new ways to collaborate, and give back through service.</p>
+                        </div>
+                        <Link href="/programs" className={styles.textLink}>
+                            Explore our programs <ArrowRight size={18} aria-hidden="true" />
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -139,16 +166,32 @@ export default async function AboutPage() {
             </section>
 
             {/* ── Awards Timeline ── */}
-            <section className="sase-content-section pb-16">
-                <div className="text-center mb-12">
-                    <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">Recognition</span>
-                    <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Awards &amp; Accomplishments</h2>
-                    <p className="text-muted-foreground mt-2 max-w-lg mx-auto text-sm leading-relaxed">
-                        Since 2022, UCF SASE has earned consistent recognition from both National SASE and UCF&apos;s Asian Pacific American Coalition.
-                    </p>
-                </div>
-                <div className="max-w-4xl mx-auto">
+            <section className={styles.awards} aria-labelledby="about-awards-title">
+                <div className={`${styles.container} ${styles.awardsLayout}`}>
+                    <div className={styles.awardsIntroduction}>
+                        <h2 id="about-awards-title" className={styles.sectionTitle}>Chapter milestones</h2>
+                        <p>
+                            National SASE and UCF&apos;s Asian Pacific American Coalition (APAC) have recognized our chapter since 2022.
+                        </p>
+                    </div>
                     <AwardsTimeline />
+                </div>
+            </section>
+
+            <section className={styles.invitation} aria-labelledby="about-invitation-title">
+                <div className={`${styles.container} ${styles.invitationLayout}`}>
+                    <div>
+                        <h2 id="about-invitation-title" className={styles.sectionTitle}>Come meet us.</h2>
+                        <p>A workshop, a social, a general body meeting. Find an event and say hello.</p>
+                    </div>
+                    <div className={styles.invitationActions}>
+                        <Link href="/events" className={styles.primaryLink}>
+                            See upcoming events <ArrowUpRight size={20} aria-hidden="true" />
+                        </Link>
+                        <Link href="/team" className={styles.textLink}>
+                            Meet the team <ArrowRight size={18} aria-hidden="true" />
+                        </Link>
+                    </div>
                 </div>
             </section>
         </main>
