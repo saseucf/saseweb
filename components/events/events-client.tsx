@@ -317,7 +317,8 @@ function EventCalendar({ events }: { events: Event[] }) {
     const eventsByDate = useMemo(() => {
         const map = new Map<string, Event[]>();
         events.forEach(e => {
-            const dateStr = new Date(e.start_time).toISOString().split('T')[0];
+            const d = new Date(e.start_time);
+            const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
             const existing = map.get(dateStr) || [];
             map.set(dateStr, [...existing, e]);
         });

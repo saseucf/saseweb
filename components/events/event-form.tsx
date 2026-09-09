@@ -60,12 +60,17 @@ export default function EventForm({
     }
 
     // Event type logic
+    const WORKSHOP_SUBCATEGORIES = ["Pre-Health", "Pro-Dev", "Tech"];
     const initialType = existingEvent?.event_type ?? "";
+    const isWorkshopSub = initialType.startsWith("Workshop - ");
     const isPreset = initialType === "" ? false : PRESET_EVENT_TYPES.some(p => p.label === initialType);
     const [eventTypeSelection, setEventTypeSelection] = useState(
-        initialType === "" ? PRESET_EVENT_TYPES[0].label : (isPreset ? initialType : "custom")
+        initialType === "" ? PRESET_EVENT_TYPES[0].label : (isWorkshopSub ? "Workshop" : (isPreset ? initialType : "custom"))
     );
-    const [customEventType, setCustomEventType] = useState(isPreset ? "" : initialType);
+    const [workshopSubcategory, setWorkshopSubcategory] = useState(
+        isWorkshopSub ? initialType.replace("Workshop - ", "") : ""
+    );
+    const [customEventType, setCustomEventType] = useState(isPreset || isWorkshopSub ? "" : initialType);
 
     async function handleSubmit(
         submitEvent: React.FormEvent<HTMLFormElement>
@@ -97,7 +102,14 @@ export default function EventForm({
         }
 
         let eventType = eventTypeSelection;
-        if (eventType === "custom") {
+        if (eventType === "Workshop") {
+            if (!workshopSubcategory) {
+                setErrorMessage("Please select a workshop subcategory.");
+                setIsSubmitting(false);
+                return;
+            }
+            eventType = `Workshop - ${workshopSubcategory}`;
+        } else if (eventType === "custom") {
             eventType = customEventType.trim();
         }
 
@@ -176,7 +188,8 @@ export default function EventForm({
             router.refresh();
         } catch (error: unknown) {
             console.error("Could not save event:", error);
-            setErrorMessage("Could not save event. Check your dates and fields.");
+            const message = error instanceof Error ? error.message : "Check your dates and fields.";
+            setErrorMessage(`Could not save event. ${message}`);
             setIsSubmitting(false);
         }
         }
@@ -267,12 +280,28 @@ export default function EventForm({
                             className="w-4 h-4 rounded-full flex-shrink-0" 
                             style={{ 
                                 backgroundColor: getEventTypeColor(
-                                    eventTypeSelection === 'custom' ? customEventType : eventTypeSelection
+                                    eventTypeSelection === 'custom' ? customEventType
+                                    : eventTypeSelection === 'Workshop' && workshopSubcategory ? `Workshop - ${workshopSubcategory}`
+                                    : eventTypeSelection
                                 ) 
                             }} 
                         />
                     </div>
                     
+                    {eventTypeSelection === "Workshop" && (
+                        <select
+                            value={workshopSubcategory}
+                            onChange={(e) => setWorkshopSubcategory(e.target.value)}
+                            required
+                            className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa] w-full"
+                        >
+                            <option value="" disabled>Select a subcategory...</option>
+                            {WORKSHOP_SUBCATEGORIES.map(sub => (
+                                <option key={sub} value={sub}>{sub}</option>
+                            ))}
+                        </select>
+                    )}
+
                     {eventTypeSelection === "custom" && (
                         <input
                             type="text"
