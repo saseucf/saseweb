@@ -1,0 +1,42 @@
+[
+  {
+    "images": [
+      true,
+      true
+    ],
+    "overflow": [],
+    "scrollWidth": 320,
+    "smallTargets": [],
+    "width": 320
+  },
+  {
+    "images": [
+      true,
+      true
+    ],
+    "overflow": [],
+    "scrollWidth": 768,
+    "smallTargets": [],
+    "width": 768
+  },
+  {
+    "images": [
+      true,
+      true
+    ],
+    "overflow": [],
+    "scrollWidth": 390,
+    "smallTargets": [],
+    "width": 390
+  },
+  {
+    "images": [
+      true,
+      true
+    ],
+    "overflow": [],
+    "scrollWidth": 1280,
+    "smallTargets": [],
+    "width": 1280
+  }
+]
