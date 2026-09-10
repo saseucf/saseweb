@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
     return (
@@ -25,11 +26,16 @@ export default function Footer() {
                     />
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-4">
-                    <SocialLink href="https://www.instagram.com/saseucf/" icon="instagram" label="Instagram" />
-                    <SocialLink href="https://www.linkedin.com/company/ucf-sase/" icon="linkedin" label="LinkedIn" />
-                    <SocialLink href="https://discord.gg/PK8e6KwAQS" icon="discord" label="Discord" />
-                    <SocialLink href="https://knightconnect.campuslabs.com/engage/organization/saseucf" icon="knightconnect" label="KnightConnect" />
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                    <Link href="/contact" className="inline-flex min-h-11 items-center rounded px-2 text-sm font-semibold text-foreground underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4">
+                        Contact &amp; Help
+                    </Link>
+                    <div className="flex items-center gap-4">
+                        <SocialLink href="https://www.instagram.com/saseucf/" icon="instagram" label="Instagram" />
+                        <SocialLink href="https://www.linkedin.com/company/ucf-sase/" icon="linkedin" label="LinkedIn" />
+                        <SocialLink href="https://discord.gg/PK8e6KwAQS" icon="discord" label="Discord" />
+                        <SocialLink href="https://knightconnect.campuslabs.com/engage/organization/saseucf" icon="knightconnect" label="KnightConnect" />
+                    </div>
                 </div>
             </div>
             <div className="max-w-7xl mx-auto text-center mt-6 text-xs font-semibold text-[#8eafe3] opacity-60 uppercase tracking-widest">
