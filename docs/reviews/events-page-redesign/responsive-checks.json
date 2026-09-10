@@ -1,0 +1,50 @@
+[
+  {
+    "actualWidth": 320,
+    "category": "Workshop",
+    "documentWidth": 320,
+    "horizontalOverflow": false,
+    "requestedWidth": 320,
+    "smallestCalendarDay": 44.5703125
+  },
+  {
+    "actualWidth": 390,
+    "category": "Workshop",
+    "documentWidth": 390,
+    "horizontalOverflow": false,
+    "requestedWidth": 390,
+    "smallestCalendarDay": 54.5703125
+  },
+  {
+    "actualWidth": 768,
+    "category": "Workshop",
+    "documentWidth": 768,
+    "horizontalOverflow": false,
+    "requestedWidth": 768,
+    "smallestCalendarDay": 56.8515625
+  },
+  {
+    "actualWidth": 1023,
+    "category": "Workshop",
+    "documentWidth": 1023,
+    "horizontalOverflow": false,
+    "requestedWidth": 1023,
+    "smallestCalendarDay": 56.8515625
+  },
+  {
+    "actualWidth": 1024,
+    "category": "Workshop",
+    "documentWidth": 1024,
+    "horizontalOverflow": false,
+    "requestedWidth": 1024,
+    "smallestCalendarDay": 56.8515625
+  },
+  {
+    "actualWidth": 1440,
+    "category": "Workshop",
+    "documentWidth": 1440,
+    "horizontalOverflow": false,
+    "requestedWidth": 1440,
+    "smallestCalendarDay": 56.8515625
+  }
+]

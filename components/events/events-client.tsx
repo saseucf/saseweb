@@ -1,420 +1,179 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { getEventTypeColor } from "@/lib/event-type-colors";
+import { ArrowDown, ArrowUpRight, CalendarDays, Check, ChevronDown, Clock3, MapPin, Search, X } from "lucide-react";
+import EventCalendar from "./event-calendar";
+import { useEventMotion } from "./use-event-motion";
+import { eventDateKey, eventDescription, eventOccursOn, eventStatus, formatCalendarDate, formatEventDate, formatEventRange, googleCalendarUrl, icsDataUrl, type PublicEvent } from "./event-display";
+import styles from "@/app/events/events.module.css";
 
-type Event = {
-    id: string;
-    title: string;
-    description: string | null;
-    event_type: string;
-    location: string | null;
-    start_time: string;
-    end_time: string;
-    capacity: number | null;
-    points: number;
-    host: string | null;
-    created_at: string;
-    status: "draft" | "published" | "cancelled";
-    forms?: { slug: string, is_open: boolean }[];
-};
-
-function generateGoogleCalendarUrl(event: Event) {
-    const start = new Date(event.start_time).toISOString().replace(/-|:|\.\d+/g, "");
-    const end = new Date(event.end_time).toISOString().replace(/-|:|\.\d+/g, "");
-    const params = new URLSearchParams({
-        action: "TEMPLATE",
-        text: event.title,
-        dates: `${start}/${end}`,
-        details: event.description || "",
-        location: event.location || "",
-    });
-    return `https://calendar.google.com/calendar/render?${params.toString()}`;
-}
-
-function generateIcsDataUrl(event: Event) {
-    const start = new Date(event.start_time).toISOString().replace(/-|:|\.\d+/g, "");
-    const end = new Date(event.end_time).toISOString().replace(/-|:|\.\d+/g, "");
-    const icsContent = [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "BEGIN:VEVENT",
-        `DTSTART:${start}`,
-        `DTEND:${end}`,
-        `SUMMARY:${event.title}`,
-        `DESCRIPTION:${event.description ? event.description.replace(/\n/g, "\\n") : ""}`,
-        `LOCATION:${event.location || ""}`,
-        "END:VEVENT",
-        "END:VCALENDAR"
-    ].join("\r\n");
-    return `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
-}
-
-export default function EventsClient({ events }: { events: Event[] }) {
-    const router = useRouter();
-    const [selectedType, setSelectedType] = useState<string | null>(null);
+export default function EventsClient({ events, initialNow }: { events: PublicEvent[]; initialNow: string }) {
+    const [period, setPeriod] = useState<"upcoming" | "past">("upcoming");
+    const [selectedType, setSelectedType] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    
-    // Derived values
-    const uniqueTypes = useMemo(() => {
-        const types = new Set(events.map(e => e.event_type));
-        return Array.from(types).sort();
-    }, [events]);
+    const [calendarOpen, setCalendarOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [now, setNow] = useState(initialNow);
+    const root = useRef<HTMLDivElement>(null);
+    const calendar = useRef<HTMLDivElement>(null);
+    const animateLayout = useEventMotion(root);
 
-    const sortedEvents = useMemo(() => {
-        const now = new Date();
-        return [...events].sort((a, b) => {
-            const aIsPast = new Date(a.end_time) < now;
-            const bIsPast = new Date(b.end_time) < now;
-            if (aIsPast && !bIsPast) return 1; // a goes to bottom
-            if (!aIsPast && bIsPast) return -1; // b goes to bottom
-            return 0; // retain original order (which is by start_time ascending)
-        });
-    }, [events]);
+    // Match the server's first render, then keep long-lived tabs up to date.
+    useEffect(() => {
+        const update = () => setNow(new Date().toISOString());
+        update();
+        const timer = setInterval(update, 60_000);
+        return () => clearInterval(timer);
+    }, []);
 
-    const filteredEvents = sortedEvents.filter(e => {
-        const matchesType = selectedType ? e.event_type === selectedType : true;
-        const matchesSearch = e.title.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesType && matchesSearch;
+    const uniqueTypes = useMemo(() => [...new Set(events.map(e => e.event_type))].sort(), [events]);
+    const matchingEvents = useMemo(() => events.filter(event => {
+        const inPeriod = (eventStatus(event, now) === "past") === (period === "past");
+        return inPeriod && (!selectedType || event.event_type === selectedType)
+            && event.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
+    }).sort((a, b) => period === "past"
+        ? new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+        : new Date(a.start_time).getTime() - new Date(b.start_time).getTime()), [events, now, period, searchQuery, selectedType]);
+    const filteredEvents = selectedDate ? matchingEvents.filter(event => eventOccursOn(event, selectedDate)) : matchingEvents;
+    const groups = new Map<string, PublicEvent[]>();
+    filteredEvents.forEach(event => {
+        const month = formatEventDate(event.start_time, { month: "long", year: "numeric" });
+        groups.set(month, [...(groups.get(month) ?? []), event]);
     });
+    const hasFilters = Boolean(selectedType || searchQuery || selectedDate);
+    const clearFilters = () => { setSelectedType(""); setSearchQuery(""); setSelectedDate(null); };
 
     return (
-        <div>
-            {/* Search Bar */}
-            <div className="relative w-full max-w-md mb-6">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                    </svg>
+        <div ref={root}>
+            <div className={styles.toolbar}>
+                <div className={styles.periods} role="group" aria-label="Event timeframe">
+                    <button type="button" aria-pressed={period === "upcoming"} onClick={() => { setPeriod("upcoming"); setSelectedDate(null); }}>Upcoming</button>
+                    <button type="button" aria-pressed={period === "past"} onClick={() => { setPeriod("past"); setSelectedDate(null); }}>Past events</button>
                 </div>
-                <input
-                    type="text"
-                    placeholder="Search events by name..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-[#D0D0CE] rounded-xl leading-5 bg-card placeholder-[#ACA39A] focus:outline-none focus:ring-2 focus:ring-[#e9eef8] focus:border-[#89abe3] transition-all sm:text-sm shadow-sm"
-                />
-            </div>
-            {/* Filter Chips */}
-            <div className="flex flex-wrap gap-2 mb-8">
-                <button
-                    onClick={() => setSelectedType(null)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
-                        selectedType === null 
-                        ? 'bg-foreground text-background' 
-                        : 'bg-card border border-[#D0D0CE] text-muted-foreground hover:bg-background'
-                    }`}
-                >
-                    All Events
+                <button type="button" className={styles.calendarToggle} aria-expanded={calendarOpen} aria-controls="event-calendar" onClick={() => animateLayout(() => { setCalendarOpen(!calendarOpen); setSelectedDate(null); }, calendarOpen ? calendar.current : null)}>
+                    <CalendarDays size={18} aria-hidden="true" /><span>{calendarOpen ? "Hide calendar" : "Show calendar"}</span>
                 </button>
-                {uniqueTypes.map(type => {
-                    const color = getEventTypeColor(type);
-                    const isSelected = selectedType === type;
-                    return (
-                        <button
-                            key={type}
-                            onClick={() => setSelectedType(type)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
-                                isSelected 
-                                ? 'bg-card shadow-md border-transparent text-foreground' 
-                                : 'bg-card border border-[#D0D0CE] text-muted-foreground hover:bg-background'
-                            }`}
-                            style={{
-                                borderColor: isSelected ? color : undefined,
-                                borderWidth: isSelected ? '2px' : '1px'
-                            }}
-                        >
-                            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
-                            {type}
-                        </button>
-                    );
-                })}
+            </div>
+            <div className={styles.filters}>
+                <div className={styles.search}>
+                    <label className={styles.srOnly} htmlFor="event-search">Search events by name</label>
+                    <Search size={18} aria-hidden="true" />
+                    <input id="event-search" type="search" placeholder="Search" value={searchQuery} onChange={event => setSearchQuery(event.target.value)} />
+                </div>
+                <div className={styles.category}>
+                    <label className={styles.srOnly} htmlFor="event-type">Event category</label>
+                    <select id="event-type" value={selectedType} onChange={event => setSelectedType(event.target.value)}>
+                        <option value="">All categories</option>
+                        {uniqueTypes.map(type => <option key={type} value={type}>{type}</option>)}
+                    </select>
+                    <ChevronDown size={18} aria-hidden="true" />
+                </div>
+            </div>
+            <div ref={calendar} id="event-calendar" className={styles.calendarReveal} hidden={!calendarOpen}>
+                {calendarOpen ? <EventCalendar events={matchingEvents} today={eventDateKey(now)} selectedDate={selectedDate} onSelect={setSelectedDate} /> : null}
+            </div>
+            <div className={styles.resultsMeta} data-event-motion="position">
+                <p role="status">{filteredEvents.length} {period === "past" ? "past" : "upcoming"} event{filteredEvents.length === 1 ? "" : "s"}{selectedDate ? ` on ${formatCalendarDate(selectedDate, { month: "short", day: "numeric", year: "numeric" })}` : ""}</p>
+                {hasFilters && filteredEvents.length > 0 ? <button type="button" onClick={clearFilters}>Clear filters <X size={16} aria-hidden="true" /></button> : null}
             </div>
 
-            {/* Custom Interactive Calendar */}
-            <div className="mb-12 bg-card rounded-2xl border border-[#D0D0CE] shadow-sm p-6 max-w-4xl mx-auto">
-                <EventCalendar events={filteredEvents} />
-            </div>
-
-            {/* Event List */}
             {filteredEvents.length === 0 ? (
-                <div className="sase-form-card">
-                    <p className="text-[#ACA39A] font-medium text-center">No upcoming events matching this filter. Check back soon!</p>
+                <div className={styles.emptyState} data-event-motion="position">
+                    <h3>{hasFilters ? "No matching events." : period === "upcoming" ? "More events coming soon." : "No past events yet."}</h3>
+                    <p>{hasFilters ? "Try another search, category, or date." : "Explore moments from past events below."}</p>
+                    {hasFilters ? <button type="button" className={styles.primaryLink} onClick={clearFilters}>Clear filters</button>
+                        : <a href="#event-photos" className={styles.textLink}>Explore event photos <ArrowDown size={18} aria-hidden="true" /></a>}
                 </div>
             ) : (
-                <div className="sase-form-grid">
-                    {filteredEvents.map((event) => {
-                        const now = new Date();
-                        const eventColor = getEventTypeColor(event.event_type);
-                        const isToday = new Date().toDateString() === new Date(event.start_time).toDateString();
-                        const isPast = new Date(event.end_time) < now;
-                        
-                        let cleanDescription = event.description ?? "";
-                        let externalUrl = "";
-                        const EXT_URL_DELIMITER = "\n\n===EXTERNAL_URL===";
-                        if (cleanDescription.includes(EXT_URL_DELIMITER)) {
-                            const parts = cleanDescription.split(EXT_URL_DELIMITER);
-                            cleanDescription = parts[0];
-                            externalUrl = parts[1] ?? "";
-                        }
-
-                        const openForm = event.forms?.find(f => f.is_open);
-                        
-                        return (
-                            <Link 
-                                key={event.id} 
-                                href={`/events/${event.id}`}
-                                className={`sase-form-card flex flex-col justify-between relative overflow-hidden transition-all duration-200 ${isPast ? "opacity-75 grayscale-[0.2]" : "hover:ring-2 hover:ring-[#89ABE3] hover:-translate-y-1"}`}
-                                style={{ borderLeft: `6px solid ${isPast ? "#ACA39A" : eventColor}` }}
-                            >
-                                <div>
-                                    <div className="flex justify-between items-start gap-2 mb-2">
-                                        <h2 className="text-foreground font-bold text-xl flex items-center gap-2">
-                                            {event.title}
-                                            {isPast && (
-                                                <span className="bg-[#ACA39A]/20 text-[#ACA39A] text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded border border-[#ACA39A]/30">
-                                                    Finished
-                                                </span>
-                                            )}
-                                        </h2>
-                                        <span className="bg-background text-foreground text-xs font-bold px-2 py-1 rounded whitespace-nowrap">
-                                            {event.points} pt{event.points === 1 ? "" : "s"}
-                                        </span>
-                                    </div>
-                                    
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: isPast ? "#ACA39A" : eventColor }} />
-                                        <p className="sase-eyebrow !m-0 !text-muted-foreground">{event.event_type}</p>
-                                    </div>
-                                    
-                                    {cleanDescription && (
-                                        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{cleanDescription}</p>
-                                    )}
-
-                                    <div className="flex flex-col gap-2 mt-4 border-t border-[#D0D0CE] pt-4">
-                                        <div className="flex items-start gap-2 text-sm">
-                                            <span className="font-semibold text-foreground min-w-[70px]">When:</span>
-                                            <span className="text-muted-foreground">
-                                                {new Date(event.start_time).toLocaleString('en-US', {
-                                                    timeZone: 'America/New_York',
-                                                    weekday: 'short', month: 'short', day: 'numeric',
-                                                    hour: 'numeric', minute: '2-digit'
-                                                })}
-                                                {" - "}
-                                                {new Date(event.end_time).toLocaleTimeString('en-US', {
-                                                    timeZone: 'America/New_York',
-                                                    hour: 'numeric', minute: '2-digit'
-                                                })}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-start gap-2 text-sm">
-                                            <span className="font-semibold text-foreground min-w-[70px]">Where:</span>
-                                            <span className="text-muted-foreground">{event.location ?? "TBA"}</span>
-                                        </div>
-                                        {event.host && (
-                                            <div className="flex items-start gap-2 text-sm">
-                                                <span className="font-semibold text-foreground min-w-[70px]">Host:</span>
-                                                <span className="text-muted-foreground">{event.host}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    
-                                    {!isPast && (
-                                        <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-[#D0D0CE]">
-                                            <div className="flex items-center gap-2">
-                                                <a 
-                                                    href={generateGoogleCalendarUrl(event)} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="flex-1 text-center py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[0.65rem] sm:text-xs font-bold transition-colors uppercase tracking-wider"
-                                                >
-                                                    + Google Cal
-                                                </a>
-                                                <a 
-                                                    href={generateIcsDataUrl(event)} 
-                                                    download={`${event.title.replace(/\s+/g, '_')}.ics`}
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="flex-1 text-center py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[0.65rem] sm:text-xs font-bold transition-colors uppercase tracking-wider"
-                                                >
-                                                    + Apple/ICS
-                                                </a>
-                                            </div>
-
-                                            {((openForm || externalUrl) || isToday) && (
-                                                <div className="flex items-center gap-3">
-                                                    {(externalUrl || openForm) && (
-                                                        <button 
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                                if (externalUrl) {
-                                                                    window.open(externalUrl, "_blank");
-                                                                } else {
-                                                                    router.push(`/forms/${openForm?.slug}`);
-                                                                }
-                                                            }}
-                                                            className="px-4 py-2 bg-[#171d52] text-white rounded-lg text-sm font-bold hover:bg-[#2a3473] transition-colors w-full text-center"
-                                                        >
-                                                            RSVP Now
-                                                        </button>
-                                                    )}
-                                                    {isToday && (
-                                                        <button 
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                                router.push(`/checkin/scan/${event.id}`);
-                                                            }}
-                                                            className="px-4 py-2 bg-[#89abe3] text-[#171d52] rounded-lg text-sm font-bold hover:bg-[#a6c1ee] transition-colors w-full text-center"
-                                                        >
-                                                            Check In
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </Link>
-                        );
-                    })}
+                <div className={styles.eventList}>
+                    {[...groups].map(([month, monthEvents]) => (
+                        <section key={month} className={styles.monthGroup} aria-label={month}>
+                            <h3 className={styles.monthTitle} data-event-motion="position">{month}</h3>
+                            {monthEvents.map(event => <EventRow key={event.id} event={event} now={now} animateLayout={animateLayout} />)}
+                        </section>
+                    ))}
                 </div>
             )}
         </div>
     );
 }
 
-function EventCalendar({ events }: { events: Event[] }) {
-    const [currentDate, setCurrentDate] = useState(() => {
-        const now = new Date();
-        return new Date(now.getFullYear(), now.getMonth(), 1);
-    });
-
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
-    const prevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-    const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-
-    const monthName = currentDate.toLocaleString('default', { month: 'long' });
-    const year = currentDate.getFullYear();
-
-    // Generate days for grid
-    const daysInMonth = new Date(year, currentDate.getMonth() + 1, 0).getDate();
-    const firstDayOfWeek = new Date(year, currentDate.getMonth(), 1).getDay();
-    
-    const days = [];
-    for (let i = 0; i < firstDayOfWeek; i++) {
-        days.push(null);
-    }
-    for (let i = 1; i <= daysInMonth; i++) {
-        days.push(new Date(year, currentDate.getMonth(), i));
-    }
-
-    // Map events by date string (YYYY-MM-DD)
-    const eventsByDate = useMemo(() => {
-        const map = new Map<string, Event[]>();
-        events.forEach(e => {
-            const dateStr = new Date(e.start_time).toISOString().split('T')[0];
-            const existing = map.get(dateStr) || [];
-            map.set(dateStr, [...existing, e]);
-        });
-        return map;
-    }, [events]);
-
-    // Format safely to account for timezone shifts
-    const formatDateKey = (date: Date) => {
-        // We use local YYYY-MM-DD string to match the events
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+function EventRow({ event, now, animateLayout }: { event: PublicEvent; now: string; animateLayout: ReturnType<typeof useEventMotion> }) {
+    const [expanded, setExpanded] = useState(false);
+    const detailsToggle = useRef<HTMLButtonElement>(null);
+    const details = useRef<HTMLDivElement>(null);
+    const detailsId = `event-details-${event.id}`;
+    const status = eventStatus(event, now);
+    const isPast = status === "past";
+    const isToday = eventDateKey(now) === eventDateKey(event.start_time);
+    const { text, externalUrl } = eventDescription(event.description);
+    const openForm = event.forms?.find(form => form.is_open);
+    const registrationHref = externalUrl || (openForm ? `/forms/${openForm.slug}` : "");
+    const toggleDetails = () => animateLayout(() => setExpanded(value => !value), expanded ? details.current : null);
+    const closeDetails = () => {
+        detailsToggle.current?.focus({ preventScroll: true });
+        animateLayout(() => setExpanded(false), details.current);
     };
 
-    const selectedDateStr = selectedDate ? formatDateKey(selectedDate) : null;
-    const selectedEvents = selectedDateStr ? (eventsByDate.get(selectedDateStr) || []) : [];
-
     return (
-        <div>
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-black text-foreground">{monthName} {year}</h3>
-                <div className="flex gap-2">
-                    <button onClick={prevMonth} className="px-3 py-1 bg-background hover:bg-muted border border-border rounded text-foreground font-bold">&larr;</button>
-                    <button onClick={nextMonth} className="px-3 py-1 bg-background hover:bg-muted border border-border rounded text-foreground font-bold">&rarr;</button>
+        <article className={styles.eventRow} data-event-motion="position" data-expanded={expanded} aria-labelledby={`event-${event.id}`}>
+            <div className={styles.eventSurface} data-event-motion="surface" aria-hidden="true" />
+            <div className={styles.dateBlock} data-event-motion="position" aria-hidden="true">
+                <span>{formatEventDate(event.start_time, { month: "short" })}</span>
+                <strong>{formatEventDate(event.start_time, { day: "2-digit" })}</strong>
+                <span>{formatEventDate(event.start_time, { weekday: "short" })}</span>
+            </div>
+            <div className={styles.eventContent} data-event-motion="position">
+                <div className={styles.eventTags}>
+                    <span>{event.event_type}</span>
+                    {status === "ongoing" ? <span className={styles.live}>Happening now</span> : isToday && !isPast ? <span className={styles.live}>Today</span> : null}
+                </div>
+                <h4 id={`event-${event.id}`}>{event.title}</h4>
+                <div className={styles.eventFacts}>
+                    <p><Clock3 size={16} aria-hidden="true" /><span>{formatEventRange(event)}</span></p>
+                    <p><MapPin size={16} aria-hidden="true" /><span>{event.location || "Location to be announced"}</span></p>
                 </div>
             </div>
-
-            {/* Grid */}
-            <div className="overflow-x-auto no-scrollbar w-full">
-                <div className="grid grid-cols-7 gap-1 mb-2 min-w-[450px]">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="text-center text-xs font-bold text-[#ACA39A] uppercase tracking-wider py-2">
-                        {day}
-                    </div>
-                ))}
-                
-                {days.map((date, i) => {
-                    if (!date) return <div key={`empty-${i}`} className="p-2 h-20 bg-background rounded border border-transparent" />;
-                    
-                    const dateStr = formatDateKey(date);
-                    const dayEvents = eventsByDate.get(dateStr) || [];
-                    const isSelected = selectedDateStr === dateStr;
-                    
-                    return (
-                        <div 
-                            key={i} 
-                            onClick={() => setSelectedDate(date)}
-                            className={`p-2 min-h-20 rounded border cursor-pointer hover:border-[#89ABE3] transition-colors relative flex flex-col ${
-                                isSelected ? 'border-[#89abe3] bg-[#F4F6FB] dark:bg-muted shadow-inner' : 'border-border bg-card'
-                            }`}
-                        >
-                            <span className={`text-sm font-semibold mb-1 ${isSelected ? 'text-foreground' : 'text-muted-foreground'}`}>
-                                {date.getDate()}
-                            </span>
-                            <div className="flex flex-wrap gap-1 mt-auto">
-                                {dayEvents.map(e => (
-                                    <div 
-                                        key={e.id} 
-                                        className="w-2 h-2 rounded-full" 
-                                        style={{ backgroundColor: getEventTypeColor(e.event_type) }} 
-                                        title={e.title}
-                                    />
-                                ))}
+            <div className={styles.eventActions} data-event-motion="position">
+                {!isPast && registrationHref ? (
+                    <Link href={registrationHref} target={externalUrl ? "_blank" : undefined} rel={externalUrl ? "noopener noreferrer" : undefined} className={styles.primaryLink} aria-label={`RSVP for ${event.title}${externalUrl ? " (opens in a new tab)" : ""}`}>RSVP <ArrowUpRight size={18} aria-hidden="true" /></Link>
+                ) : null}
+                <button ref={detailsToggle} type="button" className={`${styles.detailLink} ${styles.detailsToggle}`} aria-expanded={expanded} aria-controls={detailsId} aria-label={`${expanded ? "Hide" : "View"} details for ${event.title}`} onClick={toggleDetails}>
+                    {expanded ? "Hide details" : "View details"}<ChevronDown size={18} aria-hidden="true" />
+                </button>
+            </div>
+            <div ref={details} id={detailsId} className={styles.inlineDetails} hidden={!expanded}>
+                {expanded ? (
+                    <>
+                        <div className={styles.detailsLayout}>
+                            <div className={styles.fullDescription}>
+                                <p>{text || "No additional description has been posted."}</p>
                             </div>
+                            <dl className={styles.detailsFacts}>
+                                {event.host ? <div><dt>Hosted by</dt><dd>{event.host}</dd></div> : null}
+                                {event.capacity !== null ? <div><dt>Capacity</dt><dd>{event.capacity} people</dd></div> : null}
+                                <div><dt>Member points</dt><dd>{event.points} {event.points === 1 ? "point" : "points"}</dd></div>
+                            </dl>
                         </div>
-                    );
-                })}
-            </div>
-            </div>
-
-            {/* Selected Date Details */}
-            {selectedDate && (
-                <div className="mt-6 p-4 bg-[#F4F6FB] dark:bg-muted/30 rounded-lg border border-[#89ABE3]">
-                    <h4 className="font-bold text-foreground mb-3">
-                        Events on {selectedDate.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
-                    </h4>
-                    {selectedEvents.length === 0 ? (
-                        <p className="text-sm text-[#ACA39A]">No events scheduled for this day.</p>
-                    ) : (
-                        <ul className="space-y-3">
-                            {selectedEvents.map(e => (
-                                <li key={e.id}>
-                                    <Link href={`/events/${e.id}`} className="flex items-start gap-3 bg-card p-3 rounded shadow-sm border border-background hover:border-[#89ABE3] hover:-translate-y-0.5 transition-all duration-200">
-                                        <div className="w-1.5 min-h-[40px] self-stretch rounded-full" style={{ backgroundColor: getEventTypeColor(e.event_type) }} />
+                        <div className={styles.detailsFooter}>
+                            <div className={styles.detailsUtilities}>
+                                {!isPast ? <>
+                                    {isToday ? <Link href={`/checkin/scan/${event.id}`} className={styles.detailLink}>Check in <Check size={18} aria-hidden="true" /></Link> : null}
+                                    <details className={styles.calendarExport}>
+                                        <summary>Add to calendar <ChevronDown size={16} aria-hidden="true" /></summary>
                                         <div>
-                                            <p className="font-bold text-foreground text-sm">{e.title}</p>
-                                            <p className="text-xs text-muted-foreground mt-1">
-                                                {new Date(e.start_time).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' })} 
-                                                {" • "} <span className="font-semibold" style={{ color: getEventTypeColor(e.event_type) }}>{e.event_type}</span>
-                                            </p>
+                                            <a href={googleCalendarUrl(event)} target="_blank" rel="noopener noreferrer">Google Calendar <ArrowUpRight size={16} aria-hidden="true" /></a>
+                                            <a href={icsDataUrl(event)} download={`${event.title.replace(/\s+/g, "_")}.ics`}>Apple / Outlook (.ics)</a>
                                         </div>
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            )}
-        </div>
+                                    </details>
+                                </> : <p>This event has ended.</p>}
+                            </div>
+                            <button type="button" className={styles.closeDetails} onClick={closeDetails}>Close details <X size={16} aria-hidden="true" /></button>
+                        </div>
+                    </>
+                ) : null}
+            </div>
+        </article>
     );
 }
