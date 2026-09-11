@@ -1,0 +1,110 @@
+{
+  "implementationCommit": "c77724eb26e3fe7d40598d40e21c34a2d7e50139",
+  "widthChecks": [
+    {
+      "communityDisplay": "flex",
+      "formWidth": 400,
+      "height": 900,
+      "overflow": 0,
+      "photoLoaded": true,
+      "width": 1280
+    },
+    {
+      "communityDisplay": "flex",
+      "formWidth": 398,
+      "height": 900,
+      "overflow": 0,
+      "width": 900
+    },
+    {
+      "communityDisplay": "none",
+      "controls": [
+        {
+          "height": 48,
+          "name": "email"
+        },
+        {
+          "height": 48,
+          "name": "password"
+        },
+        {
+          "height": 44,
+          "name": "Show password"
+        },
+        {
+          "height": 48,
+          "name": "Log in"
+        },
+        {
+          "height": 48,
+          "name": "Continue with Discord"
+        },
+        {
+          "height": 48,
+          "name": "Continue with Google"
+        },
+        {
+          "height": 44,
+          "name": "Sign up"
+        }
+      ],
+      "height": 844,
+      "inputFont": "16px",
+      "overflow": 0,
+      "width": 390
+    },
+    {
+      "controls": [
+        {
+          "height": 48,
+          "name": "email"
+        },
+        {
+          "height": 48,
+          "name": "password"
+        },
+        {
+          "height": 44,
+          "name": "Show password"
+        },
+        {
+          "height": 48,
+          "name": "Log in"
+        },
+        {
+          "height": 48,
+          "name": "Continue with Discord"
+        },
+        {
+          "height": 48,
+          "name": "Continue with Google"
+        },
+        {
+          "height": 44,
+          "name": "Sign up"
+        }
+      ],
+      "height": 740,
+      "inputFont": "16px",
+      "overflow": 0,
+      "width": 320
+    },
+    {
+      "communityDisplay": "none",
+      "formWidth": 400,
+      "height": 1024,
+      "overflow": 0,
+      "width": 768
+    }
+  ],
+  "freshTabConsoleErrors": [],
+  "existingTabConsoleErrors": [
+    {
+      "level": "error",
+      "message": "Failed to fetch RSC payload for http://127.0.0.1:3004/checkin. Falling back to browser navigation. TypeError: Failed to fetch\n    at y (http://127.0.0.1:3004/_next/static/chunks/4012-32dffad8d35e7cf6.js:1:140098)\n    at async _ (http://127.0.0.1:3004/_next/static/chunks/4012-32dffad8d35e7cf6.js:1:138956)\n    at async Object.o [as task] (http://127.0.0.1:3004/_next/static/chunks/4012-32dffad8d35e7cf6.js:1:147858)",
+      "timestamp": "2026-09-11T02:10:04.832Z",
+      "url": "http://127.0.0.1:3004/_next/static/chunks/4012-32dffad8d35e7cf6.js"
+    }
+  ],
+  "consoleNote": "The existing preview tab recorded a shared /checkin prefetch failure around the server restart. The final page was checked again in a fresh tab."
+}

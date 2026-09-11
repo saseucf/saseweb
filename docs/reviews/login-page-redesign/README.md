@@ -19,6 +19,9 @@ The branch is `feature/login-page-redesign`, rebased onto `origin/dev` at `6c640
 - `npx tsx --test tests/auth-redirect.test.ts`: 3 tests passed.
 - Source comparison: session checks, password and OAuth handlers, profile gates, and redirects are identical to the current base branch.
 - The replacement workshop photo was visually inspected from the existing local asset.
+- Final production page: reviewed the workshop photo crop at 1280px and 900px and captured a fresh 1280 × 900 desktop screenshot.
+- Final production page: captured a fresh 390 × 844 mobile screenshot; confirmed no horizontal overflow at 320, 390, 768, 900, and 1280px. Mobile inputs remain 16px and control heights remain at least 44px.
+- A fresh browser tab loaded the final page with no console errors. The older preview tab recorded a shared `/checkin` prefetch failure around the server restart; both results are retained in `final-browser-checks.json`.
 
 ## Browser checks from the approved layout
 
@@ -38,8 +41,10 @@ No real account sign-ins or OAuth authorization flows were completed, and no ema
 ## Visual evidence
 
 - `before-desktop.jpg`: original Login page before the redesign.
-- `mobile.jpg`: approved 390 × 844 mobile layout, captured before the desktop-only photo replacement and rebase.
-- `responsive-checks.json` and `keyboard-checks.json`: measurements from that layout review.
+- `desktop.jpg`: final 1280 × 900 desktop view with the workshop photo, captured after the photo replacement and rebase.
+- `mobile.jpg`: final 390 × 844 mobile view, captured after the photo replacement and rebase.
+- `final-browser-checks.json`: final responsive measurements and console observations.
+- `responsive-checks.json` and `keyboard-checks.json`: measurements from the original approved-layout review.
 - [Replacement workshop photo](../../../public/events/breadboard2.jpg).
 
-Fresh desktop screenshot capture was blocked because the host Mac was locked. The final desktop crop and the page after the rebase still need a browser review. The build is available locally at `http://127.0.0.1:3004/login` and in the PR's deployment preview when available.
+Both screenshots show the final production build. The browser viewport override was reset after verification. The build is available locally at `http://127.0.0.1:3004/login` and in the PR's deployment preview.
