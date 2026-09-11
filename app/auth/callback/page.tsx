@@ -10,6 +10,7 @@ function AuthCallback() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"), DEFAULT_MEMBER_DESTINATION)
+    const isLinkFlow = searchParams.get("flow") === "link"
 
     useEffect(() => {
         // The cookie-backed browser client completes the PKCE callback during
@@ -18,6 +19,20 @@ function AuthCallback() {
         supabase.auth.getSession().then(async ({ data }) => {
             const user = data.session?.user
             if (user) {
+                if (isLinkFlow) {
+                    try {
+                        localStorage.setItem("sase:auth", JSON.stringify(user))
+                    } catch {
+                        // ignore localStorage errors
+                    }
+
+                    window.dispatchEvent(
+                        new CustomEvent("sase:auth", { detail: { user } })
+                    )
+
+                    router.replace(redirectUrl)
+                    return
+                }
                 const accountCreatedAt = new Date(user.created_at).getTime()
                 const accountWasJustCreated =
                     Number.isFinite(accountCreatedAt) &&
@@ -118,7 +133,7 @@ function AuthCallback() {
             }
             router.replace("/login")
         })
-    }, [router, redirectUrl])
+    }, [router, redirectUrl, isLinkFlow])
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-6">

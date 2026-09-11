@@ -12,6 +12,7 @@ import VerifyPaymentButton from "@/components/membership/verify-payment-button";
 import { getMemberNames } from "@/lib/member-names";
 import { getMembershipCheckoutConfiguration } from "@/lib/membership-checkout";
 import { createServerSupabase } from "@/lib/supabase-server";
+import ConnectedAccounts from "@/components/membership/connected-accounts";
 
 export const dynamic = "force-dynamic";
 
@@ -184,6 +185,12 @@ export default async function MembershipPage() {
           <Link href="/membership/profile" className="sase-secondary-button !inline-flex min-h-11 shrink-0 items-center justify-center px-5 dark:!border-[#89abe3]/60 dark:!text-[#e9e8e8] dark:hover:!bg-[#89abe3]/10">
             Update details
           </Link>
+        </div>
+        <div className="mt-8 border-t border-border pt-7">
+          <h3 className="text-lg font-black tracking-tight">
+            Connected accounts
+          </h3>
+          <ConnectedAccounts />
         </div>
       </section>
     </main>
