@@ -1,4 +1,5 @@
 import { createServerSupabase } from "@/lib/supabase-server";
+import styles from "./Leaderboard.module.css";
 
 type LeaderboardEntry = {
     id: string;
@@ -16,18 +17,6 @@ function getInitials(name: string) {
         .slice(0, 2);
 }
 
-const rankColors: Record<number, string> = {
-    0: "bg-[#dbc8b6] text-[#141b4d]",
-    1: "bg-[#c0c0c0] text-[#141b4d]",
-    2: "bg-[#cd7f32] text-[#141b4d]",
-};
-
-const rankLabels: Record<number, string> = {
-    0: "🥇",
-    1: "🥈",
-    2: "🥉",
-};
-
 export default async function Leaderboard() {
     const supabase = createServerSupabase();
     const { data, error } = await supabase
@@ -39,44 +28,48 @@ export default async function Leaderboard() {
     const entries: LeaderboardEntry[] = error || !data ? [] : (data as LeaderboardEntry[]);
 
     return (
-        <div className="w-full max-w-2xl mx-auto">
-            <div className="text-center mb-8">
-                <h3 className="text-[#89abe3] font-black text-4xl tracking-tight mb-2">Leaderboard</h3>
-                <p className="text-muted-foreground">Top contributors across all SASE UCF events.</p>
+        <div className={styles.leaderboard}>
+            <div className={styles.heading}>
+                <h2 id="home-leaderboard-title">Leaderboard</h2>
+                <p>Top contributors across all SASE UCF events.</p>
             </div>
-            
+
             {entries.length === 0 ? (
-                <div className="sase-form-card text-center">
-                    <p className="text-gray-500 font-medium">No leaderboard data yet. Earn points by attending events!</p>
+                <div className={styles.empty}>
+                    <p>
+                        <strong>No leaderboard data yet.</strong>{" "}
+                        <span>Earn points by attending events!</span>
+                    </p>
                 </div>
             ) : (
-                <div className="bg-card rounded-2xl border border-border shadow-md overflow-hidden">
-                    {entries.map((entry, idx) => (
-                        <div
-                            key={entry.id}
-                            className={`flex items-center justify-between px-6 py-4 border-b border-[#f0f4fb] last:border-0 transition-colors hover:bg-background ${rankColors[idx] ?? ""}`}
-                        >
-                            <div className="flex items-center gap-4">
-                                <span className="font-black text-lg w-8 text-center">
-                                    {rankLabels[idx] ?? idx + 1}
-                                </span>
-                                <div
-                                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black"
-                                    style={{
-                                        background: idx < 3 ? "rgba(0,0,0,0.1)" : "#e9eef8",
-                                        color: idx < 3 ? "inherit" : "#89abe3",
-                                    }}
-                                >
-                                    {getInitials(entry.full_name ?? "?")}
-                                </div>
-                                <span className="font-semibold text-sm">{entry.full_name ?? "Anonymous"}</span>
-                            </div>
-                            <span className="font-mono font-black text-base tabular-nums">
-                                {entry.total_points ?? 0} pts
-                            </span>
-                        </div>
-                    ))}
-                </div>
+                <table className={styles.table}>
+                    <caption className={styles.srOnly}>SASE UCF event contributor rankings</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Rank</th>
+                            <th scope="col">Member</th>
+                            <th scope="col" className={styles.points}>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {entries.map((entry, idx) => (
+                            <tr key={entry.id} className={idx < 3 ? styles.topRank : undefined}>
+                                <td className={styles.rank}>{idx + 1}</td>
+                                <th scope="row" className={styles.member}>
+                                    <span className={styles.memberIdentity}>
+                                        <span className={styles.initials} aria-hidden="true">
+                                            {getInitials(entry.full_name ?? "?")}
+                                        </span>
+                                        <span className={styles.name}>{entry.full_name ?? "Anonymous"}</span>
+                                    </span>
+                                </th>
+                                <td className={styles.points}>
+                                    {entry.total_points ?? 0} <span className={styles.unit}>pts</span>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             )}
         </div>
     );

@@ -160,13 +160,102 @@
 .sase-nav-links a:hover, .sase-nav-active { color: var(--sase-blue) !important; }
 .sase-login { border: 1px solid var(--sase-blue); border-radius: 999px; padding: 11px 20px; }
 
-.sase-sun { background: linear-gradient(180deg, #e50000 0%, #8b182f 48%, #0e4059 100%); border-radius: 50%; height: min(42vw, 540px); position: absolute; right: 4%; top: 18%; width: min(42vw, 540px); }
-.sase-cloud { background: #fbbf24; border-radius: 999px; height: 18px; position: absolute; width: 240px; z-index: 1; opacity: 0.9; }
-.sase-cloud::before, .sase-cloud::after { background: inherit; border-radius: inherit; content: ""; height: 18px; position: absolute; }
-.sase-cloud::before { right: 80%; top: 35px; width: 160px; }
-.sase-cloud::after { left: 65%; top: -35px; width: 100px; }
-.sase-cloud-top { right: 5%; top: 25%; }
-.sase-cloud-middle { right: 45%; top: 52%; transform: scale(0.72); }
+.sase-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(24px, 4vw, 64px) 24px clamp(88px, 12vw, 156px);
+  background: var(--background);
+}
+.sase-hero-layout {
+  display: grid;
+  align-items: center;
+  gap: 28px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+/* A single bounded scene keeps every decorative offset relative to the artwork. */
+.sase-hero-art {
+  position: relative;
+  width: min(58vw, 300px);
+  aspect-ratio: 1;
+  justify-self: center;
+  pointer-events: none;
+}
+.sase-sun { background: linear-gradient(180deg, #e50000 0%, #8b182f 48%, #0e4059 100%); border-radius: 50%; position: absolute; right: 6%; top: 8%; width: 82%; aspect-ratio: 1; opacity: 0.5; }
+.sase-cloud { background: #fbbf24; border-radius: 999px; height: 3%; position: absolute; z-index: 1; opacity: 0.9; }
+.sase-cloud::before, .sase-cloud::after { background: inherit; border-radius: inherit; content: ""; height: 100%; position: absolute; }
+.sase-cloud::before { right: 65%; top: 200%; width: 70%; }
+.sase-cloud::after { left: 60%; top: -200%; width: 45%; }
+.sase-cloud-top { right: 5%; top: 22%; width: 48%; }
+.sase-cloud-middle { left: 14%; top: 68%; width: 26%; }
+.sase-hero-content { min-width: 0; text-align: center; }
+.sase-hero-brand { width: min(78vw, 460px); max-width: 100%; margin: 0 auto; }
+.sase-hero-subtitle {
+  margin: 16px 0 0;
+  font-size: clamp(0.75rem, 1.05vw, 0.875rem);
+  line-height: 1.65;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--foreground);
+  opacity: 0.8;
+}
+.sase-hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 24px; }
+.sase-hero-actions a { padding-inline: clamp(18px, 4vw, 32px); min-height: 44px; }
+.sase-hero-waves {
+  --sase-wave-bob: clamp(5px, 0.8vw, 10px);
+  position: absolute;
+  inset: auto 0 0;
+  height: clamp(76px, 11vw, 150px);
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.48;
+  mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+}
+.sase-hero-wave-back, .sase-hero-waves::before, .sase-hero-waves::after {
+  content: "";
+  position: absolute;
+  inset: 0 -9%;
+  z-index: 0;
+  /* Preserve the rolling crests and crop the artwork's deeper navy base. */
+  background: url("/wave1.png") center top / 100% 230% no-repeat;
+  animation: sase-wave-drift 9s ease-in-out -4s infinite alternate;
+}
+.sase-hero-waves::before {
+  inset: 20% -10% -20%;
+  z-index: 1;
+  background-image: url("/wave2.png");
+  animation-duration: 7s;
+  animation-delay: -7s;
+  animation-direction: alternate-reverse;
+}
+.sase-hero-waves::after {
+  inset: 40% -8% -40%;
+  z-index: 2;
+  animation-duration: 5.5s;
+  animation-delay: -2s;
+}
+
+@keyframes sase-wave-drift {
+  from { transform: translate3d(-6%, calc(-1 * var(--sase-wave-bob)), 0); }
+  to { transform: translate3d(6%, var(--sase-wave-bob), 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sase-hero-wave-back, .sase-hero-waves::before, .sase-hero-waves::after { animation: none; }
+}
+
+@media (min-width: 1024px) {
+  .sase-hero { padding-inline: 48px; }
+  .sase-hero-layout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(48px, 6vw, 96px); }
+  .sase-hero-art { grid-column: 2; grid-row: 1; width: min(100%, 480px); }
+  .sase-hero-content { grid-column: 1; grid-row: 1; text-align: left; }
+  .sase-hero-brand { width: 100%; max-width: 600px; margin: 0; }
+  .sase-hero-actions { justify-content: flex-start; }
+  .sase-sun { opacity: 1; }
+}
 
 .sase-bottom-note { bottom: 24px; left: 5vw; position: absolute; z-index: 3; }
 .sase-bottom-note p { color: var(--sase-navy); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -179,9 +268,6 @@
   .sase-nav-links a { font-size: 0.58rem; letter-spacing: 0.08em; }
   .sase-nav-links a:nth-child(2) { display: none; }
   .sase-login { padding: 9px 12px; }
-  .sase-sun { height: 220px; right: -60px; top: 10%; width: 220px; opacity: 0.5; }
-  .sase-cloud-top { top: 20%; right: 2%; }
-  .sase-cloud-middle { right: 24%; top: 50%; display: none; }
   .sase-bottom-note { bottom: 14px; }
 }
 

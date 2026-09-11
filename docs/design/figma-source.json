@@ -1,0 +1,782 @@
+{
+  "page": {
+    "id": "1:2",
+    "name": "Anya mockups"
+  },
+  "frames": [
+    {
+      "id": "456:110",
+      "name": "Frame 3",
+      "width": 1728,
+      "height": 5476,
+      "fills": [
+        {
+          "type": "SOLID",
+          "visible": true,
+          "opacity": 1,
+          "blendMode": "NORMAL",
+          "color": {
+            "r": 0.0784313753247261,
+            "g": 0.10588235408067703,
+            "b": 0.3019607961177826
+          },
+          "boundVariables": {}
+        }
+      ],
+      "colors": [
+        {
+          "hex": "#fffde5",
+          "count": 14,
+          "examples": [
+            {
+              "id": "456:112",
+              "name": "SASE",
+              "type": "TEXT",
+              "opacity": 1
+            },
+            {
+              "id": "456:115",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "456:116",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#89abe3",
+          "count": 5,
+          "examples": [
+            {
+              "id": "456:123",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "456:125",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "456:128",
+              "name": "Society of Asian Scientists & Engineers",
+              "type": "TEXT",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#ffffff",
+          "count": 3,
+          "examples": [
+            {
+              "id": "456:143",
+              "name": "SASE is a nonprofit, student-run organization dedi",
+              "type": "TEXT",
+              "opacity": 0.7200000286102295
+            },
+            {
+              "id": "456:147",
+              "name": "Where Community meets Careers",
+              "type": "TEXT",
+              "opacity": 1
+            },
+            {
+              "id": "663:4006",
+              "name": "Rectangle 27",
+              "type": "RECTANGLE",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#d9d9d9",
+          "count": 3,
+          "examples": [
+            {
+              "id": "456:144",
+              "name": "Rectangle 23",
+              "type": "RECTANGLE",
+              "opacity": 1
+            },
+            {
+              "id": "456:145",
+              "name": "Rectangle 24",
+              "type": "RECTANGLE",
+              "opacity": 1
+            },
+            {
+              "id": "456:146",
+              "name": "Rectangle 25",
+              "type": "RECTANGLE",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#020202",
+          "count": 2,
+          "examples": [
+            {
+              "id": "456:111",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "499:115",
+              "name": "SEE EVENTS",
+              "type": "TEXT",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#ffcf5e",
+          "count": 2,
+          "examples": [
+            {
+              "id": "456:120",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "456:149",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#141b4d",
+          "count": 1,
+          "examples": [
+            {
+              "id": "456:110",
+              "name": "Frame 3",
+              "type": "FRAME",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#a00a11",
+          "count": 1,
+          "examples": [
+            {
+              "id": "456:135",
+              "name": "Rectangle 19",
+              "type": "RECTANGLE",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#292d53",
+          "count": 1,
+          "examples": [
+            {
+              "id": "456:139",
+              "name": "Rectangle 20",
+              "type": "RECTANGLE",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#394774",
+          "count": 1,
+          "examples": [
+            {
+              "id": "456:142",
+              "name": "Rectangle 22",
+              "type": "RECTANGLE",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#cd0000",
+          "count": 1,
+          "examples": [
+            {
+              "id": "663:4007",
+              "name": "Ellipse 5",
+              "type": "ELLIPSE",
+              "opacity": 1
+            }
+          ]
+        }
+      ],
+      "typography": [
+        {
+          "font": {
+            "family": "Inter",
+            "style": "Semi Bold",
+            "variationSettings": {
+              "wght": 600,
+              "slnt": 0
+            }
+          },
+          "fontSize": 24,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 4,
+          "examples": [
+            {
+              "id": "663:4002",
+              "text": "EVENTS"
+            },
+            {
+              "id": "663:4003",
+              "text": "About us "
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Archivo Black",
+            "style": "Regular"
+          },
+          "fontSize": 180,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": -15
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 96.32479858398438
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "456:112",
+              "text": "SASE"
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Space Mono",
+            "style": "Bold"
+          },
+          "fontSize": 24,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "456:128",
+              "text": "Society of Asian Scientists & Engineers"
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Outfit",
+            "style": "Regular",
+            "variationSettings": {
+              "wght": 400
+            }
+          },
+          "fontSize": 20,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 0
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 30.799999237060547
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "456:143",
+              "text": "SASE is a nonprofit, student-run organization dedicated to the unique needs of Asian heritage scientists and engineers in America. We unite "
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Inter",
+            "style": "Extra Bold",
+            "variationSettings": {
+              "wght": 800,
+              "slnt": 0
+            }
+          },
+          "fontSize": 64,
+          "letterSpacing": {
+            "unit": "PERCENT",
+            "value": 3
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 77
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "456:147",
+              "text": "Where Community \nmeets Careers"
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Inter",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700,
+              "slnt": 0
+            }
+          },
+          "fontSize": 24,
+          "letterSpacing": {
+            "unit": "PERCENT",
+            "value": 3
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 77
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "499:115",
+              "text": "SEE EVENTS "
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Inter",
+            "style": "Extra Bold",
+            "variationSettings": {
+              "wght": 800,
+              "slnt": 0
+            }
+          },
+          "fontSize": 24,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "663:4001",
+              "text": "HOME"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "465:155",
+      "name": "Frame 5",
+      "width": 1728,
+      "height": 17041,
+      "fills": [
+        {
+          "type": "SOLID",
+          "visible": true,
+          "opacity": 1,
+          "blendMode": "NORMAL",
+          "color": {
+            "r": 0.0784313753247261,
+            "g": 0.10588235408067703,
+            "b": 0.3019607961177826
+          },
+          "boundVariables": {}
+        }
+      ],
+      "colors": [
+        {
+          "hex": "#fffde5",
+          "count": 15,
+          "examples": [
+            {
+              "id": "465:157",
+              "name": "SASE",
+              "type": "TEXT",
+              "opacity": 1
+            },
+            {
+              "id": "465:160",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "465:161",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#b4e4ed",
+          "count": 10,
+          "examples": [
+            {
+              "id": "479:216",
+              "name": "PAST GBM:",
+              "type": "TEXT",
+              "opacity": 1
+            },
+            {
+              "id": "493:238",
+              "name": "PAST SOCIALS:",
+              "type": "TEXT",
+              "opacity": 1
+            },
+            {
+              "id": "493:243",
+              "name": "PAST WORKSHOPS:",
+              "type": "TEXT",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#89abe3",
+          "count": 7,
+          "examples": [
+            {
+              "id": "465:168",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "465:170",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "465:173",
+              "name": "Society of Asian Scientists & Engineers",
+              "type": "TEXT",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#ffcf5e",
+          "count": 2,
+          "examples": [
+            {
+              "id": "493:247",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            },
+            {
+              "id": "493:248",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#000000",
+          "count": 2,
+          "examples": [
+            {
+              "id": "813:707",
+              "name": "UPCOMING EVENTS",
+              "type": "TEXT",
+              "opacity": 1
+            },
+            {
+              "id": "813:708",
+              "name": "calendar",
+              "type": "TEXT",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#141b4d",
+          "count": 1,
+          "examples": [
+            {
+              "id": "465:155",
+              "name": "Frame 5",
+              "type": "FRAME",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#020202",
+          "count": 1,
+          "examples": [
+            {
+              "id": "465:156",
+              "name": "Vector",
+              "type": "VECTOR",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#394774",
+          "count": 1,
+          "examples": [
+            {
+              "id": "465:187",
+              "name": "Rectangle 22",
+              "type": "RECTANGLE",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#ffffff",
+          "count": 1,
+          "examples": [
+            {
+              "id": "465:195",
+              "name": "Rectangle 27",
+              "type": "RECTANGLE",
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "hex": "#cd0000",
+          "count": 1,
+          "examples": [
+            {
+              "id": "465:196",
+              "name": "Ellipse 5",
+              "type": "ELLIPSE",
+              "opacity": 1
+            }
+          ]
+        }
+      ],
+      "typography": [
+        {
+          "font": "mixed",
+          "fontSize": 120,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 5,
+          "examples": [
+            {
+              "id": "479:216",
+              "text": "PAST GBM:"
+            },
+            {
+              "id": "493:238",
+              "text": "PAST SOCIALS:"
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Archivo",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700,
+              "wdth": 100
+            }
+          },
+          "fontSize": 70,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 5,
+          "examples": [
+            {
+              "id": "583:971",
+              "text": "CONFERENCES"
+            },
+            {
+              "id": "583:972",
+              "text": "WORKSHOPS"
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Inter",
+            "style": "Semi Bold",
+            "variationSettings": {
+              "wght": 600,
+              "slnt": 0
+            }
+          },
+          "fontSize": 24,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 4,
+          "examples": [
+            {
+              "id": "465:178",
+              "text": "HOME"
+            },
+            {
+              "id": "465:179",
+              "text": "About us "
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Inter",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700,
+              "slnt": 0
+            }
+          },
+          "fontSize": 24,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 2,
+          "examples": [
+            {
+              "id": "813:707",
+              "text": "UPCOMING EVENTS"
+            },
+            {
+              "id": "813:708",
+              "text": "calendar"
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Archivo Black",
+            "style": "Regular"
+          },
+          "fontSize": 180,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": -15
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 96.32479858398438
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "465:157",
+              "text": "SASE"
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Space Mono",
+            "style": "Bold"
+          },
+          "fontSize": 24,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "465:173",
+              "text": "Society of Asian Scientists & Engineers"
+            }
+          ]
+        },
+        {
+          "font": {
+            "family": "Inter",
+            "style": "Extra Bold",
+            "variationSettings": {
+              "wght": 800,
+              "slnt": 0
+            }
+          },
+          "fontSize": 24,
+          "letterSpacing": {
+            "unit": "PIXELS",
+            "value": 2.496000051498413
+          },
+          "lineHeight": {
+            "unit": "PIXELS",
+            "value": 18.719999313354492
+          },
+          "count": 1,
+          "examples": [
+            {
+              "id": "472:206",
+              "text": "EVENTS "
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variableCollections": [],
+  "textStyleCount": 0,
+  "paintStyleCount": 0,
+  "inspectedAt": "2026-09-08",
+  "fileKey": "IAsev5n73AI0dH5eoH9bZT",
+  "note": "Read-only Figma inspection. Proposed tokens are stored separately in tokens.json."
+}
