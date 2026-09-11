@@ -1,0 +1,26 @@
+[
+  {
+    "name": "password",
+    "outline": "solid"
+  },
+  {
+    "name": "Show password",
+    "outline": "solid"
+  },
+  {
+    "name": "Log in",
+    "outline": "solid"
+  },
+  {
+    "name": "Continue with Discord",
+    "outline": "solid"
+  },
+  {
+    "name": "Continue with Google",
+    "outline": "solid"
+  },
+  {
+    "name": "Sign up",
+    "outline": "solid"
+  }
+]
