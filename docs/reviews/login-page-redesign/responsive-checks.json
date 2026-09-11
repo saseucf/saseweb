@@ -1,0 +1,115 @@
+[
+  {
+    "controls": [
+      {
+        "height": 48,
+        "name": "email",
+        "width": 342
+      },
+      {
+        "height": 48,
+        "name": "password",
+        "width": 342
+      },
+      {
+        "height": 44,
+        "name": "Show password",
+        "width": 46
+      },
+      {
+        "height": 48,
+        "name": "Log in",
+        "width": 342
+      },
+      {
+        "height": 48,
+        "name": "Continue with Discord",
+        "width": 342
+      },
+      {
+        "height": 48,
+        "name": "Continue with Google",
+        "width": 342
+      },
+      {
+        "height": 44,
+        "name": "Sign up",
+        "width": 55
+      }
+    ],
+    "heading": "Log in to SASE",
+    "inputFont": "16px",
+    "overflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [
+      {
+        "height": 48,
+        "name": "email",
+        "width": 272
+      },
+      {
+        "height": 48,
+        "name": "password",
+        "width": 272
+      },
+      {
+        "height": 44,
+        "name": "Show password",
+        "width": 46
+      },
+      {
+        "height": 48,
+        "name": "Log in",
+        "width": 272
+      },
+      {
+        "height": 48,
+        "name": "Continue with Discord",
+        "width": 272
+      },
+      {
+        "height": 48,
+        "name": "Continue with Google",
+        "width": 272
+      },
+      {
+        "height": 44,
+        "name": "Sign up",
+        "width": 55
+      }
+    ],
+    "overflow": 0,
+    "width": 320
+  },
+  {
+    "communityDisplay": "none",
+    "formWidth": 400,
+    "overflow": 0,
+    "width": 768
+  },
+  {
+    "communityDisplay": "flex",
+    "formWidth": 398,
+    "overflow": 0,
+    "width": 900
+  },
+  {
+    "communityDisplay": "flex",
+    "formWidth": 400,
+    "images": [
+      {
+        "alt": "SASE",
+        "loaded": true
+      },
+      {
+        "alt": "SASE members gathered together at a general body meeting",
+        "loaded": true
+      }
+    ],
+    "inputFont": "16px",
+    "overflow": 0,
+    "width": 1280
+  }
+]

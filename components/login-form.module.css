@@ -1,0 +1,190 @@
+.form { display: grid; gap: 18px; }
+
+.field { display: grid; gap: 8px; }
+
+.label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.input {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--login-line);
+    border-radius: 4px;
+    background: var(--login-surface);
+    color: var(--login-navy);
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.4;
+    transition: border-color 180ms var(--login-ease), background-color 180ms var(--login-ease);
+}
+
+.input:hover { border-color: var(--login-navy); }
+
+.password { position: relative; }
+.password .input { padding-right: 58px; }
+
+.visibility {
+    position: absolute;
+    inset-block: 2px;
+    right: 2px;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--login-muted);
+    cursor: pointer;
+    transition: background-color 180ms var(--login-ease), color 180ms var(--login-ease);
+}
+
+.visibility:hover {
+    background: var(--login-canvas);
+    color: var(--login-navy);
+}
+
+.primary, .provider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1px solid var(--login-navy);
+    border-radius: 4px;
+    font: inherit;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 180ms var(--login-ease), border-color 180ms var(--login-ease), transform 180ms var(--login-ease);
+}
+
+.primary {
+    margin-top: 4px;
+    background: var(--login-navy);
+    color: var(--login-surface);
+}
+
+.primary:hover:not(:disabled) { background: oklch(35% 0.09 270); }
+.primary:active:not(:disabled), .provider:active { transform: translateY(1px); }
+.primary:disabled { opacity: 0.65; cursor: wait; }
+
+.providers { display: grid; gap: 12px; }
+
+.provider {
+    position: relative;
+    border-color: var(--login-line);
+    background: var(--login-surface);
+    color: var(--login-navy);
+    font-weight: 500;
+}
+
+.provider svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+.provider:hover {
+    border-color: var(--login-navy);
+    background: oklch(95.7% 0.012 264);
+}
+
+.input:focus-visible, .primary:focus-visible, .provider:focus-visible,
+.visibility:focus-visible, .signup a:focus-visible {
+    outline: 2px solid var(--login-focus);
+    outline-offset: 3px;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-block: 24px;
+    color: var(--login-muted);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.separator::before, .separator::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: oklch(86% 0.02 264);
+}
+
+.error {
+    margin: 16px 0 0;
+    padding: 12px 14px;
+    border: 1px solid oklch(77% 0.075 24);
+    border-radius: 4px;
+    background: oklch(96.5% 0.016 24);
+    color: oklch(42% 0.14 24);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.signup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 5px;
+    margin: 16px 0 0;
+    color: var(--login-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.signup a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 4px;
+    border-radius: 2px;
+    color: var(--login-navy);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: oklch(70% 0.04 264);
+}
+
+.signup a:hover { text-decoration-color: currentColor; }
+.signup a:active { color: var(--login-focus); }
+
+.skeleton {
+    display: grid;
+    gap: 18px;
+    min-height: 454px;
+}
+
+.skeletonField { display: grid; gap: 8px; }
+.skeletonLabel, .skeletonInput, .skeletonButton, .skeletonFooter {
+    display: block;
+    border-radius: 4px;
+    background: oklch(91.8% 0.014 264);
+}
+.skeletonLabel { width: 64px; height: 20px; }
+.skeletonInput, .skeletonButton { height: 48px; }
+.skeletonDivider { height: 18px; margin-block: 6px; }
+.skeletonFooter { width: 220px; max-width: 100%; height: 16px; margin: 16px auto; }
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .input, .visibility, .primary, .provider { transition: none; }
+    .primary:active:not(:disabled), .provider:active { transform: none; }
+}
