@@ -151,6 +151,11 @@ export function LoginForm() {
                         </button>
                     </div>
                 </div>
+                <div style={{ textAlign: "right", marginTop: -4 }}>
+                    <Link href="/forgot-password" className={styles.forgotLink}>
+                        Forgot password?
+                    </Link>
+                </div>
                 <button
                     className={styles.primary}
                     type="submit"
