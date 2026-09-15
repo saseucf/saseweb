@@ -11,6 +11,7 @@ function AuthCallback() {
     const searchParams = useSearchParams()
     const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"), DEFAULT_MEMBER_DESTINATION)
     const isLinkFlow = searchParams.get("flow") === "link"
+    const isRecovery = searchParams.get("type") === "recovery"
 
     useEffect(() => {
         // The cookie-backed browser client completes the PKCE callback during
@@ -19,6 +20,11 @@ function AuthCallback() {
         supabase.auth.getSession().then(async ({ data }) => {
             const user = data.session?.user
             if (user) {
+                if (isRecovery) {
+                    router.replace("/reset-password")
+                    return
+                }
+
                 if (isLinkFlow) {
                     try {
                         localStorage.setItem("sase:auth", JSON.stringify(user))
@@ -131,9 +137,9 @@ function AuthCallback() {
                 router.replace(redirectUrl)
                 return
             }
-            router.replace("/login")
+            router.replace(isRecovery ? "/forgot-password" : "/login")
         })
-    }, [router, redirectUrl, isLinkFlow])
+    }, [router, redirectUrl, isLinkFlow, isRecovery])
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-6">

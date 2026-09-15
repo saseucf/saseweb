@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import MemberProfileForm from "@/components/membership/member-profile-form";
+import ChangePasswordForm from "@/components/change-password-form";
 import { createServerSupabase } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,9 @@ export default async function MembershipProfilePage() {
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login?redirect=/membership/profile");
+
+  const providers: string[] = user.app_metadata?.providers ?? [];
+  const hasPasswordAuth = providers.includes("email");
 
   const { data: profile, error } = await supabase
     .from("profiles")
@@ -58,6 +62,23 @@ export default async function MembershipProfilePage() {
               graduationYear: profile.year || "",
             }}
           />
+        </section>
+      )}
+
+      {hasPasswordAuth && !error && profile && (
+        <section className="mx-auto mt-8 max-w-2xl border border-border bg-card p-5 sm:p-8" aria-labelledby="change-password-heading">
+          <ChangePasswordForm userEmail={profile.email || user.email || ""} />
+        </section>
+      )}
+
+      {!hasPasswordAuth && !error && profile && (
+        <section className="mx-auto mt-8 max-w-2xl border border-border bg-card p-5 sm:p-8">
+          <p className="text-sm text-muted-foreground">
+            Want to add a password to your account?{" "}
+            <Link href="/forgot-password" className="font-medium text-[#4266a4] underline underline-offset-4 hover:text-[#171d52]">
+              Reset password
+            </Link>
+          </p>
         </section>
       )}
     </main>

@@ -13,6 +13,9 @@ export default async function ProfilePage() {
 
     if (!user) redirect("/login?redirect=/profile");
 
+    const providers: string[] = user.app_metadata?.providers ?? []
+    const hasPasswordAuth = providers.includes("email")
+
     const { data: profile, error } = await supabase
         .from("profiles")
         .select("id, first_name, last_name, email, phone_number, major, school, year, paid_member, role, wants_email_notifications")
@@ -60,5 +63,5 @@ export default async function ProfilePage() {
         currency: "USD",
     });
 
-    return <ProfileClient initialProfile={profile} checkout={checkout} initialAttendances={attendances || []} />;
+    return <ProfileClient initialProfile={profile} checkout={checkout} initialAttendances={attendances || []} hasPasswordAuth={hasPasswordAuth} userEmail={user.email ?? ""} />;
 }
