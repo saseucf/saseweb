@@ -6,6 +6,7 @@ import {
     AlertCircle,
     CheckCircle2,
     ExternalLink,
+    KeyRound,
     Mail,
     Phone,
     ShieldCheck,
@@ -19,6 +20,7 @@ import { toast } from "sonner";
 import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import type { MembershipCheckoutConfigurationResult } from "@/lib/membership-checkout";
+import ChangePasswordForm from "@/components/change-password-form";
 
 function formatMoney(cents: number, currency: string) {
     return new Intl.NumberFormat("en-US", {
@@ -67,7 +69,7 @@ const getEventTypeColor = (type: string) => {
     }
 };
 
-export default function ProfileClient({ initialProfile, checkout, initialAttendances }: { initialProfile: ProfileData, checkout: MembershipCheckoutConfigurationResult, initialAttendances: AttendedEvent[] }) {
+export default function ProfileClient({ initialProfile, checkout, initialAttendances, hasPasswordAuth, userEmail }: { initialProfile: ProfileData, checkout: MembershipCheckoutConfigurationResult, initialAttendances: AttendedEvent[], hasPasswordAuth: boolean, userEmail: string }) {
     const router = useRouter();
     const [profile, setProfile] = useState(initialProfile);
     const [firstName, setFirstName] = useState(initialProfile.first_name || "");
@@ -302,6 +304,13 @@ export default function ProfileClient({ initialProfile, checkout, initialAttenda
                     </form>
                 </section>
 
+                {/* Change Password */}
+                {hasPasswordAuth && (
+                    <section className="sase-content-section border border-border bg-card shadow-sm rounded-xl p-6 sm:p-8">
+                        <ChangePasswordForm userEmail={userEmail} />
+                    </section>
+                )}
+
                 {/* Membership Status */}
                 <section className="sase-content-section overflow-hidden border border-border bg-card shadow-[0_12px_30px_rgba(23,29,82,0.06)] animate-in fade-in !p-0" aria-labelledby="membership-status-heading">
                     <div className="px-5 py-7 sm:px-8 sm:py-9">
@@ -343,6 +352,17 @@ export default function ProfileClient({ initialProfile, checkout, initialAttenda
                                     <div>
                                         <dt className="sr-only">Phone number</dt>
                                         <dd className="font-mono">{profile.phone_number || "No phone number saved"}</dd>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <KeyRound className="mt-0.5 size-4 shrink-0 text-[#4266a4] dark:text-[#89abe3]" aria-hidden="true" />
+                                    <div>
+                                        <dt className="sr-only">Password</dt>
+                                        <dd>
+                                            <Link href="/forgot-password" className="text-sm font-medium text-[#4266a4] hover:text-[#171d52] underline underline-offset-4 decoration-[#4266a4]/40 hover:decoration-current transition-colors">
+                                                Reset password
+                                            </Link>
+                                        </dd>
                                     </div>
                                 </div>
                             </dl>

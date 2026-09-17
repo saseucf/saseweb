@@ -11,6 +11,7 @@ function AuthCallback() {
     const searchParams = useSearchParams()
     const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"), DEFAULT_MEMBER_DESTINATION)
     const isLinkFlow = searchParams.get("flow") === "link"
+    const isRecovery = searchParams.get("type") === "recovery"
 
     useEffect(() => {
         // The cookie-backed browser client completes the PKCE callback during
@@ -19,6 +20,11 @@ function AuthCallback() {
         supabase.auth.getSession().then(async ({ data }) => {
             const user = data.session?.user
             if (user) {
+                if (isRecovery) {
+                    router.replace("/reset-password")
+                    return
+                }
+
                 if (isLinkFlow) {
                     try {
                         localStorage.setItem("sase:auth", JSON.stringify(user))
@@ -41,20 +47,19 @@ function AuthCallback() {
 
                 if (accountWasJustCreated && !welcomeEmailSent && user.email) {
                     try {
+                        const firstName =
+                            user.user_metadata?.first_name ??
+                            user.user_metadata?.given_name ??
+                            user.user_metadata?.full_name?.split(" ")[0] ??
+                            ""
+
                         const response = await fetch("/api/email", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                to: user.email,
-                                subject: "Welcome to UCF SASE",
-                                text: "Welcome to UCF SASE! Your account has been created successfully.",
-                                html: `
-                                    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
-                                        <h2 style="margin-bottom: 12px;">Welcome to UCF SASE</h2>
-                                        <p>Your account has been created successfully.</p>
-                                        <p>We are glad to have you with us.</p>
-                                    </div>
-                                `,
+                                type: "welcome",
+                                email: user.email,
+                                firstName,
                             }),
                         })
 
@@ -131,9 +136,9 @@ function AuthCallback() {
                 router.replace(redirectUrl)
                 return
             }
-            router.replace("/login")
+            router.replace(isRecovery ? "/forgot-password" : "/login")
         })
-    }, [router, redirectUrl, isLinkFlow])
+    }, [router, redirectUrl, isLinkFlow, isRecovery])
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-6">
