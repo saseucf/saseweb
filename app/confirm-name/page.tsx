@@ -4,7 +4,7 @@ import { FormEvent, Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import supabase from "@/lib/auth"
-import { parseJoinProfile, profileIsComplete } from "@/lib/unified-auth"
+import { parseJoinProfile, profileIsComplete, skipsProfileQuestions } from "@/lib/unified-auth"
 import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 function ConfirmName() {
@@ -27,6 +27,11 @@ function ConfirmName() {
             const user = session?.user
             if (!user) {
                 router.replace(`/login?redirect=${encodeURIComponent(redirectUrl)}`)
+                return
+            }
+
+            if (skipsProfileQuestions(user)) {
+                router.replace(redirectUrl)
                 return
             }
 

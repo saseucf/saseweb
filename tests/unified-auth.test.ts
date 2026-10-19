@@ -1,9 +1,23 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createMemberFromProfile, parseJoinProfile, passwordNextStep, profileIsComplete } from "../lib/unified-auth";
+import { createMemberFromProfile, parseJoinProfile, passwordNextStep, profileIsComplete, skipsProfileQuestions } from "../lib/unified-auth";
 import { getSafeAuthRedirect } from "../lib/auth-redirect";
 
 const profile = { first_name: " Ana ", last_name: "de la Cruz", major: "Physics", year: "2029", school: "University of Central Florida" };
+
+test("Google and Discord accounts skip profile questions, including linked accounts", () => {
+  for (const provider of ["google", "discord"]) {
+    assert.equal(skipsProfileQuestions({ app_metadata: { provider } }), true);
+    assert.equal(skipsProfileQuestions({ app_metadata: { provider: "email", providers: ["email", provider] } }), true);
+  }
+});
+
+test("email accounts still require profile setup and editable metadata cannot bypass it", () => {
+  for (const app_metadata of [{}, { provider: "email" }, { providers: ["email"] }, { providers: "google" }, { provider: "github" }]) {
+    const user = { app_metadata, user_metadata: { provider: "google", providers: ["discord"] } };
+    assert.equal(skipsProfileQuestions(user), false);
+  }
+});
 
 test("only invalid credentials offer inline setup; verification and provider errors keep separate paths", () => {
   assert.equal(passwordNextStep(null), "signed-in");

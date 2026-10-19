@@ -238,7 +238,7 @@ export function LoginForm() {
                 </button>
             </div>
 
-            <p className={styles.signup}>Google and Discord handle sign-in securely. New members will be asked for their name, major, and graduation year before continuing.</p>
+            <p className={styles.signup}>Google and Discord take you straight to your destination, including event check-in. No extra profile questions. Joining with email requires your name, major, and graduation year.</p>
         </div>
     )
 }

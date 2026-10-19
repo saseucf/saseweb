@@ -1,6 +1,6 @@
 # Unified member access and CSV downloads
 
-`/login` now handles sign-in and joining. `/signup` and `/checkin/login` redirect to it and preserve a validated internal destination. Google and Discord authenticate through their providers and create a new account when needed. Members with incomplete details go to `/confirm-name` to add their first/last name, major, and four-digit graduation year.
+`/login` now handles sign-in and joining. `/signup` and `/checkin/login` redirect to it and preserve a validated internal destination. Google and Discord authenticate through their providers and create a new account when needed. These members continue directly to their destination, including event check-in, without name, major, school, or graduation-year questions. They can add details later through their profile. Email/password members with incomplete details go to `/confirm-name` to add their first/last name, major, and four-digit graduation year. The social-account exemption uses Supabase-managed provider metadata and also covers linked Google/Discord accounts; editable user metadata cannot enable it.
 
 For email/password access, the form first attempts normal password authentication. On Supabase's generic invalid-credentials response, it offers profile setup in the same form. It does not publicly look up whether an email is registered. A new account is submitted to Supabase only after names, major, graduation year, and a password of at least eight characters have been entered. School defaults to UCF and can be edited through the existing profile screen.
 

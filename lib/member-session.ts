@@ -1,9 +1,12 @@
 "use client";
 import type { User } from "@supabase/supabase-js";
 import supabase from "@/lib/auth";
-import { parseJoinProfile, profileIsComplete } from "@/lib/unified-auth";
+import { parseJoinProfile, profileIsComplete, skipsProfileQuestions } from "@/lib/unified-auth";
 
 export async function memberDestination(user: User, destination: string) {
+  // OAuth already supplies the account identity. Demographics are optional and
+  // must not delay a member returning to an event check-in.
+  if (skipsProfileQuestions(user)) return destination;
   const { data: profile, error } = await supabase.from("profiles").select("first_name, last_name, major, year, school, name_confirmed").eq("id", user.id).maybeSingle();
   if (error) throw new Error("Your profile could not be loaded. Please try again.");
   if (!profileIsComplete(profile) && user.user_metadata?.signup_profile_complete === true) {

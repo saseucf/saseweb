@@ -1,3 +1,12 @@
+import type { User } from "@supabase/supabase-js";
+
+export function skipsProfileQuestions(user: Pick<User, "app_metadata">) {
+  // Use Supabase-managed provider metadata, never editable user metadata.
+  const { provider, providers } = user.app_metadata;
+  return [provider, ...(Array.isArray(providers) ? providers : [])]
+    .some(value => value === "google" || value === "discord");
+}
+
 export type JoinProfile = { first_name: string; last_name: string; major: string; year: string; school: string };
 
 export function parseJoinProfile(value: Record<string, unknown>): JoinProfile {
