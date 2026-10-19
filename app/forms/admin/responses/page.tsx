@@ -37,6 +37,7 @@ function Responses() {
     const formId = searchParams.get("id");
     const [form, setForm] = useState<FormRecord | null>(null);
     const [submissions, setSubmissions] = useState<Submission[]>([]);
+    const [exportError, setExportError] = useState("");
     const [message, setMessage] = useState("Loading responses...");
     
     // UI State
@@ -138,13 +139,14 @@ function Responses() {
     }, [formId, router]);
 
     // CSV Export
-    function exportToCSV() {
+    async function exportToCSV() {
         if (!form || filteredSubmissions.length === 0) return;
         
-        downloadTable(`${form.title}-responses`, ["Submitted At", "Email", ...form.schema.map(q => q.label || "Untitled")], filteredSubmissions.map(sub => [sub.created_at, sub.email || "Unknown", ...form.schema.map(q => {
+        setExportError("");
+        try { await downloadTable(`${form.title}-responses`, ["Submitted At", "Email", ...form.schema.map(q => q.label || "Untitled")], filteredSubmissions.map(sub => [sub.created_at, sub.email || "Unknown", ...form.schema.map(q => {
             const answer = sub.responses[q.id];
             return Array.isArray(answer) ? answer.join(", ") : answer ?? "";
-        })]));
+        })])); } catch (error) { setExportError(error instanceof Error ? error.message : "Download failed."); }
     }
 
     // Individual Edit Handlers
@@ -210,6 +212,7 @@ function Responses() {
                 </button>
             </div>
             
+            {exportError && <p role="alert" className="mx-auto max-w-4xl text-sm text-red-700">{exportError}</p>}
             <div className="sase-page-header">
                 <p className="sase-eyebrow">UCF SASE / Response archive</p>
                 <h1>{form.title}</h1>

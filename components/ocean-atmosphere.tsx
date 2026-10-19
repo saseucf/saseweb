@@ -7,14 +7,24 @@ export default function OceanAtmosphere() {
   useEffect(() => {
     const element = root.current;
     if (!element) return;
+    const page = element.parentElement;
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
     let frame = 0;
     let x = 0, y = 0;
     const render = () => {
       frame = 0;
-      if (preference.matches) return;
-      element.parentElement?.style.setProperty("--ocean-scroll", `${Math.min(window.scrollY * .13, 180)}px`);
+      if (preference.matches) {
+        page?.style.removeProperty("--ocean-scroll");
+        page?.style.removeProperty("--cloud-clear-x");
+        page?.style.removeProperty("--cloud-visibility");
+        return;
+      }
+      const progress = Math.min(Math.max(window.scrollY / Math.max(window.innerHeight * .85, 1), 0), 1);
+      const clearing = progress * progress * (3 - 2 * progress);
+      page?.style.setProperty("--ocean-scroll", `${Math.min(window.scrollY * .13, 180)}px`);
+      page?.style.setProperty("--cloud-clear-x", `${clearing * window.innerWidth * .55}px`);
+      page?.style.setProperty("--cloud-visibility", `${1 - clearing}`);
       if (cursor.current) cursor.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(render); };
@@ -30,8 +40,9 @@ export default function OceanAtmosphere() {
       schedule();
     };
     const hide = () => { if (cursor.current) cursor.current.dataset.visible = "false"; };
-    const changed = () => { hide(); if (preference.matches && frame) { cancelAnimationFrame(frame); frame = 0; } };
+    const changed = () => { hide(); schedule(); };
     window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
     window.addEventListener("pointermove", move, { passive: true });
     document.documentElement.addEventListener("pointerleave", hide);
     window.addEventListener("blur", hide);
@@ -40,10 +51,14 @@ export default function OceanAtmosphere() {
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
       window.removeEventListener("pointermove", move);
       document.documentElement.removeEventListener("pointerleave", hide);
       window.removeEventListener("blur", hide);
       preference.removeEventListener("change", changed);
+      page?.style.removeProperty("--ocean-scroll");
+      page?.style.removeProperty("--cloud-clear-x");
+      page?.style.removeProperty("--cloud-visibility");
     };
   }, []);
   return <>

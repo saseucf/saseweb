@@ -101,7 +101,6 @@
 .card figcaption p { margin: 8px 0 0; font: 400 1.125rem/1.5 var(--font-about-body), system-ui, sans-serif; }
 
 .viewport[data-paused="true"] .track,
-.viewport:hover .track,
 .viewport:focus-within .track { animation-play-state: paused; }
 
 @keyframes photo-drift { to { transform: translateX(-50%); } }

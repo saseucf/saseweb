@@ -45,3 +45,9 @@ export function rankLeaderboard(profiles: readonly LeaderboardProfile[]) {
     rank: members.findIndex(member => (member.total_points ?? 0) === (profile.total_points ?? 0)) + 1,
   }));
 }
+
+export type PublicLeaderboardEntry = { name: string; total_points: number; rank: number };
+
+export function publicLeaderboardEntries(profiles: readonly LeaderboardProfile[]): PublicLeaderboardEntry[] {
+  return rankLeaderboard(profiles).map(({ name, total_points, rank }) => ({ name, total_points, rank }));
+}

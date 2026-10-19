@@ -1,5 +1,4 @@
-import CsvDownloadButton from "@/components/csv-download-button";
-import { createServerSupabase } from "@/lib/supabase-server";
+import { loadMemberMajorBreakdown } from "@/lib/chapter-demographics-server";
 import OceanAtmosphere from "@/components/ocean-atmosphere";
 import { BriefcaseBusiness, HeartHandshake, Globe2 } from "lucide-react";
 import AwardsTimeline from "@/components/AwardsTimeline";
@@ -14,6 +13,8 @@ import styles from "./about.module.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-about-ui", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-about-body", display: "swap" });
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
     title: "About – UCF SASE",
     description: "Get to know UCF SASE: our community, our mission, and the milestones we've reached together. All backgrounds and majors are welcome.",
@@ -22,42 +23,7 @@ export const metadata = {
 
 
 export default async function AboutPage() {
-    const supabase = await createServerSupabase();
-    const { data: profiles } = await supabase.from("profiles").select("major");
-
-    const majorCounts: Record<string, number> = {};
-
-    if (profiles) {
-        profiles.forEach((p) => {
-            if (p.major && p.major.trim() !== "") {
-                const normalized = p.major.trim();
-                majorCounts[normalized] = (majorCounts[normalized] || 0) + 1;
-            }
-        });
-    }
-
-    const sortedMajors = Object.entries(majorCounts)
-        .map(([label, count]) => ({ label, count }))
-        .sort((a, b) => b.count - a.count);
-
-    const TOP_N = 7;
-    const topMajors = sortedMajors.slice(0, TOP_N);
-    const otherMajors = sortedMajors.slice(TOP_N);
-    const otherCount = otherMajors.reduce((sum, m) => sum + m.count, 0);
-
-    const chartData = topMajors.map((m) => ({
-        name: m.label,
-        value: m.count,
-    }));
-
-    if (otherCount > 0) {
-        chartData.push({
-            name: "Other",
-            value: otherCount,
-        });
-    }
-
-    chartData.sort((a, b) => b.value - a.value);
+    const { data: chartData, error: demographicsError } = await loadMemberMajorBreakdown();
 
     return (
         <main className={`${styles.page} ${inter.variable} ${outfit.variable} ocean-page`}>
@@ -146,8 +112,7 @@ export default async function AboutPage() {
                     <p className="text-muted-foreground mt-2 text-sm">Live data from our member registry — by declared major.</p>
                 </div>
                 <div className="max-w-3xl mx-auto">
-                    <CsvDownloadButton filename="sase-chapter-majors" rows={chartData} label="Download major breakdown (CSV)" />
-                    <MajorPieChart data={chartData} />
+                    {demographicsError ? <p role="status" className="text-center text-muted-foreground">The member major breakdown is temporarily unavailable.</p> : <MajorPieChart data={chartData} />}
                 </div>
             </section>
 

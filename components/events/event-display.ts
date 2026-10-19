@@ -51,6 +51,11 @@ export function eventStatus(event: Pick<PublicEvent, "start_time" | "end_time">,
     return "upcoming";
 }
 
+export function eventTimingLabel(event: Pick<PublicEvent, "start_time" | "end_time">, now: string) {
+    if (eventStatus(event, now) === "past") return null;
+    return eventOccursOn(event, eventDateKey(now)) ? "Happening today" : null;
+}
+
 export function eventOccursOn(event: Pick<PublicEvent, "start_time" | "end_time">, date: string) {
     // Treat midnight end times as the end of the previous day, not a new day.
     const finalInstant = new Date(Math.max(new Date(event.start_time).getTime(), new Date(event.end_time).getTime() - 1));

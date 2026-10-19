@@ -118,6 +118,7 @@ export default async function DemographicsPage() {
 
             <div className="max-w-6xl mx-auto mt-8 flex flex-col gap-8">
                 
+                <CsvDownloadButton filename="sase-top-10" endpoint="/api/admin/exports/leaderboard" label="Download current top 10 (CSV)" />
                 <CsvDownloadButton filename="sase-all-attendance" endpoint="/api/admin/attendances" label="Download all check-ins (CSV)" />
                 {/* Top Metrics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">

@@ -6,7 +6,7 @@ import { ArrowDown, ArrowUpRight, CalendarDays, Check, ChevronDown, Clock3, MapP
 import EventCalendar from "./event-calendar";
 import { getAcademicFields } from "@/app/actions/academic-fields";
 import { useEventMotion } from "./use-event-motion";
-import { eventDateKey, eventDescription, eventOccursOn, eventStatus, formatCalendarDate, formatEventDate, formatEventRange, googleCalendarUrl, icsDataUrl, type PublicEvent } from "./event-display";
+import { eventDateKey, eventDescription, eventOccursOn, eventStatus, eventTimingLabel, formatCalendarDate, formatEventDate, formatEventRange, googleCalendarUrl, icsDataUrl, type PublicEvent } from "./event-display";
 import styles from "@/app/events/events.module.css";
 
 export default function EventsClient({ events, initialNow }: { events: PublicEvent[]; initialNow: string }) {
@@ -125,7 +125,8 @@ function EventRow({ event, now, animateLayout }: { event: PublicEvent; now: stri
     const detailsId = `event-details-${event.id}`;
     const status = eventStatus(event, now);
     const isPast = status === "past";
-    const isToday = eventDateKey(now) === eventDateKey(event.start_time);
+    const isToday = eventOccursOn(event, eventDateKey(now));
+    const timingLabel = eventTimingLabel(event, now);
     const { text, externalUrl } = eventDescription(event.description);
     const openForm = event.forms?.find(form => form.is_open);
     const registrationHref = externalUrl || (openForm ? `/forms/${openForm.slug}` : "");
@@ -146,7 +147,7 @@ function EventRow({ event, now, animateLayout }: { event: PublicEvent; now: stri
             <div className={styles.eventContent} data-event-motion="position">
                 <div className={styles.eventTags}>
                     <span>{event.event_type}</span>
-                    {status === "ongoing" ? <span className={styles.live}>Happening now</span> : isToday && !isPast ? <span className={styles.live}>Today</span> : null}
+                    {timingLabel ? <span className={styles.live}>{timingLabel}</span> : null}
                 </div>
                 <h4 id={`event-${event.id}`}>{event.title}</h4>
                 <div className={styles.eventFacts}>

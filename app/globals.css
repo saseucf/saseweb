@@ -335,8 +335,8 @@
 .ocean-atmosphere { position: absolute; inset: 0; overflow: clip; pointer-events: none; z-index: 1; }
 .ocean-sky { position: absolute; inset: 0 0 auto; height: 850px; transform: translate3d(0, var(--ocean-scroll, 0px), 0); }
 .ocean-cloud { position: absolute; width: clamp(260px, 36vw, 600px); height: 150px; border-radius: 50%; background: radial-gradient(ellipse, #e4f2ff99, #ffffff66 45%, transparent 70%); filter: blur(16px); animation: ocean-cloud-drift 32s ease-in-out infinite alternate; }
-.ocean-cloud-one { top: 10%; right: -8%; }
-.ocean-cloud-two { top: 56%; left: -12%; animation-delay: -14s; opacity: .65; }
+.ocean-cloud-one { top: 10%; right: -8%; translate: var(--cloud-clear-x, 0px) 0; opacity: var(--cloud-visibility, 1); }
+.ocean-cloud-two { top: 56%; left: -12%; animation-delay: -14s; translate: calc(-1 * var(--cloud-clear-x, 0px)) 0; opacity: calc(.65 * var(--cloud-visibility, 1)); }
 .ocean-school { position: absolute; top: 590px; left: 0; width: 100%; height: 180px; opacity: .14; transform: translateY(var(--ocean-scroll, 0px)); }
 .ocean-fish { position: absolute; color: #5579bd; width: 46px; animation: ocean-swim 38s linear infinite; }
 .ocean-fish-0 { top: 25px; left: 4%; }
@@ -369,7 +369,12 @@
 @media (hover: none), (pointer: coarse) { .ocean-cursor { display: none; } }
 @media (prefers-reduced-motion: reduce) { .ocean-atmosphere *, .sase-cloud { animation: none !important; transform: none !important; } .ocean-sky, .ocean-school { transform: none; } .ocean-bubbles, .ocean-cursor { display: none; } }
 
-.ocean-page .sase-cloud { background: #e4f2ff; opacity: .65; animation: ocean-cloud-drift 22s ease-in-out infinite alternate; }
-.ocean-page .sase-cloud-middle { animation-delay: -11s; }
+.ocean-page .sase-cloud { background: #e4f2ff; opacity: calc(.65 * var(--cloud-visibility, 1)); animation: ocean-cloud-drift 22s ease-in-out infinite alternate; translate: var(--cloud-clear-x, 0px) 0; }
+.ocean-page .sase-cloud-middle { animation-delay: -11s; translate: calc(-1 * var(--cloud-clear-x, 0px)) 0; }
 .ocean-page .sase-hero-art { transform: translateY(calc(var(--ocean-scroll, 0px) * .35)); }
 @media (prefers-reduced-motion: reduce) { .ocean-page .sase-cloud { animation: none; } .ocean-page .sase-hero-art { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .ocean-cloud, .ocean-page .sase-cloud { translate: none; }
+  .ocean-cloud-one { opacity: 1; }
+  .ocean-cloud-two, .ocean-page .sase-cloud { opacity: .65; }
+}
