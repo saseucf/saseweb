@@ -1,76 +1,33 @@
-import { createServerSupabase } from "@/lib/supabase-server";
+import { loadMemberMajorBreakdown } from "@/lib/chapter-demographics-server";
+import OceanAtmosphere from "@/components/ocean-atmosphere";
+import { BriefcaseBusiness, HeartHandshake, Globe2 } from "lucide-react";
 import AwardsTimeline from "@/components/AwardsTimeline";
+import AboutPhotoWheel from "@/components/about-photo-wheel";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Inter, Outfit } from "next/font/google";
+import MajorPieChart from "@/components/demographics/major-pie-chart";
 import styles from "./about.module.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-about-ui", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-about-body", display: "swap" });
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
     title: "About – UCF SASE",
     description: "Get to know UCF SASE: our community, our mission, and the milestones we've reached together. All backgrounds and majors are welcome.",
 };
 
-// Brand colors to assign dynamically to the top majors
-const BRAND_CLASSES = [
-    "bg-[#141b4d] dark:bg-[#89abe3]",
-    "bg-[#89abe3] dark:bg-[#a8c3f2]",
-    "bg-[#dbc8b6] dark:bg-[#dbc8b6]",
-    "bg-[#26355f] dark:bg-[#6888c8]",
-    "bg-[#4168a8] dark:bg-[#4168a8]",
-    "bg-[#2d5a96] dark:bg-[#2d5a96]",
-    "bg-[#1e3f72] dark:bg-[#9cbbe8]",
-    "bg-[#7ca0da] dark:bg-[#7ca0da]",
-];
+
 
 export default async function AboutPage() {
-    const supabase = await createServerSupabase();
-    const { data: profiles } = await supabase.from("profiles").select("major");
-
-    const majorCounts: Record<string, number> = {};
-    let totalValidMajors = 0;
-
-    if (profiles) {
-        profiles.forEach((p) => {
-            if (p.major && p.major.trim() !== "") {
-                const normalized = p.major.trim();
-                majorCounts[normalized] = (majorCounts[normalized] || 0) + 1;
-                totalValidMajors++;
-            }
-        });
-    }
-
-    const sortedMajors = Object.entries(majorCounts)
-        .map(([label, count]) => ({ label, count }))
-        .sort((a, b) => b.count - a.count);
-
-    const TOP_N = 7;
-    const topMajors = sortedMajors.slice(0, TOP_N);
-    const otherMajors = sortedMajors.slice(TOP_N);
-    const otherCount = otherMajors.reduce((sum, m) => sum + m.count, 0);
-
-    const chartData = topMajors.map((m, i) => ({
-        label: m.label,
-        percent: totalValidMajors > 0 ? Number(((m.count / totalValidMajors) * 100).toFixed(1)) : 0,
-        colorClass: BRAND_CLASSES[i % BRAND_CLASSES.length],
-    }));
-
-    if (otherCount > 0) {
-        chartData.push({
-            label: "Other",
-            percent: totalValidMajors > 0 ? Number(((otherCount / totalValidMajors) * 100).toFixed(1)) : 0,
-            colorClass: "bg-[#e9e8e8] dark:bg-muted",
-        });
-    }
-
-    chartData.sort((a, b) => b.percent - a.percent);
-    const maxPercent = Math.max(...chartData.map((d) => d.percent), 1);
+    const { data: chartData, error: demographicsError } = await loadMemberMajorBreakdown();
 
     return (
-        <main className={`${styles.page} ${inter.variable} ${outfit.variable}`}>
+        <main className={`${styles.page} ${inter.variable} ${outfit.variable} ocean-page`}>
+            <OceanAtmosphere />
             <header className={styles.hero}>
                 <div className={styles.container}>
                     <div className={styles.heroLayout}>
@@ -109,6 +66,17 @@ export default async function AboutPage() {
             </header>
 
             {/* ── Mission Statement ── */}
+            <section className="chapter-values" aria-labelledby="about-values-title">
+                <div className="chapter-values-heading"><p className="sase-eyebrow">What brings us together</p><h2 id="about-values-title">Three values.<br />One community.</h2><p>A national mission, made personal at UCF. We turn shared values into opportunities to grow, connect, and give back.</p></div>
+                <div className="chapter-values-grid">
+                    {[
+                        { icon: BriefcaseBusiness, number: "01", title: "Professional development", copy: "Build confidence for your next step through technical workshops, career conversations, leadership roles, and a community that shares what it learns.", link: "/programs", action: "Find your next opportunity" },
+                        { icon: HeartHandshake, number: "02", title: "Service", copy: "Make a difference beyond campus. Give your time, share your skills, and work alongside fellow members to support our wider community.", link: "/events", action: "Get involved" },
+                        { icon: Globe2, number: "03", title: "Diversity", copy: "Bring your whole self. We celebrate Asian heritage and welcome every background and major, making room for new perspectives and lasting friendships.", link: "/team", action: "Meet our community" },
+                    ].map(value => <article key={value.number} className="chapter-value"><div className="chapter-value-top"><value.icon size={28} aria-hidden="true" /><span>{value.number}</span></div><h3>{value.title}</h3><p>{value.copy}</p><Link href={value.link}>{value.action} <ArrowUpRight size={17} aria-hidden="true" /></Link></article>)}
+                </div>
+            </section>
+
             <section className={styles.mission} aria-labelledby="about-mission-title">
                 <div className={`${styles.container} ${styles.missionLayout}`}>
                     <figure className={styles.workshopPhoto}>
@@ -137,31 +105,14 @@ export default async function AboutPage() {
             </section>
 
             {/* ── Member Demographics ── */}
-            <section className="sase-content-section hidden">
+            <section className="sase-content-section pt-16 pb-16 bg-card" aria-labelledby="about-demographics-title">
                 <div className="text-center mb-10">
                     <span className="inline-block text-[0.65rem] font-black tracking-[0.2em] uppercase text-[#89abe3] bg-[#89abe3]/10 px-3 py-1 rounded-full mb-3">Community</span>
-                    <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Member Demographics</h2>
+                    <h2 id="about-demographics-title" className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Member Demographics</h2>
                     <p className="text-muted-foreground mt-2 text-sm">Live data from our member registry — by declared major.</p>
                 </div>
-                <div className="bg-background rounded-2xl border border-border shadow-md p-8 max-w-3xl mx-auto">
-                    <div className="space-y-4">
-                        {chartData.length === 0 ? (
-                            <p className="text-center text-muted-foreground">Not enough data to display demographics yet.</p>
-                        ) : (
-                            chartData.map((item) => (
-                                <div key={item.label} className="flex items-center gap-3 group">
-                                    <span className="text-xs text-muted-foreground w-44 shrink-0 text-right font-medium group-hover:text-foreground transition-colors">{item.label}</span>
-                                    <div className="flex-1 bg-muted rounded-full h-4 overflow-hidden">
-                                        <div
-                                            className={`h-full rounded-full transition-all duration-700 ${item.colorClass}`}
-                                            style={{ width: `${(item.percent / maxPercent) * 100}%` }}
-                                        />
-                                    </div>
-                                    <span className="text-sm font-black text-foreground w-12 shrink-0 tabular-nums">{item.percent}%</span>
-                                </div>
-                            ))
-                        )}
-                    </div>
+                <div className="max-w-3xl mx-auto">
+                    {demographicsError ? <p role="status" className="text-center text-muted-foreground">The member major breakdown is temporarily unavailable.</p> : <MajorPieChart data={chartData} />}
                 </div>
             </section>
 
@@ -177,6 +128,8 @@ export default async function AboutPage() {
                     <AwardsTimeline />
                 </div>
             </section>
+
+            <AboutPhotoWheel />
 
             <section className={styles.invitation} aria-labelledby="about-invitation-title">
                 <div className={`${styles.container} ${styles.invitationLayout}`}>

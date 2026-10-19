@@ -2,10 +2,11 @@
 
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PRESET_EVENT_TYPES, getEventTypeColor } from "@/lib/event-type-colors";
 import { saveEvent } from "@/app/actions/events";
+import { getAcademicFields } from "@/app/actions/academic-fields";
 
 type EventData = {
     id: string;
@@ -19,6 +20,7 @@ type EventData = {
     points: number;
     host: string | null;
     status: "draft" | "published" | "cancelled";
+    academic_field_id?: string | null;
 };
 
 type EventFormProps = {
@@ -48,6 +50,11 @@ export default function EventForm({
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitAction, setSubmitAction] = useState<"publish" | "draft">("draft");
+    const [academicFields, setAcademicFields] = useState<{id: string, name: string}[]>([]);
+
+    useEffect(() => {
+        getAcademicFields().then(setAcademicFields);
+    }, []);
 
     let initialDescription = existingEvent?.description ?? "";
     let initialExternalUrl = "";
@@ -83,6 +90,8 @@ export default function EventForm({
         const status = submitAction === "publish" ? "published" : "draft";
 
         const formData = new FormData(submitEvent.currentTarget);
+
+        const academicFieldId = String(formData.get("academic_field_id") ?? "") || null;
 
         // Read the event information from the submitted form.
         const title = String(
@@ -178,6 +187,7 @@ export default function EventForm({
             points,
             host: host || null,
             status,
+            academic_field_id: academicFieldId,
         };
 
         try {
@@ -313,6 +323,26 @@ export default function EventForm({
                         />
                     )}
                 </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+                <label
+                    htmlFor="academic_field_id"
+                    className="text-sm font-semibold text-foreground"
+                >
+                    Event Category (Optional)
+                </label>
+                <select
+                    id="academic_field_id"
+                    name="academic_field_id"
+                    defaultValue={existingEvent?.academic_field_id ?? ""}
+                    className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
+                >
+                    <option value="">No specific field</option>
+                    {academicFields.map(f => (
+                        <option key={f.id} value={f.id}>{f.name}</option>
+                    ))}
+                </select>
             </div>
 
             <div className="flex flex-col gap-1">

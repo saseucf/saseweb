@@ -1,7 +1,9 @@
+import CsvDownloadButton from "@/components/csv-download-button";
 import { createServerSupabase } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 
 import { Users, CheckCircle, Trophy, BarChart3, TrendingUp, CalendarDays } from "lucide-react";
+import MajorPieChart from "@/components/demographics/major-pie-chart";
 
 export const revalidate = 0; // Don't cache this admin page
 
@@ -24,14 +26,19 @@ export default async function DemographicsPage() {
 
     // 2. Fetch data
     // Using an inner join-like select. This fetches all attendances and their related event/profile data.
-    const { data: attendances, error } = await supabase
-        .from("event_attendances")
-        .select(`
-            id,
-            user_id,
-            profiles ( first_name, last_name, major, year ),
-            events ( event_type )
-        `);
+    const fetchAttendancePage = (offset: number) => supabase.from("event_attendances").select(`
+        id, user_id,
+        profiles ( first_name, last_name, major, year ),
+        events ( event_type )
+    `).order("id").range(offset, offset + 999);
+    const firstPage = await fetchAttendancePage(0);
+    const attendances = firstPage.data ?? [];
+    let error = firstPage.error;
+    for (let offset = 1000; !error && attendances.length === offset; offset += 1000) {
+        const page = await fetchAttendancePage(offset);
+        error = page.error;
+        if (page.data) attendances.push(...page.data);
+    }
 
     if (error) {
         console.error("Error fetching demographics data:", error);
@@ -98,6 +105,8 @@ export default async function DemographicsPage() {
     const sortedYears = Array.from(yearMap.entries()).sort((a, b) => b[1] - a[1]);
     const sortedEventTypes = Array.from(eventTypeMap.entries()).sort((a, b) => b[1] - a[1]);
 
+    const majorChartData = sortedMajors.map(([name, value]) => ({ name, value }));
+
 
     return (
         <main className="sase-page pt-[120px]">
@@ -109,6 +118,8 @@ export default async function DemographicsPage() {
 
             <div className="max-w-6xl mx-auto mt-8 flex flex-col gap-8">
                 
+                <CsvDownloadButton filename="sase-top-10" endpoint="/api/admin/exports/leaderboard" label="Download current top 10 (CSV)" />
+                <CsvDownloadButton filename="sase-all-attendance" endpoint="/api/admin/attendances" label="Download all check-ins (CSV)" />
                 {/* Top Metrics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                     <MetricCard 
@@ -151,6 +162,7 @@ export default async function DemographicsPage() {
                             <Trophy className="w-6 h-6 text-[#5579bd]" />
                             <h2 className="text-xl font-bold text-foreground">Top Attendees</h2>
                         </div>
+                        <CsvDownloadButton filename="sase-attendance-rankings" rows={topAttendees.map((att, index) => ({ rank: index + 1, name: att.name, major: att.major, graduation_year: att.year, events_attended: att.count }))} label="Download all attendance rankings (CSV)" />
                         {topAttendees.length === 0 ? (
                             <p className="text-muted-foreground font-medium text-center py-4">No attendees yet.</p>
                         ) : (
@@ -186,6 +198,7 @@ export default async function DemographicsPage() {
                             <h2 className="text-xl font-bold text-foreground">Event Types</h2>
                         </div>
                         <div className="space-y-4">
+                            <CsvDownloadButton filename="sase-event-types" rows={sortedEventTypes.map(([event_type, checkins]) => ({ event_type, checkins }))} />
                             {sortedEventTypes.length === 0 ? (
                                 <p className="text-muted-foreground font-medium text-center py-4">No events yet.</p>
                             ) : (
@@ -214,7 +227,9 @@ export default async function DemographicsPage() {
                     {/* Majors */}
                     <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
                         <h2 className="text-xl font-bold text-foreground mb-6 border-b border-border pb-4">Majors Breakdown</h2>
-                        <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 no-scrollbar">
+                        <CsvDownloadButton filename="sase-majors" rows={sortedMajors.map(([major, members]) => ({ major, members }))} />
+                        <MajorPieChart data={majorChartData} />
+                        <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 no-scrollbar mt-6">
                             {sortedMajors.length === 0 ? (
                                 <p className="text-muted-foreground font-medium text-center py-4">No data available.</p>
                             ) : (
@@ -232,6 +247,7 @@ export default async function DemographicsPage() {
                     <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
                         <h2 className="text-xl font-bold text-foreground mb-6 border-b border-border pb-4">Years Breakdown</h2>
                         <div className="space-y-4">
+                            <CsvDownloadButton filename="sase-graduation-years" rows={sortedYears.map(([graduation_year, members]) => ({ graduation_year, members }))} />
                             {sortedYears.length === 0 ? (
                                 <p className="text-muted-foreground font-medium text-center py-4">No data available.</p>
                             ) : (

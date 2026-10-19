@@ -33,9 +33,11 @@ function FormCreator() {
   const [isOpen, setIsOpen] = useState(true);
   const [collectGuestName, setCollectGuestName] = useState(false);
   const [eventId, setEventId] = useState<string | null>(null);
+  const [academicFieldId, setAcademicFieldId] = useState<string | null>(null);
   const [formType, setFormType] = useState("");
   
   const [events, setEvents] = useState<SaseEvent[]>([]);
+  const [academicFields, setAcademicFields] = useState<{id: string, name: string}[]>([]);
 
   const [questions, setQuestions] = useState<Question[]>([
     {
@@ -81,6 +83,13 @@ function FormCreator() {
         setEvents(eventsData);
       }
 
+      const { data: fieldsData } = await supabase
+        .from("academic_fields")
+        .select("id, name")
+        .order("name", { ascending: true });
+
+      if (fieldsData) setAcademicFields(fieldsData);
+
       if (formId === null) {
         return;
       }
@@ -102,6 +111,7 @@ function FormCreator() {
       setRequiresLogin(data.requires_login);
       setIsOpen(data.is_open);
       setEventId(data.event_id || null);
+      setAcademicFieldId(data.academic_field_id || null);
       setFormType(data.type || "");
       setQuestions(data.schema);
       
@@ -298,6 +308,7 @@ function FormCreator() {
           requires_login: requiresLogin,
           is_open: isOpen,
           event_id: eventId || null,
+          academic_field_id: academicFieldId || null,
           type: formType.trim() !== "" ? formType.trim() : null,
         })
         .eq("id", formId);
@@ -318,6 +329,7 @@ function FormCreator() {
         requires_login: requiresLogin,
         is_open: isOpen,
         event_id: eventId || null,
+        academic_field_id: academicFieldId || null,
         type: formType.trim() !== "" ? formType.trim() : null,
         created_by: user.id,
       });
@@ -395,6 +407,22 @@ function FormCreator() {
               {events.map((evt) => (
                 <option key={evt.id} value={evt.id}>
                   {evt.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">Event Category (Optional)</label>
+            <select
+              className="border border-border rounded-xl px-4 py-3 text-sm focus:border-[#89abe3] focus:ring-2 focus:ring-[#e9eef8] outline-none transition-all appearance-none bg-card"
+              value={academicFieldId || ""}
+              onChange={(e) => setAcademicFieldId(e.target.value || null)}
+            >
+              <option value="">-- No Field --</option>
+              {academicFields.map((field) => (
+                <option key={field.id} value={field.id}>
+                  {field.name}
                 </option>
               ))}
             </select>

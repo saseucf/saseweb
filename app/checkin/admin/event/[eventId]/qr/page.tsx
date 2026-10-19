@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import supabase from "@/lib/auth";
-import { QRCodeSVG } from 'qrcode.react';
+import DownloadableQr from "@/components/downloadable-qr";
 import React from "react";
 import { Loader2 } from "lucide-react";
 
@@ -85,22 +85,13 @@ export default function AdminEventQRPage({ params }: { params: Promise<{ eventId
         <p className="text-lg sm:text-2xl text-[#5579bd] font-bold">Scan to Check-In!</p>
       </div>
 
-      {/* QR code box: fills the available screen space */}
-      <div className="bg-[#fffde9] p-4 sm:p-8 rounded-3xl shadow-2xl border-4 border-[#171d52] w-full max-w-[min(80vw,80vh,480px)] aspect-square flex items-center justify-center">
-        <QRCodeSVG 
-          value={qrUrl}
-          size={undefined}
-          style={{ width: "100%", height: "100%", maxWidth: "100%", maxHeight: "100%" }}
-          level={"H"}
-          includeMargin={false}
-          fgColor="#171d52"
-          bgColor="#fffde9"
-        />
+      <div className="w-full max-w-[480px] rounded-3xl border border-border bg-card p-5 shadow-xl">
+        <DownloadableQr value={qrUrl} label={`Check in to ${event.title}`} filename={`sase-event-${event.id}`} customizable />
       </div>
-      
+
       <div className="text-center">
         <p className="text-muted-foreground font-bold tracking-wide uppercase text-xs sm:text-sm mb-4">
-          Point your phone camera at this code to automatically check in.
+          Point your phone camera at this code to check in. Guests are welcome.
         </p>
         <div className="inline-flex items-center gap-3 bg-[#e9eef8] px-4 sm:px-6 py-2 sm:py-3 rounded-full border border-[#89abe3] shadow-inner">
           <span className="text-[#171d52] font-black text-base sm:text-xl">

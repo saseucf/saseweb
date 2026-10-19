@@ -1,9 +1,10 @@
 "use client"
+import CsvDownloadButton from "@/components/csv-download-button";
 
 import { useEffect, useState } from "react";
 import supabase from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import { Loader2, LogOut, CheckCircle, XCircle, Camera, QrCode } from "lucide-react";
+import { Loader2, LogOut, CheckCircle, XCircle, Camera, QrCode, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import QRScanner from "@/components/checkin/QRScanner";
 
@@ -19,6 +20,8 @@ export default function AdminDashboard() {
   const [checkInStatus, setCheckInStatus] = useState<{success: boolean; msg: string} | null>(null);
   const [checkInLoading, setCheckInLoading] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
+  const [manualEmail, setManualEmail] = useState("");
+  const [manualMode, setManualMode] = useState(false);
 
   const router = useRouter();
 
@@ -152,6 +155,59 @@ export default function AdminDashboard() {
     setCheckInLoading(false);
   };
 
+  const handleManualCheckIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualEmail.trim()) return;
+
+    setCheckInLoading(true);
+    setCheckInStatus(null);
+    setScannedUser(null);
+
+    // Fetch the user's profile by email
+    const { data: userProfile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('email', manualEmail.trim())
+      .single();
+
+    if (profileError || !userProfile) {
+      setCheckInStatus({ success: false, msg: "User with this email not found." });
+      setCheckInLoading(false);
+      return;
+    }
+
+    setScannedUser(userProfile);
+
+    if (!selectedEvent) {
+      setCheckInStatus({ success: false, msg: "No event selected." });
+      setCheckInLoading(false);
+      return;
+    }
+
+    const { error: checkInError } = await supabase
+      .from('event_attendances')
+      .insert({
+        event_id: selectedEvent,
+        user_id: userProfile.id,
+      });
+
+    if (checkInError) {
+      if (checkInError.code === '23505') {
+        setCheckInStatus({ success: false, msg: "User is already checked in to this event." });
+        toast.error("User is already checked in to this event.");
+      } else {
+        setCheckInStatus({ success: false, msg: "Failed to check in. Please try again." });
+        toast.error("Failed to check in. Please try again.");
+      }
+    } else {
+      setCheckInStatus({ success: true, msg: "Successfully checked in!" });
+      toast.success("Successfully checked in!");
+      setManualEmail("");
+    }
+
+    setCheckInLoading(false);
+  };
+
   if (loading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
@@ -204,9 +260,11 @@ export default function AdminDashboard() {
         </select>
       </div>
 
+      <CsvDownloadButton filename="sase-event-attendance" endpoint={`/api/admin/attendances?eventId=${encodeURIComponent(selectedEvent)}`} disabled={!selectedEvent} label="Download event check-ins (CSV)" />
+
       {/* Scanner Toggle and QR Generator */}
       <div className="w-full flex space-x-3">
-        {!scanning ? (
+        {!scanning && !manualMode ? (
           <button
             onClick={() => setScanning(true)}
             className="flex-1 flex flex-col items-center justify-center space-y-2 bg-foreground text-white p-4 rounded-xl font-bold shadow-md hover:bg-[#26355f] transition-all active:scale-[0.98] disabled:opacity-50 h-28"
@@ -215,7 +273,7 @@ export default function AdminDashboard() {
             <Camera className="w-8 h-8" />
             <span className="text-sm tracking-wide">Scan Members</span>
           </button>
-        ) : (
+        ) : scanning ? (
           <div className="w-full space-y-4 animate-in fade-in zoom-in-95">
             <QRScanner onScan={handleScan} />
             <button
@@ -225,9 +283,47 @@ export default function AdminDashboard() {
               Cancel Scan
             </button>
           </div>
-        )}
+        ) : null}
 
-        {!scanning && (
+        {!scanning && !manualMode ? (
+          <button
+            onClick={() => setManualMode(true)}
+            disabled={!selectedEvent}
+            className="flex-1 flex flex-col items-center justify-center space-y-2 bg-card text-foreground border-2 border-foreground p-4 rounded-xl font-bold shadow-sm hover:bg-muted transition-all active:scale-[0.98] disabled:opacity-50 h-28"
+          >
+            <UserPlus className="w-8 h-8" />
+            <span className="text-sm tracking-wide text-center">Manual Check-In</span>
+          </button>
+        ) : manualMode ? (
+          <div className="w-full space-y-4 animate-in fade-in zoom-in-95 bg-card p-4 rounded-xl border border-border shadow-sm">
+            <h3 className="text-sm font-bold text-foreground">Manual Check-In</h3>
+            <form onSubmit={handleManualCheckIn} className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Member's Email"
+                value={manualEmail}
+                onChange={(e) => setManualEmail(e.target.value)}
+                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-[#89abe3] focus:ring-2 focus:ring-[#dbe5fa] outline-none"
+                required
+              />
+              <button
+                type="submit"
+                disabled={checkInLoading || !selectedEvent}
+                className="bg-[#89abe3] text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-foreground transition-colors disabled:opacity-50"
+              >
+                Check In
+              </button>
+            </form>
+            <button
+              onClick={() => { setManualMode(false); setManualEmail(""); }}
+              className="w-full p-2 text-center text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-[#e9eef8] rounded-xl transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : null}
+
+        {!scanning && !manualMode && (
           <button
             onClick={() => {
               if (selectedEvent) {

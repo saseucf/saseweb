@@ -4,8 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight, CalendarDays, Check, ChevronDown, Clock3, MapPin, Search, X } from "lucide-react";
 import EventCalendar from "./event-calendar";
+import { getAcademicFields } from "@/app/actions/academic-fields";
 import { useEventMotion } from "./use-event-motion";
-import { eventDateKey, eventDescription, eventOccursOn, eventStatus, formatCalendarDate, formatEventDate, formatEventRange, googleCalendarUrl, icsDataUrl, type PublicEvent } from "./event-display";
+import { eventDateKey, eventDescription, eventOccursOn, eventStatus, eventTimingLabel, formatCalendarDate, formatEventDate, formatEventRange, googleCalendarUrl, icsDataUrl, type PublicEvent } from "./event-display";
 import styles from "@/app/events/events.module.css";
 
 export default function EventsClient({ events, initialNow }: { events: PublicEvent[]; initialNow: string }) {
@@ -27,22 +28,30 @@ export default function EventsClient({ events, initialNow }: { events: PublicEve
         return () => clearInterval(timer);
     }, []);
 
+    const [academicFields, setAcademicFields] = useState<{id: string, name: string}[]>([]);
+    const [selectedField, setSelectedField] = useState("");
+
+    useEffect(() => {
+        getAcademicFields().then(setAcademicFields);
+    }, []);
+
     const uniqueTypes = useMemo(() => [...new Set(events.map(e => e.event_type))].sort(), [events]);
     const matchingEvents = useMemo(() => events.filter(event => {
         const inPeriod = (eventStatus(event, now) === "past") === (period === "past");
         return inPeriod && (!selectedType || event.event_type === selectedType)
+            && (!selectedField || event.academic_field_id === selectedField)
             && event.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
     }).sort((a, b) => period === "past"
         ? new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
-        : new Date(a.start_time).getTime() - new Date(b.start_time).getTime()), [events, now, period, searchQuery, selectedType]);
+        : new Date(a.start_time).getTime() - new Date(b.start_time).getTime()), [events, now, period, searchQuery, selectedType, selectedField]);
     const filteredEvents = selectedDate ? matchingEvents.filter(event => eventOccursOn(event, selectedDate)) : matchingEvents;
     const groups = new Map<string, PublicEvent[]>();
     filteredEvents.forEach(event => {
         const month = formatEventDate(event.start_time, { month: "long", year: "numeric" });
         groups.set(month, [...(groups.get(month) ?? []), event]);
     });
-    const hasFilters = Boolean(selectedType || searchQuery || selectedDate);
-    const clearFilters = () => { setSelectedType(""); setSearchQuery(""); setSelectedDate(null); };
+    const hasFilters = Boolean(selectedType || searchQuery || selectedDate || selectedField);
+    const clearFilters = () => { setSelectedType(""); setSearchQuery(""); setSelectedDate(null); setSelectedField(""); };
 
     return (
         <div ref={root}>
@@ -69,6 +78,16 @@ export default function EventsClient({ events, initialNow }: { events: PublicEve
                     </select>
                     <ChevronDown size={18} aria-hidden="true" />
                 </div>
+                {academicFields.length > 0 && (
+                    <div className={styles.category}>
+                        <label className={styles.srOnly} htmlFor="event-field">Event Category</label>
+                        <select id="event-field" value={selectedField} onChange={event => setSelectedField(event.target.value)}>
+                            <option value="">All fields</option>
+                            {academicFields.map(field => <option key={field.id} value={field.id}>{field.name}</option>)}
+                        </select>
+                        <ChevronDown size={18} aria-hidden="true" />
+                    </div>
+                )}
             </div>
             <div ref={calendar} id="event-calendar" className={styles.calendarReveal} hidden={!calendarOpen}>
                 {calendarOpen ? <EventCalendar events={matchingEvents} today={eventDateKey(now)} selectedDate={selectedDate} onSelect={setSelectedDate} /> : null}
@@ -106,7 +125,8 @@ function EventRow({ event, now, animateLayout }: { event: PublicEvent; now: stri
     const detailsId = `event-details-${event.id}`;
     const status = eventStatus(event, now);
     const isPast = status === "past";
-    const isToday = eventDateKey(now) === eventDateKey(event.start_time);
+    const isToday = eventOccursOn(event, eventDateKey(now));
+    const timingLabel = eventTimingLabel(event, now);
     const { text, externalUrl } = eventDescription(event.description);
     const openForm = event.forms?.find(form => form.is_open);
     const registrationHref = externalUrl || (openForm ? `/forms/${openForm.slug}` : "");
@@ -127,7 +147,7 @@ function EventRow({ event, now, animateLayout }: { event: PublicEvent; now: stri
             <div className={styles.eventContent} data-event-motion="position">
                 <div className={styles.eventTags}>
                     <span>{event.event_type}</span>
-                    {status === "ongoing" ? <span className={styles.live}>Happening now</span> : isToday && !isPast ? <span className={styles.live}>Today</span> : null}
+                    {timingLabel ? <span className={styles.live}>{timingLabel}</span> : null}
                 </div>
                 <h4 id={`event-${event.id}`}>{event.title}</h4>
                 <div className={styles.eventFacts}>

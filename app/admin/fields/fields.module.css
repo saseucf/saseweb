@@ -1,0 +1,89 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.container h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.container p {
+    color: var(--color-foreground-muted, #666);
+    margin-bottom: 2rem;
+}
+
+.addForm {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border, #ddd);
+    border-radius: 4px;
+    background: var(--color-background-surface, #fff);
+    color: var(--color-foreground, #000);
+}
+
+.addButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primary, #0055a4);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.addButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.list {
+    background: var(--color-background-surface, #fff);
+    border: 1px solid var(--color-border, #ddd);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border, #ddd);
+}
+
+.listItem:last-child {
+    border-bottom: none;
+}
+
+.deleteButton {
+    background: none;
+    border: none;
+    color: var(--color-destructive, #dc2626);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deleteButton:hover {
+    background: var(--color-destructive-muted, #fee2e2);
+}

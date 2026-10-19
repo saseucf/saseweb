@@ -1,156 +1,48 @@
-"use client"
-
-import { Suspense, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-
-import supabase from "@/lib/auth"
-import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "@/lib/auth-redirect"
+"use client";
+import { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import supabase from "@/lib/auth";
+import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "@/lib/auth-redirect";
+import { announceMemberSession, memberDestination, sendMemberWelcome } from "@/lib/member-session";
 
 function AuthCallback() {
-    const router = useRouter()
-    const searchParams = useSearchParams()
-    const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"), DEFAULT_MEMBER_DESTINATION)
-    const isLinkFlow = searchParams.get("flow") === "link"
-    const isRecovery = searchParams.get("type") === "recovery"
-
-    useEffect(() => {
-        // The cookie-backed browser client completes the PKCE callback during
-        // its initialization. getSession() waits for that exchange and returns
-        // the same session that protected Server Components can read.
-        supabase.auth.getSession().then(async ({ data }) => {
-            const user = data.session?.user
-            if (user) {
-                if (isRecovery) {
-                    router.replace("/reset-password")
-                    return
-                }
-
-                if (isLinkFlow) {
-                    try {
-                        localStorage.setItem("sase:auth", JSON.stringify(user))
-                    } catch {
-                        // ignore localStorage errors
-                    }
-
-                    window.dispatchEvent(
-                        new CustomEvent("sase:auth", { detail: { user } })
-                    )
-
-                    router.replace(redirectUrl)
-                    return
-                }
-                const accountCreatedAt = new Date(user.created_at).getTime()
-                const accountWasJustCreated =
-                    Number.isFinite(accountCreatedAt) &&
-                    Date.now() - accountCreatedAt < 10 * 60 * 1000
-                const welcomeEmailSent = user.user_metadata?.welcome_email_sent === true
-
-                if (accountWasJustCreated && !welcomeEmailSent && user.email) {
-                    try {
-                        const firstName =
-                            user.user_metadata?.first_name ??
-                            user.user_metadata?.given_name ??
-                            user.user_metadata?.full_name?.split(" ")[0] ??
-                            ""
-
-                        const response = await fetch("/api/email", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                type: "welcome",
-                                email: user.email,
-                                firstName,
-                            }),
-                        })
-
-                        if (response.ok) {
-                            await supabase.auth.updateUser({
-                                data: { ...user.user_metadata, welcome_email_sent: true },
-                            })
-                        }
-                    } catch (error) {
-                        console.error("Failed to send welcome email:", error)
-                    }
-                }
-
-                try {
-                    localStorage.setItem("sase:auth", JSON.stringify(user))
-                } catch {
-                    // ignore localStorage errors
-                }
-                window.dispatchEvent(new CustomEvent("sase:auth", { detail: { user } }))
-
-                const { data: profile, error: profileError } = await supabase
-                    .from("profiles")
-                    .select("name_confirmed")
-                    .eq("id", user.id)
-                    .single()
-
-                // Profile row is missing (e.g. it was deleted while the
-                // auth.users row still exists, so handle_new_user() never
-                // re-fired). Re-create it from OAuth metadata so the user
-                // isn't stuck.
-                if (profileError?.code === "PGRST116") {
-                    const meta = user.user_metadata ?? {}
-                    let firstName = ""
-                    let lastName = ""
-
-                    if (meta.given_name) {
-                        firstName = meta.given_name
-                        lastName = meta.family_name ?? ""
-                    } else if (meta.first_name) {
-                        firstName = meta.first_name
-                        lastName = meta.last_name ?? ""
-                    } else {
-                        const displayName =
-                            meta.full_name || meta.name || meta.user_name || "New Member"
-                        const spaceIdx = displayName.indexOf(" ")
-                        if (spaceIdx > 0) {
-                            firstName = displayName.slice(0, spaceIdx)
-                            lastName = displayName.slice(spaceIdx + 1)
-                        } else {
-                            firstName = displayName
-                        }
-                    }
-
-                    await supabase.from("profiles").insert({
-                        id: user.id,
-                        first_name: firstName,
-                        last_name: lastName,
-                        email: user.email ?? "",
-                        major: "",
-                        year: "",
-                        school: "",
-                        name_confirmed: false,
-                    })
-
-                    router.replace(`/confirm-name?redirect=${encodeURIComponent(redirectUrl)}`)
-                    return
-                }
-
-                if (profile && !profile.name_confirmed) {
-                    router.replace(`/confirm-name?redirect=${encodeURIComponent(redirectUrl)}`)
-                    return
-                }
-
-                router.replace(redirectUrl)
-                return
-            }
-            router.replace(isRecovery ? "/forgot-password" : "/login")
-        })
-    }, [router, redirectUrl, isLinkFlow, isRecovery])
-
-    return (
-        <div className="min-h-screen w-full flex items-center justify-center p-6">
-            <p className="text-sm text-muted-foreground">Signing you in...</p>
-        </div>
-    )
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = getSafeAuthRedirect(searchParams.get("redirect"), DEFAULT_MEMBER_DESTINATION);
+  const isLinkFlow = searchParams.get("flow") === "link";
+  const isSetup = searchParams.get("flow") === "setup";
+  const isRecovery = searchParams.get("type") === "recovery";
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let cancelled = false;
+    async function complete() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (cancelled) return;
+        if (error) throw error;
+        if (!session) throw new Error("This sign-in link could not be completed. It may have expired. Please sign in again or request a new link.");
+        const user = session.user;
+        announceMemberSession(user);
+        const hashType = new URLSearchParams(window.location.hash.slice(1)).get("type");
+        if (isRecovery || isSetup || hashType === "recovery" || hashType === "invite") {
+          if (!cancelled) router.replace("/reset-password");
+          return;
+        }
+        if (isLinkFlow) {
+          if (!cancelled) router.replace(redirectUrl);
+          return;
+        }
+        const destination = await memberDestination(user, redirectUrl);
+        await sendMemberWelcome(user);
+        if (!cancelled) router.replace(destination);
+      } catch (error) { if (!cancelled) setError(error instanceof Error ? error.message : "Sign-in failed. Please try again."); }
+    }
+    void complete();
+    return () => { cancelled = true; };
+  }, [router, redirectUrl, isLinkFlow, isSetup, isRecovery]);
+  return <main className="flex min-h-[60vh] flex-col items-center justify-center gap-5 p-6 text-center">
+    {error ? <><p role="alert" className="max-w-md text-sm text-red-700">{error}</p><Link className="sase-primary-button" href={`/login?redirect=${encodeURIComponent(redirectUrl)}`}>Return to sign in</Link><Link className="underline" href="/forgot-password">Request a password reset</Link></> : <p role="status" className="text-sm text-muted-foreground">Finishing your sign-in...</p>}
+  </main>;
 }
-
-export default function AuthCallbackPage() {
-    return (
-        <Suspense>
-            <AuthCallback />
-        </Suspense>
-    )
-}
+export default function AuthCallbackPage() { return <Suspense><AuthCallback /></Suspense>; }

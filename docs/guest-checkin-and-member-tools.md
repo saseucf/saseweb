@@ -1,0 +1,25 @@
+# Guest check-in and member tools
+
+Apply `database/changes/add_guest_checkin_rate_limit.sql` to the existing Supabase database before deploying. Use this additive migration; do not run the destructive reset script in `database/schema.sql`. The existing `add-event-status.sql` migration must already be applied.
+
+Configure server-only `SUPABASE_SERVICE_ROLE_KEY` and `BREVO_API_KEY`, the verified Brevo sender in `EMAIL_USER`, and the canonical application URL in `NEXT_PUBLIC_SITE_URL`. Add that site's `/auth/callback` URL to Supabase Auth's redirect allowlist. Never prefix service credentials with `NEXT_PUBLIC_`.
+
+Event QR links open `/checkin/scan/[eventId]`. Signed-out attendees can enter a first name, last name, and email. New attendees receive an Auth account, its trigger-created profile, and a Brevo welcome email with a Supabase invitation link that leads to password setup. Existing profiles are reused without changing their details or issuing a login session. Guest participation is self-reported by email, so it does not verify identity or physical presence.
+
+Guest check-in is available from one hour before an event starts to one hour after it ends, and is disabled for cancelled events. Database-backed limits allow five attempts per email per ten minutes, plus 120 attempts per forwarded client IP per ten minutes when the hosting provider supplies that header. Deploy behind a provider that overwrites client IP headers. Attendance uses the existing unique event/member constraint and points trigger: retries cannot award extra points. If welcome delivery fails, account creation and attendance remain valid and the UI explains how to use Forgot password. No email delivery is claimed on failure.
+
+`/admin/users` provides quick member creation and CSV export. The API independently verifies the signed-in administrator and exports every profile column with pagination. Formula-looking fields are escaped for spreadsheet safety. Existing email addresses are reused without modifying names, roles, or dues status.
+
+Programs shows the top ten eligible members by participation points, with equal points sharing a competition rank. Only profiles with `role = 'member'` are eligible. Administrators are excluded in the database query before the top-ten limit is applied, and the public display and admin-only CSV use the same ranked results. Membership counts only eligible members with strictly more points; administrator accounts show “Not ranked” while retaining their own points total. The server selects only names, IDs, points, and eligibility role for the leaderboard; contact details are never included in its display or export. Configure the service-role key so these queries can work independently of member-only profile read policies.
+
+Run `npx tsx scripts/check-leaderboard.ts` from the repository root for a read-only check against the configured Supabase project. It verifies eligibility and compares each displayed rank against the Membership counting rule, printing counts only. It does not create attendance records, change roles, or modify points.
+
+Member and event QR codes support PNG and SVG downloads with a four-module quiet zone. Event QRs allow line/background color selection; low-contrast selections fall back to the original dark-on-white palette. Form QR downloads retain PNG export and now include the same quiet zone. Test printed codes on actual phones before using a custom palette at an event.
+
+Public-page ocean effects are decorative, preserve the normal pointer, and disable cursor tracking on touch devices. Reduced-motion preferences disable drifting, parallax, bubbles, and the cursor halo.
+
+Before release, verify using a staging event and mailbox: new guest creation and welcome activation, returning guest check-in, duplicate check-in without extra points, cancelled/closed events, rate limits, member rank, admin-only CSV access, exports beyond 1,000 profiles, and QR downloads/scanning. Live account creation and email delivery were not exercised against production during implementation.
+
+The public leaderboard loads current rankings on the server when the Programs page is opened or refreshed. There is no polling or background refresh on tab focus, visibility changes, or network reconnection. The dynamic page displays only member names, ranks, and participation points, with administrators excluded. If loading fails, the page asks the visitor to refresh and try again. The uncached `/api/leaderboard` endpoint also remains available with only the same public fields. No Realtime publication or broad profile read policy is required.
+
+CSV downloads are administrator-only. Public About shows aggregated major counts and public Programs shows the top-ten visual, without download controls. `/api/admin/exports/leaderboard` provides the current top ten only after server authorization, and all existing private CSV endpoints remain protected. The photo wheel no longer pauses on hover; its explicit pause control, keyboard-focus pause, and reduced-motion behavior remain available.

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { eventDateKey, eventDescription, eventOccursOn, eventStatus, formatEventRange, googleCalendarUrl, icsDataUrl, type PublicEvent } from "../components/events/event-display";
+import { eventDateKey, eventDescription, eventOccursOn, eventStatus, eventTimingLabel, formatEventRange, googleCalendarUrl, icsDataUrl, type PublicEvent } from "../components/events/event-display";
 
 const event: PublicEvent = {
     id: "calendar-regression", title: "Workshop, Q&A; together", description: "First line\nSecond line\n\n===EXTERNAL_URL===https://example.org/register",
@@ -36,6 +36,16 @@ test("ongoing events remain in the upcoming view until their end instant", () =>
     assert.equal(eventStatus(event, "2026-09-07T12:00:00Z"), "upcoming");
     assert.equal(eventStatus(event, event.start_time), "ongoing");
     assert.equal(eventStatus(event, event.end_time), "past");
+});
+
+test("active and later-today events say Happening today using Eastern dates", () => {
+    assert.equal(eventTimingLabel(event, "2026-09-07T12:00:00Z"), "Happening today");
+    assert.equal(eventTimingLabel(event, event.start_time), "Happening today");
+    assert.equal(eventTimingLabel(event, "2026-09-08T01:00:00Z"), "Happening today");
+    assert.equal(eventTimingLabel(event, event.end_time), null);
+    assert.equal(eventTimingLabel(event, "2026-09-06T12:00:00Z"), null);
+    const overnight = { ...event, end_time: "2026-09-09T12:00:00Z" };
+    assert.equal(eventTimingLabel(overnight, "2026-09-08T12:00:00Z"), "Happening today");
 });
 
 test("registration metadata stays out of copy and only web URLs become RSVP links", () => {

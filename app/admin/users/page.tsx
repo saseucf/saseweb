@@ -1,9 +1,12 @@
 "use client";
+import CsvDownloadButton from "@/components/csv-download-button";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "@/lib/auth";
 import { Search, ShieldCheck, User as UserIcon } from "lucide-react";
+
+import MemberAdminTools from "@/components/admin/member-admin-tools";
 
 type Profile = {
     id: string;
@@ -95,6 +98,8 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="max-w-5xl mx-auto mt-8">
+                <MemberAdminTools onAdded={() => window.location.reload()} />
+                <CsvDownloadButton filename="sase-users-filtered" rows={filteredProfiles} label="Download filtered users (CSV)" />
                 {/* Search Bar */}
                 <div className="relative w-full max-w-md mb-8">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

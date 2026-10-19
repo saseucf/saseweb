@@ -1,0 +1,123 @@
+.section {
+  --wheel-gap: 20px;
+  padding-block: 64px 72px;
+  overflow: hidden;
+  background: var(--about-navy);
+  color: var(--about-cream);
+}
+
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  width: min(100% - 96px, 1180px);
+  margin: 0 auto 36px;
+}
+
+.eyebrow {
+  margin: 0 0 14px;
+  color: var(--about-blue);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.heading h2 {
+  margin: 0;
+  font-size: clamp(1.875rem, 3.1vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -.045em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.intro {
+  margin: 16px 0 0;
+  color: var(--about-light-copy);
+  font: 400 1.0625rem/1.65 var(--font-about-body), system-ui, sans-serif;
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--about-blue);
+  border-radius: 4px;
+  color: var(--about-cream);
+  font-size: .8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.control:hover { background: color-mix(in oklab, var(--about-blue) 16%, transparent); }
+.control:focus-visible, .viewport:focus-visible { outline: 2px solid var(--about-blue); outline-offset: 5px; }
+
+.viewport {
+  overflow: hidden;
+  /* Fade only the frame edges; every photo crosses the fully visible center. */
+  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  min-width: 200%;
+  animation: photo-drift 88s linear infinite;
+}
+
+.group {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-around;
+  gap: var(--wheel-gap);
+  min-width: 100vw;
+  margin: 0;
+  /* Include the seam's gap in each equal-sized half of the loop. */
+  padding: 0 var(--wheel-gap) 0 0;
+  list-style: none;
+}
+
+.card {
+  flex: 0 0 auto;
+  width: clamp(280px, 34vw, 440px);
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--about-blue) 25%, transparent);
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--about-navy) 90%, var(--about-blue));
+}
+
+.card figure { margin: 0; }
+.imageFrame { position: relative; aspect-ratio: 3 / 2; overflow: hidden; background: var(--about-navy); }
+.image { object-fit: cover; object-position: center; }
+.card figcaption { padding: 20px 22px 22px; }
+.card figcaption > span { color: var(--about-blue); font-size: .6875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.card figcaption p { margin: 8px 0 0; font: 400 1.125rem/1.5 var(--font-about-body), system-ui, sans-serif; }
+
+.viewport[data-paused="true"] .track,
+.viewport:focus-within .track { animation-play-state: paused; }
+
+@keyframes photo-drift { to { transform: translateX(-50%); } }
+
+@media (max-width: 1023px) { .heading { width: calc(100% - 48px); } }
+@media (max-width: 767px) {
+  .section { --wheel-gap: 14px; padding-block: 44px 48px; }
+  .heading { gap: 20px; margin-bottom: 28px; }
+  .card { width: 82vw; max-width: 400px; }
+  .card figcaption { padding: 16px 18px 18px; }
+}
+@media (max-width: 479px) { .heading { width: calc(100% - 40px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .control { display: none; }
+  .viewport { overflow-x: auto; scrollbar-color: var(--about-blue) var(--about-navy); mask-image: none; padding-bottom: 16px; }
+  .track { animation: none; min-width: 0; }
+  .group { min-width: 0; padding-inline: 20px; }
+  .group[aria-hidden="true"] { display: none; }
+}

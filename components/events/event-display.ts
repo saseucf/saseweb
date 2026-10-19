@@ -19,6 +19,7 @@ export type PublicEvent = {
     created_at: string;
     status: "draft" | "published" | "cancelled";
     forms?: { slug: string; is_open: boolean }[];
+    academic_field_id?: string | null;
 };
 
 export function eventDateKey(value: string | Date): string {
@@ -48,6 +49,11 @@ export function eventStatus(event: Pick<PublicEvent, "start_time" | "end_time">,
     if (new Date(event.end_time).getTime() <= new Date(now).getTime()) return "past";
     if (new Date(event.start_time).getTime() <= new Date(now).getTime()) return "ongoing";
     return "upcoming";
+}
+
+export function eventTimingLabel(event: Pick<PublicEvent, "start_time" | "end_time">, now: string) {
+    if (eventStatus(event, now) === "past") return null;
+    return eventOccursOn(event, eventDateKey(now)) ? "Happening today" : null;
 }
 
 export function eventOccursOn(event: Pick<PublicEvent, "start_time" | "end_time">, date: string) {
