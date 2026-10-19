@@ -4,6 +4,7 @@ import { FormEvent, Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import supabase from "@/lib/auth"
+import { parseJoinProfile, profileIsComplete } from "@/lib/unified-auth"
 import { DEFAULT_MEMBER_DESTINATION, getSafeAuthRedirect } from "@/lib/auth-redirect"
 
 function ConfirmName() {
@@ -14,7 +15,7 @@ function ConfirmName() {
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [major, setMajor] = useState("")
-    const [school, setSchool] = useState("")
+    const [school, setSchool] = useState("University of Central Florida")
     const [graduationYear, setGraduationYear] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
     const [loading, setLoading] = useState(true)
@@ -25,7 +26,7 @@ function ConfirmName() {
         supabase.auth.getSession().then(async ({ data: { session } }) => {
             const user = session?.user
             if (!user) {
-                router.replace("/login")
+                router.replace(`/login?redirect=${encodeURIComponent(redirectUrl)}`)
                 return
             }
 
@@ -70,7 +71,12 @@ function ConfirmName() {
                 return
             }
 
-            if (!profile || profile.name_confirmed) {
+            if (profileError || !profile) {
+                setError("Unable to load your profile. Please refresh and try again.")
+                setLoading(false)
+                return
+            }
+            if (profileIsComplete(profile)) {
                 router.replace(redirectUrl)
                 return
             }
@@ -78,7 +84,7 @@ function ConfirmName() {
             setFirstName(profile.first_name || "")
             setLastName(profile.last_name || "")
             setMajor(profile.major || "")
-            setSchool(profile.school || "")
+            setSchool(profile.school || "University of Central Florida")
             setGraduationYear(profile.year || "")
             setPhoneNumber(profile.phone_number || "")
             setLoading(false)
@@ -104,25 +110,23 @@ function ConfirmName() {
         } = await supabase.auth.getUser()
 
         if (!user) {
-            router.replace("/login")
+            router.replace(`/login?redirect=${encodeURIComponent(redirectUrl)}`)
             return
         }
 
-        const { error: updateError } = await supabase
-            .from("profiles")
-            .update({
-                first_name: firstName.trim(),
-                last_name: lastName.trim(),
-                major: major.trim(),
-                school: school.trim(),
-                year: graduationYear.trim(),
-                phone_number: phoneNumber.trim(),
-                name_confirmed: true,
-            })
-            .eq("id", user.id)
-
+        let details
+        try {
+            details = parseJoinProfile({ first_name: firstName, last_name: lastName, major, school, year: graduationYear })
+        } catch (error) {
+            setError(error instanceof Error ? error.message : "Check your profile details.")
+            setSaving(false)
+            return
+        }
+        const { error: updateError } = await supabase.from("profiles").update({
+            ...details, phone_number: phoneNumber.trim(), name_confirmed: true,
+        }).eq("id", user.id).select("id").single()
         if (updateError) {
-            setError(updateError.message)
+            setError("Your profile could not be saved. Please try again.")
             setSaving(false)
             return
         }
@@ -206,6 +210,9 @@ function ConfirmName() {
                             </label>
                             <input
                                 id="graduationYear"
+                                inputMode="numeric"
+                                pattern="[0-9]{4}"
+                                maxLength={4}
                                 className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white"
                                 value={graduationYear}
                                 onChange={(event) => setGraduationYear(event.target.value)}

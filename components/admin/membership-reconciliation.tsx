@@ -1,4 +1,5 @@
 "use client";
+import CsvDownloadButton from "@/components/csv-download-button";
 
 import {
   AlertCircle,
@@ -319,6 +320,7 @@ export default function MembershipReconciliation() {
           </label>
         </div>
 
+        <CsvDownloadButton filename="sase-membership-payments" rows={workspace?.payments.map(payment => ({ id: payment.id, buyer: buyerName(payment), email: payment.buyer.email, phone: payment.buyer.phone, amount_cents: payment.amountCents, refunded_cents: payment.refundedAmountCents, net_cents: payment.netAmountCents, currency: payment.currency, refund_status: payment.refundStatus, created_at: payment.createdAt, eligible: payment.eligible, eligibility_reason: payment.eligibilityReason, matched_member: payment.match?.member ? memberName(payment.match.member) : "", matched_at: payment.match?.matchedAt })) ?? []} disabled={loading || !!error} label="Download displayed payments (CSV)" />
         {error ? (
           <div className="mt-6 flex items-start gap-4 border border-destructive/35 bg-destructive/10 p-5" role="alert">
             <AlertCircle className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />
@@ -433,6 +435,7 @@ export default function MembershipReconciliation() {
           </div>
         </div>
         <div className="mt-6 border border-border bg-card p-6 shadow-[0_12px_30px_rgba(23,29,82,0.06)]">
+          <CsvDownloadButton filename="sase-membership-members" rows={filteredMembers} label="Download filtered members (CSV)" disabled={loading} />
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between mb-4">
             <label className="relative block w-full max-w-md">
               <span className="sr-only">Search members</span>

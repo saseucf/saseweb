@@ -1,3 +1,5 @@
+import OceanAtmosphere from "@/components/ocean-atmosphere";
+import Leaderboard from "@/components/Leaderboard";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +10,8 @@ import styles from "./programs.module.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-programs-ui", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-programs-body", display: "swap" });
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Programs | UCF SASE",
     description: "Find your place in UCF SASE through the Intern and Mentor–Mentee programs. Explore the experience, time commitments, and how to get involved.",
@@ -15,7 +19,8 @@ export const metadata: Metadata = {
 
 export default function ProgramsPage() {
     return (
-        <main className={`${styles.page} ${inter.variable} ${outfit.variable}`}>
+        <main className={`${styles.page} ${inter.variable} ${outfit.variable} ocean-page`}>
+            <OceanAtmosphere />
             <header className={styles.hero}>
                 <div className={styles.container}>
                     <div className={styles.heroLayout}>
@@ -161,6 +166,8 @@ export default function ProgramsPage() {
                     </div>
                 </div>
             </section>
+
+            <section className="program-leaderboard" aria-labelledby="program-leaderboard-title"><Leaderboard /></section>
 
             <section className={styles.invitation} aria-labelledby="program-questions">
                 <div className={`${styles.container} ${styles.invitationLayout}`}>

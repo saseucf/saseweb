@@ -2,6 +2,7 @@ const AUTH_ENTRY_PATHS = new Set([
   "/auth/callback",
   "/confirm-name",
   "/login",
+  "/signup",
   "/forgot-password",
   "/reset-password",
   "/checkin/login",

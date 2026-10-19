@@ -3,14 +3,15 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Inter, Outfit } from "next/font/google";
 import styles from "./home.module.css";
-import Leaderboard from "@/components/Leaderboard";
+import OceanAtmosphere from "@/components/ocean-atmosphere";
 import HomeMotion from "./home-motion";
 const inter = Inter({ subsets: ["latin"], variable: "--font-home-ui", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-home-body", display: "swap" });
 
 export default function Home() {
   return (
-    <main className="sase-home">
+    <main className="sase-home ocean-page">
+      <OceanAtmosphere />
       <section className="sase-hero">
         <div className="sase-hero-layout">
           <div className="sase-hero-art" aria-hidden="true">
@@ -73,7 +74,7 @@ export default function Home() {
                   Since its founding in 2007, the Society of Asian Scientists and Engineers (SASE) has grown to a nationally recognized organization with 20,000 members worldwide, striving to help Asian heritage scientific and engineering professionals achieve their full potential. The University of Central Florida SASE Chapter was founded in 2020, shortly before the pandemic.
                 </p>
                 <p>
-                  With only 5 years under our belt, we have made tremendous strides towards the development of our members centered around core values of career, diversity, and service. Our events and programs not only advance professional pursuits, but also foster a supportive community that celebrates each and every member’s story.
+                  Since 2020, we have made tremendous strides towards the development of our members centered around core values of career, diversity, and service. Our events and programs not only advance professional pursuits, but also foster a supportive community that celebrates each and every member’s story.
                 </p>
               </div>
             </div>
@@ -88,35 +89,6 @@ export default function Home() {
                 className={styles.photo}
               />
             </div>
-          </div>
-        </section>
-
-        <section className={styles.values} aria-labelledby="home-values-title">
-          <div className={`${styles.container} ${styles.valuesLayout}`}>
-            <h2 id="home-values-title" className={styles.sectionTitle} data-home-reveal="0">3 Core Values</h2>
-            <ol className={styles.valueList}>
-              <li className={styles.value} data-home-reveal="60">
-                <span className={styles.valueNumber} aria-hidden="true">01</span>
-                <h3>Professional Development</h3>
-                <p>We encourage members to leverage the experiences, knowledge, and skills gained through our organization to pursue their goals and aspirations.</p>
-              </li>
-              <li className={styles.value} data-home-reveal="120">
-                <span className={styles.valueNumber} aria-hidden="true">02</span>
-                <h3>Service</h3>
-                <p>We commit ourselves to promoting service opportunities that enable our members to give back to the community and make a meaningful impact.</p>
-              </li>
-              <li className={styles.value} data-home-reveal="180">
-                <span className={styles.valueNumber} aria-hidden="true">03</span>
-                <h3>Diversity</h3>
-                <p>We aim to empower our members by showcasing how their diverse backgrounds can broaden perspectives and inspire collaborative efforts.</p>
-              </li>
-            </ol>
-          </div>
-        </section>
-
-        <section className={styles.leaderboard} aria-labelledby="home-leaderboard-title">
-          <div className={styles.container} data-home-reveal="0">
-            <Leaderboard />
           </div>
         </section>
 

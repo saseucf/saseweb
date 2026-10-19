@@ -144,7 +144,7 @@ test("admin authorization short-circuits match and unlink writes", async () => {
   assert.equal(downstreamCalls, 0);
 });
 
-test("workspace hides matched payments by default and returns only unpaid members", async () => {
+test("workspace hides matched payments by default and returns all members", async () => {
   const deps = dependencies({
     listPayments: async () => ({
       ok: true,
@@ -164,7 +164,7 @@ test("workspace hides matched payments by default and returns only unpaid member
   assert.equal(hiddenResult.ok, true);
   if (hiddenResult.ok) {
     assert.deepEqual(hiddenResult.data.payments.map(({ id }) => id), ["payment-old"]);
-    assert.deepEqual(hiddenResult.data.unpaidMembers.map(({ id }) => id), [MEMBER_ID]);
+    assert.deepEqual(hiddenResult.data.members.map(({ id }) => id), [MEMBER_ID, ADMIN_ID]);
   }
 
   const visibleResult = await getAdminMembershipWorkspace(true, deps);

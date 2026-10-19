@@ -1,4 +1,5 @@
 "use client";
+import CsvDownloadButton from "@/components/csv-download-button";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -228,6 +229,7 @@ export default function EventRSVPsPage({ params }: { params: Promise<{ id: strin
         <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 bg-muted">
             <h2 className="font-bold text-[#171d52]">Master RSVP List</h2>
+            <CsvDownloadButton filename="sase-event-rsvps" rows={submissions.map(sub => ({ name: sub.name, email: sub.email, form: forms.find(form => form.id === sub.form_id)?.title, submitted_at: sub.created_at, responses: sub.responses }))} label="Download RSVP list (CSV)" />
           </div>
           
           {submissions.length === 0 ? (

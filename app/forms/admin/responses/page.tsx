@@ -1,5 +1,6 @@
 "use client";
 
+import { downloadTable } from "@/lib/csv-download";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import supabase from "@/lib/auth";
@@ -140,28 +141,10 @@ function Responses() {
     function exportToCSV() {
         if (!form || filteredSubmissions.length === 0) return;
         
-        const headers = ["Submitted At", "Email", ...form.schema.map(q => q.label || "Untitled")];
-        
-        const rows = filteredSubmissions.map(sub => {
-            const time = new Date(sub.created_at).toLocaleString();
-            const email = sub.email || "Unknown";
-            const answers = form.schema.map(q => {
-                const raw = sub.responses[q.id];
-                const answer = Array.isArray(raw) ? raw.join(", ") : (raw || "");
-                return `"${String(answer).replace(/"/g, '""')}"`;
-            });
-            return `"${time}","${email}",${answers.join(",")}`;
-        });
-
-        const csvContent = [headers.map(h => `"${h}"`).join(","), ...rows].join("\n");
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `${form.title.replace(/\s+/g, "_")}_Responses.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        downloadTable(`${form.title}-responses`, ["Submitted At", "Email", ...form.schema.map(q => q.label || "Untitled")], filteredSubmissions.map(sub => [sub.created_at, sub.email || "Unknown", ...form.schema.map(q => {
+            const answer = sub.responses[q.id];
+            return Array.isArray(answer) ? answer.join(", ") : answer ?? "";
+        })]));
     }
 
     // Individual Edit Handlers

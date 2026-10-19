@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import React from "react";
+import GuestCheckinForm from "@/components/checkin/guest-checkin-form";
 
 export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventId: string }> }) {
   const [loading, setLoading] = useState(true);
@@ -22,13 +23,7 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
     const init = async () => {
       // Check auth
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        // Redirect to login, then come back here
-        router.replace(`/checkin/login?redirect=/checkin/scan/${eventId}`);
-        return;
-      }
-
-      setUserId(user.id);
+      setUserId(user?.id ?? null);
 
       // Fetch event
       const { data: eventData, error } = await supabase
@@ -122,14 +117,14 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
             </p>
           </div>
 
-          <button
+          {!userId ? <GuestCheckinForm eventId={eventId} /> : <button
             onClick={handleCheckIn}
             disabled={checkingIn}
             className="w-full bg-[#5579bd] text-white py-4 rounded-xl font-bold uppercase tracking-wider text-sm hover:bg-[#171d52] transition-transform active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center"
           >
             {checkingIn ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : null}
             Confirm Check-In
-          </button>
+          </button>}
         </div>
       ) : (
         <div className="text-center space-y-4">

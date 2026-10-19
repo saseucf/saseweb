@@ -7,8 +7,8 @@ import styles from "./login.module.css"
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
 export const metadata = {
-    title: "Log in | UCF SASE",
-    description: "Log in to your UCF SASE account to manage your membership and event forms.",
+    title: "Sign in or join | UCF SASE",
+    description: "Sign in or create your UCF SASE account in one place, then manage your membership and event check-ins.",
 }
 
 export default function LoginPage() {
@@ -37,8 +37,8 @@ export default function LoginPage() {
                 <section className={styles.signIn} aria-labelledby="login-heading">
                     <header className={styles.heading}>
                         <p className={styles.eyebrow}>UCF SASE · Member access</p>
-                        <h1 id="login-heading">Log in to SASE</h1>
-                        <p>Manage your membership and event forms.</p>
+                        <h1 id="login-heading">Sign in or join SASE</h1>
+                        <p>Your community, membership, and event check-ins in one place.</p>
                     </header>
                     <Suspense fallback={<LoginFormSkeleton />}>
                         <LoginForm />

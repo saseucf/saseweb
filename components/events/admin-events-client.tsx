@@ -1,4 +1,5 @@
 "use client";
+import CsvDownloadButton from "@/components/csv-download-button";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -58,6 +59,7 @@ export default function AdminEventsClient({ events: initialEvents }: { events: E
 
     return (
         <section className="sase-content-section">
+            <CsvDownloadButton filename="sase-events" rows={filteredEvents} label="Download filtered events (CSV)" />
             {/* Search Bar */}
             <div className="relative w-full max-w-md mb-6">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

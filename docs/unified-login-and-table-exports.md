@@ -1,0 +1,17 @@
+# Unified member access and CSV downloads
+
+`/login` now handles sign-in and joining. `/signup` and `/checkin/login` redirect to it and preserve a validated internal destination. Google and Discord authenticate through their providers and create a new account when needed. Members with incomplete details go to `/confirm-name` to add their first/last name, major, and four-digit graduation year.
+
+For email/password access, the form first attempts normal password authentication. On Supabase's generic invalid-credentials response, it offers profile setup in the same form. It does not publicly look up whether an email is registered. A new account is submitted to Supabase only after names, major, graduation year, and a password of at least eight characters have been entered. School defaults to UCF and can be edited through the existing profile screen.
+
+Supabase remains responsible for verifying credentials and preventing duplicate registrations. An incorrect password on an existing account never grants access or changes its password. Existing members can go back to sign in or use Forgot password. Network and rate-limit failures display errors rather than attempting signup.
+
+When Supabase returns a session immediately, the member profile is completed and the user continues to the original destination, including an event check-in. When email confirmation is enabled in Supabase, the form shows confirmation instructions and offers resend. The confirmation callback completes the collected profile before continuing. Passwords remain only in component memory and the Supabase authentication request; they are never put in URLs, local/session storage, or profile metadata. Google and Discord users do not need to choose a local password.
+
+Keep the deployed site's `/auth/callback` in the Supabase Auth redirect allowlist and enable the intended OAuth providers. Existing email-confirmation and password-policy settings are honored. Welcome email delivery uses the existing Brevo integration. Guest/admin-created invitation links now explicitly use `flow=setup` so account activation reaches password setup.
+
+CSV download controls now cover users, RSVP lists, form responses, attendance, demographics, audit logs, membership payments and member lists, admin events, forms, event categories, and the public leaderboard. Public downloads contain only public fields. Admin exports stay behind existing admin authorization; the attendance endpoint independently authenticates and checks the admin role before reading member contact details.
+
+Exports reflect the current search/filter where available. Audit log downloads include the 100 entries loaded by that view. The member and attendance server exports fetch every page, including datasets beyond 1,000 rows. Demographic aggregates also fetch all attendance pages. The form-response exporter preserves duplicate question labels and uses the same quoting and formula-escaping rules as other CSVs. UTF-8 BOMs support Excel; commas, quotes, line breaks, and formula-looking values are handled consistently.
+
+Staging checks before release: email login for an existing member, wrong password without account access, new member creation, email confirmation/resend when enabled, both OAuth providers, missing-profile completion, original QR check-in destination after all flows, CSV filters, spreadsheet parsing, and unauthorized attendance export. Authentication/email side effects were not tested using real production accounts.

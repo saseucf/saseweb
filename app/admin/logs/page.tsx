@@ -1,4 +1,5 @@
 "use client";
+import CsvDownloadButton from "@/components/csv-download-button";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -130,6 +131,7 @@ export default function AdminLogsPage() {
             </div>
 
             <div className="max-w-4xl mx-auto mt-8 relative">
+                <CsvDownloadButton filename="sase-audit-logs" rows={logs} label="Download displayed audit logs (CSV)" />
                 {logs.length === 0 ? (
                     <div className="bg-card rounded-2xl border border-border shadow-sm p-12 text-center">
                         <Activity className="w-12 h-12 text-muted mx-auto mb-4" />

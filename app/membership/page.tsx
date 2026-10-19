@@ -11,7 +11,8 @@ import MemberQr from "@/components/membership/member-qr";
 import VerifyPaymentButton from "@/components/membership/verify-payment-button";
 import { getMemberNames } from "@/lib/member-names";
 import { getMembershipCheckoutConfiguration } from "@/lib/membership-checkout";
-import { createServerSupabase } from "@/lib/supabase-server";
+import { createAdminSupabase, createServerSupabase } from "@/lib/supabase-server";
+import { isLeaderboardMember, queryMembersAhead } from "@/lib/leaderboard";
 import ConnectedAccounts from "@/components/membership/connected-accounts";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +34,7 @@ export default async function MembershipPage() {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("first_name, last_name, email, phone_number, paid_member, total_points")
+    .select("first_name, last_name, email, phone_number, paid_member, total_points, role")
     .eq("id", user.id)
     .single();
 
@@ -67,6 +68,11 @@ export default async function MembershipPage() {
     ? checkout.configuration.membershipPeriod
     : "2026-2027";
   const totalPoints = profile.total_points ?? 0;
+  const eligibleForRank = isLeaderboardMember(profile.role);
+  const rankResult = eligibleForRank && process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? await queryMembersAhead(createAdminSupabase(), totalPoints)
+    : null;
+  const personalRank = rankResult && !rankResult.error ? (rankResult.count ?? 0) + 1 : null;
 
   return (
     <main className="sase-page" style={{ paddingTop: "120px" }}>
@@ -151,6 +157,9 @@ export default async function MembershipPage() {
               <span className="font-mono text-4xl font-black tabular-nums">{totalPoints}</span>
             </div>
           </div>
+          <p className="mt-4 text-sm text-muted-foreground">Your chapter rank: <strong className="text-foreground">{!eligibleForRank ? "Not ranked" : personalRank ? `#${personalRank}` : "Unavailable"}</strong></p>
+          {!eligibleForRank && <p className="mt-2 text-xs text-muted-foreground">The leaderboard is for members. Administrators are excluded.</p>}
+          <Link href="/programs#program-leaderboard-title" className="mt-3 inline-block text-sm font-bold underline underline-offset-4">Explore the top 10</Link>
         </section>
 
         <section className="order-3 border border-border bg-card p-5 sm:p-7" aria-labelledby="member-forms-heading">

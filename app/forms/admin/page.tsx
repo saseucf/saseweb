@@ -1,4 +1,5 @@
 "use client";
+import CsvDownloadButton from "@/components/csv-download-button";
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -144,6 +145,7 @@ export default function Admin() {
       <div className="sase-page-header">
         <p className="sase-eyebrow">UCF SASE / Admin workspace</p>
         <h1>Admin Panel</h1>
+          <CsvDownloadButton filename="sase-forms" rows={filteredForms} label="Download filtered forms (CSV)" />
         <p>Publish forms, manage the response flow, and review submissions.</p>
       </div>
 
@@ -242,6 +244,7 @@ export default function Admin() {
                 <QRCodeCanvas
                   value={typeof window !== "undefined" ? `${window.location.origin}/forms/${form.slug}` : ""}
                   size={512}
+                  marginSize={4}
                   ref={(el) => {
                     qrRefs.current[form.slug] = el;
                   }}

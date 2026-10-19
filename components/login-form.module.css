@@ -204,3 +204,12 @@
     .input, .visibility, .primary, .provider { transition: none; }
     .primary:active:not(:disabled), .provider:active { transform: none; }
 }
+
+.helper { margin: 0 0 18px; font-size: .875rem; line-height: 1.7; color: var(--login-muted); }
+.notice { margin-bottom: 20px; padding: 14px; background: #edf4ff; color: #263f68; border: 1px solid #c4d7f4; border-radius: 8px; font-size: .875rem; line-height: 1.65; }
+.profileFields { min-width: 0; display: grid; gap: 18px; border-top: 1px solid var(--login-line); padding-top: 22px; margin-top: 4px; }
+.profileTitle { font-size: 1.1rem; font-weight: 700; padding: 12px 0; }
+.nameFields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.profileFields .helper { margin: 0; }
+.provider:disabled { cursor: wait; opacity: .65; }
+@media (max-width: 400px) { .nameFields { grid-template-columns: 1fr; } }
