@@ -7,8 +7,9 @@ const profile = (id: string, points: number, role = "member"): LeaderboardProfil
 
 test("only members are eligible, regardless of an administrator's points or role capitalization", () => {
   assert.equal(isLeaderboardMember("member"), true);
+  assert.equal(isLeaderboardMember("user"), true);
   for (const role of ["admin", "ADMIN", " Admin ", "administrator", "", null, undefined]) assert.equal(isLeaderboardMember(role), false);
-  assert.deepEqual(rankLeaderboard([profile("admin", 1000, "admin"), profile("member", 5)]).map(entry => entry.id), ["member"]);
+  assert.deepEqual(rankLeaderboard([profile("admin", 1000, "admin"), profile("member", 5), profile("existing-user", 10, "user")]).map(entry => entry.id), ["existing-user", "member"]);
 });
 
 test("administrators never occupy top-ten slots; ties have deterministic order and shared ranks", () => {
@@ -36,28 +37,28 @@ test("database query filters members before limiting and selects no contact info
     auth: { persistSession: false, autoRefreshToken: false },
     global: { fetch: async input => {
       const url = new URL(String(input));
-      assert.equal(url.searchParams.get("role"), "eq.member");
+      assert.equal(url.searchParams.get("role"), "in.(member,user)");
       assert.equal(url.searchParams.get("limit"), "10");
       assert.equal(url.searchParams.get("order"), "total_points.desc,id.asc");
       assert.equal(url.searchParams.get("select"), "id,first_name,last_name,total_points,role");
-      return Response.json([profile("member", 10)]);
+      return Response.json([profile("existing-user", 20, "user"), profile("member", 10)]);
     } },
   });
   const result = await queryLeaderboard(client);
   assert.equal(result.error, null);
-  assert.equal(result.data?.length, 1);
+  assert.equal(result.data?.length, 2);
 });
 
 test("personal rank counts only members with strictly more points so admins and tied scores do not inflate it", async () => {
-  const profiles = [profile("admin", 500, "admin"), profile("first", 20), profile("tied-a", 15), profile("tied-b", 15), profile("last", 5)];
+  const profiles = [profile("admin", 500, "admin"), profile("first", 20, "user"), profile("tied-a", 15, "user"), profile("tied-b", 15), profile("last", 5)];
   const client = createClient("https://leaderboard-test.supabase.co", "test-key", {
     auth: { persistSession: false, autoRefreshToken: false },
     global: { fetch: async (input, options) => {
       const url = new URL(String(input));
       assert.equal(options?.method, "HEAD");
-      assert.equal(url.searchParams.get("role"), "eq.member");
+      assert.equal(url.searchParams.get("role"), "in.(member,user)");
       assert.equal(url.searchParams.get("total_points"), "gt.15");
-      const ahead = profiles.filter(entry => entry.role === "member" && (entry.total_points ?? 0) > 15).length;
+      const ahead = profiles.filter(entry => isLeaderboardMember(entry.role) && (entry.total_points ?? 0) > 15).length;
       return new Response(null, { headers: { "Content-Range": `*/${ahead}` } });
     } },
   });

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isMemberProfileRole, MEMBER_PROFILE_ROLES } from "@/lib/member-roles";
 
-export const LEADERBOARD_MEMBER_ROLE = "member";
 export const LEADERBOARD_SIZE = 10;
 
 export type LeaderboardProfile = {
@@ -12,15 +12,13 @@ export type LeaderboardProfile = {
 };
 
 export function isLeaderboardMember(role: unknown) {
-  // Only the explicit member role is eligible; administrators and unknown
-  // roles cannot enter the standings, even if they have attendance points.
-  return role === LEADERBOARD_MEMBER_ROLE;
+  return isMemberProfileRole(role);
 }
 
 export function queryLeaderboard(client: SupabaseClient) {
   return client.from("profiles")
     .select("id, first_name, last_name, total_points, role")
-    .eq("role", LEADERBOARD_MEMBER_ROLE)
+    .in("role", [...MEMBER_PROFILE_ROLES])
     .order("total_points", { ascending: false })
     .order("id")
     .limit(LEADERBOARD_SIZE);
@@ -29,7 +27,7 @@ export function queryLeaderboard(client: SupabaseClient) {
 export function queryMembersAhead(client: SupabaseClient, points: number) {
   return client.from("profiles")
     .select("id", { count: "exact", head: true })
-    .eq("role", LEADERBOARD_MEMBER_ROLE)
+    .in("role", [...MEMBER_PROFILE_ROLES])
     .gt("total_points", points);
 }
 

@@ -1,3 +1,11 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { MEMBER_PROFILE_ROLES } from "@/lib/member-roles";
+
+export function queryMemberMajors(client: SupabaseClient, offset: number) {
+  return client.from("profiles").select("major")
+    .in("role", [...MEMBER_PROFILE_ROLES]).order("id").range(offset, offset + 999);
+}
+
 export function aggregateMemberMajors(rows: readonly { major: string | null }[]) {
   const counts = new Map<string, number>();
   for (const row of rows) {
