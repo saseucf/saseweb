@@ -1,4 +1,5 @@
 import type { User } from "@supabase/supabase-js";
+import { normalizeMajor } from "@/lib/majors";
 
 export function skipsProfileQuestions(user: Pick<User, "app_metadata">) {
   // Use Supabase-managed provider metadata, never editable user metadata.
@@ -17,7 +18,7 @@ export function parseJoinProfile(value: Record<string, unknown>): JoinProfile {
   };
   const year = field("year", "your graduation year", 4);
   if (!/^\d{4}$/.test(year) || Number(year) < 2000 || Number(year) > 2200) throw new Error("Enter a four-digit graduation year between 2000 and 2200.");
-  return { first_name: field("first_name", "your first name", 100), last_name: field("last_name", "your last name", 100), major: field("major", "your major", 150), year, school: field("school", "your school", 150) };
+  return { first_name: field("first_name", "your first name", 100), last_name: field("last_name", "your last name", 100), major: normalizeMajor(field("major", "your major", 150)), year, school: field("school", "your school", 150) };
 }
 
 export function passwordNextStep(error: { code?: string } | null) {

@@ -34,6 +34,7 @@ function FormCreator() {
   const [collectGuestName, setCollectGuestName] = useState(false);
   const [eventId, setEventId] = useState<string | null>(null);
   const [academicFieldId, setAcademicFieldId] = useState<string | null>(null);
+  const [hasCategoryColumn, setHasCategoryColumn] = useState(false);
   const [formType, setFormType] = useState("");
   
   const [events, setEvents] = useState<SaseEvent[]>([]);
@@ -112,6 +113,7 @@ function FormCreator() {
       setIsOpen(data.is_open);
       setEventId(data.event_id || null);
       setAcademicFieldId(data.academic_field_id || null);
+      setHasCategoryColumn(Object.hasOwn(data, "academic_field_id"));
       setFormType(data.type || "");
       setQuestions(data.schema);
       
@@ -308,7 +310,8 @@ function FormCreator() {
           requires_login: requiresLogin,
           is_open: isOpen,
           event_id: eventId || null,
-          academic_field_id: academicFieldId || null,
+          ...(academicFieldId || academicFields.length > 0 || hasCategoryColumn ? { academic_field_id: academicFieldId || null } : {}),
+          updated_at: new Date().toISOString(),
           type: formType.trim() !== "" ? formType.trim() : null,
         })
         .eq("id", formId);
@@ -329,7 +332,7 @@ function FormCreator() {
         requires_login: requiresLogin,
         is_open: isOpen,
         event_id: eventId || null,
-        academic_field_id: academicFieldId || null,
+        ...(academicFieldId || academicFields.length > 0 ? { academic_field_id: academicFieldId || null } : {}),
         type: formType.trim() !== "" ? formType.trim() : null,
         created_by: user.id,
       });

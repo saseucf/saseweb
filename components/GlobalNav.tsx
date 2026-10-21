@@ -6,11 +6,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import supabase from "@/lib/auth";
+import { useProfileRole } from "@/components/use-profile-role";
 
 export default function GlobalNav() {
   const pathname = usePathname();
-  const [role, setRole] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { role, loading } = useProfileRole(pathname);
   const [viewAsUser, setViewAsUser] = useState(false);
   const [hash, setHash] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -42,37 +42,10 @@ export default function GlobalNav() {
 
   const isAdminLogin = pathname?.includes("/checkin/admin/login");
 
-  useEffect(() => {
-    const checkUser = async (userId: string | undefined) => {
-      if (!userId) {
-        setRole(null);
-        setLoading(false);
-        return;
-      }
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", userId)
-        .single();
-      setRole(profile?.role ?? "member");
-      setLoading(false);
-    };
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      checkUser(session?.user?.id);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      checkUser(session?.user?.id);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   if (isAdminLogin) return null;
 
-  const isAdmin = role === "admin" && !viewAsUser;
-  const isRealAdmin = role === "admin";
+  const isAdmin = !loading && role === "admin" && !viewAsUser;
+  const isRealAdmin = !loading && role === "admin";
 
   const renderLinks = (isMobile = false) => {
     if (loading) {

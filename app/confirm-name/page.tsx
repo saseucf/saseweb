@@ -1,5 +1,7 @@
 "use client"
 
+import MajorSelect from "@/components/major-select";
+import { requestWorkshopCredit } from "@/lib/member-session";
 import { FormEvent, Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2 } from "lucide-react"
@@ -136,6 +138,7 @@ function ConfirmName() {
             return
         }
 
+        void requestWorkshopCredit()
         router.replace(redirectUrl)
     }
 
@@ -185,14 +188,7 @@ function ConfirmName() {
                         <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="major">
                             Major
                         </label>
-                        <input
-                            id="major"
-                            className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white"
-                            value={major}
-                            onChange={(event) => setMajor(event.target.value)}
-                            placeholder="e.g. Computer Science"
-                            required
-                        />
+                        <MajorSelect id="major" className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa] dark:text-white" value={major} onChange={setMajor} required />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

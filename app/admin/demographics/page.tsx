@@ -1,3 +1,4 @@
+import { normalizeMajor } from "@/lib/majors";
 import CsvDownloadButton from "@/components/csv-download-button";
 import { createServerSupabase } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
@@ -70,7 +71,7 @@ export default async function DemographicsPage() {
         // Profiles
         if (userId && profileInfo) {
             const name = `${profileInfo.first_name} ${profileInfo.last_name}`;
-            const major = profileInfo.major || "Unknown";
+            const major = normalizeMajor(profileInfo.major) || "Unknown";
             const year = profileInfo.year || "Unknown";
 
             if (attendeeMap.has(userId)) {

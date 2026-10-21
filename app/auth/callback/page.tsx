@@ -26,16 +26,16 @@ function AuthCallback() {
         announceMemberSession(user);
         const hashType = new URLSearchParams(window.location.hash.slice(1)).get("type");
         if (isRecovery || isSetup || hashType === "recovery" || hashType === "invite") {
-          if (!cancelled) router.replace("/reset-password");
+          if (!cancelled) { router.replace("/reset-password"); router.refresh(); }
           return;
         }
         if (isLinkFlow) {
-          if (!cancelled) router.replace(redirectUrl);
+          if (!cancelled) { router.replace(redirectUrl); router.refresh(); }
           return;
         }
         const destination = await memberDestination(user, redirectUrl);
         await sendMemberWelcome(user);
-        if (!cancelled) router.replace(destination);
+        if (!cancelled) { router.replace(destination); router.refresh(); }
       } catch (error) { if (!cancelled) setError(error instanceof Error ? error.message : "Sign-in failed. Please try again."); }
     }
     void complete();

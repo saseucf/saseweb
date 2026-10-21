@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "@/lib/auth";
 import { QRCodeCanvas } from "qrcode.react";
+import { isCompletedEvent, lastEditedTime, searchEditableItems } from "@/lib/admin-list-order";
 
 type Form = {
   id: string;
@@ -13,6 +14,10 @@ type Form = {
   description: string;
   requires_login: boolean;
   is_open: boolean;
+  type: string | null;
+  created_at: string;
+  updated_at: string | null;
+  events: { title: string; event_type: string; location: string | null; start_time: string; end_time: string } | null;
 };
 
 
@@ -26,7 +31,8 @@ export default function Admin() {
   
   const qrRefs = useRef<Record<string, HTMLCanvasElement | null>>({});
 
-  const filteredForms = forms.filter(form => form.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredForms = searchEditableItems(forms.map(form => ({ ...form, start_time: form.events?.start_time })), searchQuery,
+    form => [form.slug, form.description, form.type, form.is_open ? "open" : "closed", form.events?.title, form.events?.event_type, form.events?.location]);
 
   function handleAddForm() {
     router.push("/forms/admin/formCreator");
@@ -97,7 +103,7 @@ export default function Admin() {
 
       const { data, error } = await supabase
         .from("forms")
-        .select("*")
+        .select("*, events(title, event_type, location, start_time, end_time)")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -105,7 +111,7 @@ export default function Admin() {
         return;
       }
 
-      setForms(data || []);
+      setForms((data as unknown as Form[]) || []);
     }
 
     loadForms();
@@ -179,13 +185,15 @@ export default function Admin() {
         </div>
         <input
           type="text"
-          placeholder="Search forms by title..."
+          aria-label="Search all form details"
+          placeholder="Search title, description, type, event, location..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="block w-full pl-10 pr-3 py-3 border border-[#D0D0CE] rounded-xl leading-5 bg-card placeholder-[#ACA39A] focus:outline-none focus:ring-2 focus:ring-[#e9eef8] focus:border-[#89abe3] transition-all sm:text-sm shadow-sm"
         />
       </div>
 
+      <p className="mb-5 text-sm text-muted-foreground">Recently edited first, then earliest linked event. Search matches appear first.</p>
       {filteredForms.length === 0 ? (
         <div className="sase-form-card">
           <p className="text-[#ACA39A] font-medium text-center">No forms found matching your search.</p>
@@ -196,6 +204,7 @@ export default function Admin() {
           <div
             key={form.id}
             className="sase-form-card"
+            style={form.events && isCompletedEvent(form.events, Date.now()) ? { backgroundColor: "#f0fdf4", borderColor: "#bbf7d0" } : undefined}
           >
             <h2>
               {form.title}
@@ -204,6 +213,7 @@ export default function Admin() {
             <p className="sase-meta">
               /forms/{form.slug}
             </p>
+            {lastEditedTime(form) > 0 && <p className="!text-xs">Edited {new Date(lastEditedTime(form)).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</p>}
 
             <p className="sase-status">
               Status: {form.is_open ? "Open" : "Closed"}

@@ -131,6 +131,13 @@
   }
 }
 
+/* The event QR display owns the visible area below the fixed navigation. */
+body:has([data-event-qr-display]) {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .sase-home {
   --sase-navy: #141b4d;
   --sase-blue: #89abe3;
@@ -176,6 +183,7 @@
 }
 /* A single bounded scene keeps every decorative offset relative to the artwork. */
 .sase-hero-art {
+  grid-row: 2;
   position: relative;
   width: min(58vw, 300px);
   aspect-ratio: 1;
@@ -189,7 +197,7 @@
 .sase-cloud::after { left: 60%; top: -200%; width: 45%; }
 .sase-cloud-top { right: 5%; top: 22%; width: 48%; }
 .sase-cloud-middle { left: 14%; top: 68%; width: 26%; }
-.sase-hero-content { min-width: 0; text-align: center; }
+.sase-hero-content { grid-row: 1; min-width: 0; text-align: center; }
 .sase-hero-brand { width: min(78vw, 460px); max-width: 100%; margin: 0 auto; }
 .sase-hero-subtitle {
   margin: 16px 0 0;
@@ -316,7 +324,9 @@
 .sase-login-card input { background: #fff; border-color: #cbd5e8; }
 
 @media (max-width: 700px) {
-  .sase-page { padding: 32px 20px 60px; }
+  .sase-page { padding: 20px 20px 60px; }
+  .sase-hero { padding-top: 16px; }
+  .sase-hero-layout { gap: 16px; }
   .sase-add-button { margin-left: 0; margin-top: 14px; }
   .sase-creator-panel { padding: 18px; }
   .sase-page-header h1 { font-size: 3.2rem; }

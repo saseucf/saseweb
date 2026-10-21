@@ -3,11 +3,14 @@ import test from "node:test";
 import { guestCheckinIsOpen, registerGuestAttendance } from "../lib/guest-checkin-core";
 
 const input = { firstName: "Ana", lastName: "Lee", email: "ana@example.com" };
-test("guest window includes its exact boundaries and rejects invalid or cancelled events", () => {
-  const event = { start_time: "2026-10-19T20:00:00Z", end_time: "2026-10-19T22:00:00Z" };
-  for (const time of ["19:00:00", "20:00:00", "23:00:00"]) assert.equal(guestCheckinIsOpen(event, Date.parse(`2026-10-19T${time}Z`)), true);
-  for (const time of ["18:59:59", "23:00:01"]) assert.equal(guestCheckinIsOpen(event, Date.parse(`2026-10-19T${time}Z`)), false);
-  for (const candidate of [null, { ...event, status: "cancelled" }, { ...event, end_time: "invalid" }, { ...event, end_time: "2026-10-18T22:00:00Z" }]) assert.equal(guestCheckinIsOpen(candidate, Date.parse(event.start_time)), false);
+test("guest check-in has no date window; only missing and cancelled events are blocked", () => {
+  for (const year of [2001, 2026, 2099]) {
+    const event = { start_time: `${year}-10-19T20:00:00Z`, end_time: `${year}-10-19T22:00:00Z` };
+    assert.equal(guestCheckinIsOpen(event), true);
+    assert.equal(guestCheckinIsOpen({ ...event, status: "cancelled" }), false);
+  }
+  assert.equal(guestCheckinIsOpen(null), false);
+  assert.equal(guestCheckinIsOpen({ start_time: "invalid", end_time: "invalid" }), true);
 });
 
 test("new guests are provisioned before attendance is recorded and delivery failures stay visible", async () => {

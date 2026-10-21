@@ -16,10 +16,8 @@ export async function POST(request: Request) {
   } catch (error) { return Response.json({ error: (error as Error).message }, { status: 400 }); }
   const admin = createAdminSupabase();
   const { data: event, error } = await admin.from("events").select("id, start_time, end_time, status").eq("id", eventId).single();
-  const now = Date.now();
-  if (error || !guestCheckinIsOpen(event, now)) {
-    return Response.json({ error: "Check-in opens one hour before the event and closes one hour after it ends." }, { status: 400 });
-  }
+  if (error || !event) return Response.json({ error: "Event not found. Please scan the event QR code again." }, { status: 404 });
+  if (!guestCheckinIsOpen(event)) return Response.json({ error: "This event has been cancelled." }, { status: 400 });
   // Hosting providers populate this header; it is an additional shared-network
   // budget, while the per-email budget always applies, including local development.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();

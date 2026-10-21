@@ -1,181 +1,63 @@
 "use client";
+
+import { useEffect, useState } from "react";
+import { ChevronRight, Folder, Search, X } from "lucide-react";
 import CsvDownloadButton from "@/components/csv-download-button";
-
-import { useState } from "react";
-import Link from "next/link";
-import EventActions from "@/components/events/event-actions";
+import AdminEventCard from "@/components/events/admin-event-card";
 import supabase from "@/lib/auth";
-import { useEffect } from "react";
+import { organizeAdminEvents, type AdminListEvent } from "@/lib/admin-list-order";
 
-type Event = {
-    id: string;
-    title: string;
-    description: string | null;
-    event_type: string;
-    location: string | null;
-    start_time: string;
-    end_time: string;
-    capacity: number | null;
-    points: number;
-    host: string | null;
-    status: "draft" | "published" | "cancelled";
-    created_at: string;
-    forms?: { id: string, title: string }[];
-    checkin_count?: number;
-    rsvp_count?: number;
-};
+export default function AdminEventsClient({ events: initialEvents, initialNow }: { events: AdminListEvent[]; initialNow: number }) {
+  const [events, setEvents] = useState(initialEvents);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [now, setNow] = useState(initialNow);
+  useEffect(() => { setEvents(initialEvents); }, [initialEvents]);
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+  useEffect(() => {
+    const channel = supabase.channel("realtime_admin_checkins")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "event_attendances" }, payload => {
+        setEvents(previous => previous.map(event => event.id === payload.new.event_id ? { ...event, checkin_count: (event.checkin_count ?? 0) + 1 } : event));
+      }).subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, []);
 
-export default function AdminEventsClient({ events: initialEvents }: { events: Event[] }) {
-    const [events, setEvents] = useState<Event[]>(initialEvents);
-    const [searchQuery, setSearchQuery] = useState("");
+  const { matching, upcoming, folders } = organizeAdminEvents(events, searchQuery, now);
+  const searching = searchQuery.trim().length > 0;
+  const cards = (items: AdminListEvent[]) => <div className="sase-form-grid !mt-0">{items.map(event => <AdminEventCard key={event.id} event={event} now={now} />)}</div>;
 
-    useEffect(() => {
-        const channel = supabase.channel('realtime_admin_checkins')
-            .on(
-                'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'event_attendances' },
-                (payload) => {
-                    const newCheckin = payload.new;
-                    setEvents((prevEvents) => 
-                        prevEvents.map(event => {
-                            if (event.id === newCheckin.event_id) {
-                                return { ...event, checkin_count: (event.checkin_count || 0) + 1 };
-                            }
-                            return event;
-                        })
-                    );
-                }
-            )
-            .subscribe();
+  return <section className="sase-content-section">
+    <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="relative w-full max-w-xl">
+        <Search size={18} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <input type="search" aria-label="Search all events" placeholder="Search title, type, location, date, host, forms..." value={searchQuery} onChange={event => setSearchQuery(event.target.value)} className="w-full rounded-xl border border-border bg-card py-3 pl-11 pr-12 text-sm text-foreground focus:outline-2 focus:outline-offset-2 focus:outline-[#89abe3]" />
+        {searching && <button type="button" aria-label="Clear event search" onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-2 text-muted-foreground"><X size={18} /></button>}
+      </div>
+      <CsvDownloadButton filename="sase-events" rows={matching} label={searching ? "Download search results (CSV)" : "Download all events (CSV)"} />
+    </div>
+    <p className="mb-6 text-sm text-muted-foreground">Recently edited first, then earliest start time. Search includes past events in every folder.</p>
 
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, []);
-
-    const filteredEvents = events.filter(event => 
-        event.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    return (
-        <section className="sase-content-section">
-            <CsvDownloadButton filename="sase-events" rows={filteredEvents} label="Download filtered events (CSV)" />
-            {/* Search Bar */}
-            <div className="relative w-full max-w-md mb-6">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                    </svg>
-                </div>
-                <input
-                    type="text"
-                    placeholder="Search events by title..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-[#D0D0CE] rounded-xl leading-5 bg-card placeholder-[#ACA39A] focus:outline-none focus:ring-2 focus:ring-[#e9eef8] focus:border-[#89abe3] transition-all sm:text-sm shadow-sm"
-                />
-            </div>
-
-            {filteredEvents.length === 0 ? (
-                <div className="sase-form-card">
-                    <p className="text-gray-500 font-medium text-center">No events found matching your search.</p>
-                </div>
-            ) : (
-                <div className="sase-form-grid">
-                    {filteredEvents.map((event) => (
-                        <div key={event.id} className="sase-form-card flex flex-col justify-between">
-                            <div>
-                                <div className="flex flex-wrap items-center gap-3 mb-2">
-                                    <h2 className="text-foreground font-bold text-xl">
-                                        {event.title}
-                                    </h2>
-                                    <span className={`px-2 py-1 text-[0.65rem] font-bold uppercase tracking-wider rounded ${
-                                        event.status === 'published' ? 'bg-green-100 text-green-700' :
-                                        event.status === 'draft' ? 'bg-gray-100 text-gray-700' :
-                                        'bg-red-100 text-red-700'
-                                    }`}>
-                                        {event.status}
-                                    </span>
-                                </div>
-                                
-                                <p className="sase-eyebrow mb-3">{event.event_type}</p>
-
-                                <div className="flex flex-col gap-1 mt-4 text-sm">
-                                    <div className="flex items-start gap-2">
-                                        <span className="font-semibold text-[#344674] min-w-[50px]">Time:</span>
-                                        <span className="text-gray-600">
-                                            {new Date(event.start_time).toLocaleString('en-US', {
-                                                timeZone: 'America/New_York',
-                                                weekday: 'short', month: 'short', day: 'numeric',
-                                                hour: 'numeric', minute: '2-digit'
-                                            })}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-start gap-2">
-                                        <span className="font-semibold text-[#344674] min-w-[50px]">Place:</span>
-                                        <span className="text-gray-600">
-                                            {event.location ?? "Not specified"}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-[#344674] min-w-[50px]">Check-ins:</span>
-                                        <span className="text-gray-600 flex items-center gap-3">
-                                            {event.checkin_count}
-                                            {event.forms && event.forms.length > 0 && (
-                                                <span className="text-[0.65rem] bg-[#e9eef8] text-[#344674] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-[#89abe3]">
-                                                    RSVPs: {event.rsvp_count}
-                                                </span>
-                                            )}
-                                        </span>
-                                    </div>
-                                    {event.forms && event.forms.length > 0 && (
-                                        <div className="flex items-start gap-2 mt-2 pt-2 border-t border-gray-100">
-                                            <span className="font-semibold text-[#344674] min-w-[50px]">Forms:</span>
-                                            <span className="text-gray-600 flex flex-col gap-1">
-                                                {event.forms.map(f => (
-                                                    <Link key={f.id} href={`/forms/admin/responses?id=${f.id}`} className="text-blue-500 hover:underline">
-                                                        {f.title}
-                                                    </Link>
-                                                ))}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col gap-3">
-                                <div className="grid grid-cols-3 gap-3">
-                                    <Link
-                                        href={`/admin/events/${event.id}/edit`}
-                                        className="sase-secondary-button flex items-center justify-center text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs"
-                                    >
-                                        Edit
-                                    </Link>
-
-                                    <Link
-                                        href={`/admin/events/${event.id}/rsvps`}
-                                        className="sase-secondary-button flex items-center justify-center text-center !px-2 !py-2.5 !text-[0.65rem] sm:!text-xs"
-                                    >
-                                        RSVP List
-                                    </Link>
-
-                                    <EventActions
-                                        eventId={event.id}
-                                        status={event.status}
-                                    />
-                                </div>
-
-                                <Link
-                                    href={`/checkin/admin/event/${event.id}/qr`}
-                                    className="sase-primary-button w-full flex items-center justify-center text-center !py-3 !text-sm"
-                                >
-                                    Show QR Code
-                                </Link>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </section>
-    );
+    {searching ? <section aria-label="Event search results">
+      <h2 className="mb-4 text-xl font-bold" aria-live="polite">{matching.length} {matching.length === 1 ? "match" : "matches"}</h2>
+      {matching.length ? cards(matching) : <div className="sase-form-card"><p>No events match your search. Try a type, location, or date.</p></div>}
+    </section> : <>
+      <section aria-labelledby="upcoming-admin-events">
+        <h2 id="upcoming-admin-events" className="mb-4 text-xl font-bold">Upcoming &amp; ongoing <span className="ml-2 text-sm font-medium text-muted-foreground">{upcoming.length}</span></h2>
+        {upcoming.length ? cards(upcoming) : <div className="sase-form-card"><p>No upcoming events. Past events are organized below.</p></div>}
+      </section>
+      {folders.length > 0 && <section className="mt-10" aria-labelledby="past-admin-events">
+        <h2 id="past-admin-events" className="text-xl font-bold">Past events</h2>
+        <p className="mt-2 text-sm text-muted-foreground">Open a folder to review completed events by type.</p>
+        <div className="mt-5 space-y-3">{folders.map(folder => <details key={folder.type} className="group rounded-xl border border-border bg-card">
+          <summary className="flex cursor-pointer list-none items-center gap-3 rounded-xl px-5 py-4 font-bold focus-visible:outline-2 focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden">
+            <ChevronRight size={18} aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-90" /><Folder size={20} aria-hidden="true" className="shrink-0 text-[#5579bd]" />
+            <span>{folder.type}</span><span className="ml-auto rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">{folder.events.length}</span>
+          </summary>
+          <div className="border-t border-border p-4 sm:p-5">{cards(folder.events)}</div>
+        </details>)}</div>
+      </section>}
+    </>}
+  </section>;
 }

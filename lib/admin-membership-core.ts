@@ -84,6 +84,7 @@ export type AdminPayment = {
   buyer: ZeffyPayment["buyer"];
   eligible: boolean;
   eligibilityReason: string | null;
+  emailConflict: string | null;
   match: (ActivePaymentMatch & { member: AdminMember | null }) | null;
 };
 
@@ -131,12 +132,15 @@ function providerError(result: Extract<ZeffyResult<never>, { ok: false }>): Admi
   };
 }
 
-function paymentEligibility(
+export function paymentEligibility(
   payment: ZeffyPayment,
   configuration: MembershipConfiguration,
 ): string | null {
   if (payment.currency !== configuration.expectedCurrency) {
     return `Payment currency must be ${configuration.expectedCurrency}.`;
+  }
+  if (payment.amountCents !== configuration.expectedAmountCents) {
+    return `Payment amount must be ${configuration.expectedAmountCents} cents.`;
   }
   if (payment.refundedAmountCents > 0 || payment.netAmountCents !== payment.amountCents) {
     return "Refunded payments cannot be assigned.";
@@ -205,6 +209,11 @@ export async function getAdminMembershipWorkspace(
         ? { ...activeMatch, member: membersById.get(activeMatch.profileId) ?? null }
         : null;
       const eligibilityReason = paymentEligibility(payment, dependencies.configuration);
+      const email = payment.buyer.email?.trim().toLowerCase();
+      const emailMember = email ? memberResult.data.find(member => member.email.trim().toLowerCase() === email && !member.paidMember) : null;
+      const emailConflict = emailMember && activeMatch && activeMatch.profileId !== emailMember.id
+        ? `The payment email matches ${emailMember.firstName} ${emailMember.lastName} (${emailMember.email}), but this payment is already assigned to another account. Review the existing assignment before making changes.`
+        : null;
       return {
         id: payment.id,
         createdAt: payment.createdAt,
@@ -217,10 +226,11 @@ export async function getAdminMembershipWorkspace(
         buyer: payment.buyer,
         eligible: eligibilityReason === null,
         eligibilityReason,
+        emailConflict,
         match,
       };
     })
-    .filter((payment) => includeMatched || payment.match === null)
+    .filter((payment) => includeMatched || payment.match === null || payment.emailConflict !== null)
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt));
 
   return {

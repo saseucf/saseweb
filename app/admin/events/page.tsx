@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createServerSupabase } from "@/lib/supabase-server";
 import AdminEventsClient from "@/components/events/admin-events-client";
+import { latestEditTimes } from "@/lib/admin-list-order";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ type Event = {
     host: string | null;
     status: "draft" | "published" | "cancelled";
     created_at: string;
+    last_edited_at?: string | null;
     forms?: { id: string, title: string }[];
     checkin_count?: number;
     rsvp_count?: number;
@@ -64,6 +66,10 @@ export default async function AdminEventsPage() {
     }
 
     const events = (eventsData ?? []) as Event[];
+    const { data: editLogs } = await supabase.from("admin_logs").select("entity_id, created_at")
+        .eq("entity_type", "events").eq("action", "update").order("created_at", { ascending: false }).limit(1000);
+    const editTimes = latestEditTimes(editLogs ?? []);
+    events.forEach(event => { event.last_edited_at = editTimes[event.id] ?? null; });
 
     const checkinCounts: Record<string, number> = {};
     if (attendancesData) {
@@ -123,7 +129,7 @@ export default async function AdminEventsPage() {
                 </div>
             </div>
 
-            <AdminEventsClient events={events} />
+            <AdminEventsClient events={events} initialNow={Date.now()} />
         </main>
     );
 }

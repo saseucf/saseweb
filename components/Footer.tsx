@@ -2,8 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { isEventQrDisplay } from "@/lib/checkin-display";
 
 export default function Footer() {
+    const pathname = usePathname();
+    if (isEventQrDisplay(pathname)) return null;
     return (
         <footer className="bg-background border-t border-border py-8 px-6 mt-auto">
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">

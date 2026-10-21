@@ -46,31 +46,38 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
 
   const handleCheckIn = async () => {
     if (!userId || !event) return;
+    if (checkingIn) return;
     
     setCheckingIn(true);
     setStatus(null);
 
-    const { error } = await supabase
-      .from('event_attendances')
-      .insert({
-        event_id: event.id,
-        user_id: userId,
-      });
+    try {
+      if (event.status === 'cancelled') throw new Error("This event has been cancelled.");
+      const { error } = await supabase
+        .from('event_attendances')
+        .insert({
+          event_id: event.id,
+          user_id: userId,
+        });
 
-    if (error) {
-      if (error.code === '23505') {
-        setStatus({ success: false, msg: "You are already checked in!" });
-        toast.error("You are already checked in!");
+      if (error) {
+        if (error.code === '23505') {
+          setStatus({ success: true, msg: "You are already checked in!" });
+          toast.success("You are already checked in!");
+        } else {
+          setStatus({ success: false, msg: "Failed to check in. Please try again." });
+          toast.error("Failed to check in. Please try again.");
+        }
       } else {
-        setStatus({ success: false, msg: "Failed to check in. Please try again." });
-        toast.error("Failed to check in. Please try again.");
+        setStatus({ success: true, msg: "Successfully checked in to " + event.title + "!" });
+        toast.success("Successfully checked in to " + event.title + "!");
       }
-    } else {
-      setStatus({ success: true, msg: "Successfully checked in to " + event.title + "!" });
-      toast.success("Successfully checked in to " + event.title + "!");
-    }
     
-    setCheckingIn(false);
+    } catch (error) {
+      setStatus({ success: false, msg: error instanceof Error ? error.message : "Unable to connect. Please try again." });
+    } finally {
+      setCheckingIn(false);
+    }
   };
 
   if (loading) {
@@ -82,7 +89,7 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="flex flex-col items-center justify-start pt-4 sm:pt-0 sm:justify-center min-h-[70vh] space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {status ? (
         <div className="w-full max-w-sm p-8 bg-card border border-border rounded-xl shadow-lg flex flex-col items-center justify-center space-y-6 text-center animate-in zoom-in-95">
@@ -99,6 +106,7 @@ export default function MemberSelfCheckIn({ params }: { params: Promise<{ eventI
             <h2 className="text-2xl font-bold text-[#171d52]">{status.success ? "Checked In!" : "Check-In Failed"}</h2>
             <p className="text-muted-foreground font-medium mt-2">{status.msg}</p>
           </div>
+          {!status.success && event && <button onClick={() => setStatus(null)} className="w-full py-3 rounded-lg border border-border font-bold">Try again</button>}
           <button
             onClick={() => router.push('/membership')}
             className="w-full bg-[#171d52] text-white py-3 rounded-lg font-bold hover:bg-[#5579bd] transition-colors"
