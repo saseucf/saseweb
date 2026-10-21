@@ -29,7 +29,12 @@ export default function EventActions({
         setIsSubmitting(true);
 
         try {
-            await deleteEvent(eventId);
+            const result = await deleteEvent(eventId);
+            if (!result.ok) {
+                setErrorMessage(result.error);
+                setIsSubmitting(false);
+                return;
+            }
             router.refresh();
         } catch (error: unknown) {
             console.error("Could not delete event:", error);
@@ -49,7 +54,12 @@ export default function EventActions({
         setIsSubmitting(true);
 
         try {
-            await cancelEvent(eventId);
+            const result = await cancelEvent(eventId);
+            if (!result.ok) {
+                setErrorMessage(result.error);
+                setIsSubmitting(false);
+                return;
+            }
             router.refresh();
         } catch (error: unknown) {
             console.error("Could not cancel event:", error);

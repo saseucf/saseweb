@@ -1,3 +1,4 @@
+import { normalizeMajor } from "@/lib/majors";
 import { getAdminAuthorization } from "@/lib/admin-membership";
 import { createAdminSupabase } from "@/lib/supabase-server";
 import { membersCsv } from "@/lib/member-tools";
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
     for (const attendance of data) {
       const profile = Array.isArray(attendance.profiles) ? attendance.profiles[0] : attendance.profiles;
       const event = Array.isArray(attendance.events) ? attendance.events[0] : attendance.events;
-      rows.push({ attendance_id: attendance.id, event_id: attendance.event_id, event: event?.title, member_id: attendance.user_id, first_name: profile?.first_name, last_name: profile?.last_name, email: profile?.email, major: profile?.major, graduation_year: profile?.year, points: event?.points, checked_in_at: attendance.checked_in_at, feedback_rating: attendance.feedback_rating, feedback_text: attendance.feedback_text });
+      rows.push({ attendance_id: attendance.id, event_id: attendance.event_id, event: event?.title, member_id: attendance.user_id, first_name: profile?.first_name, last_name: profile?.last_name, email: profile?.email, major: normalizeMajor(profile?.major), graduation_year: profile?.year, points: event?.points, checked_in_at: attendance.checked_in_at, feedback_rating: attendance.feedback_rating, feedback_text: attendance.feedback_text });
     }
     if (data.length < 1000) break;
   }

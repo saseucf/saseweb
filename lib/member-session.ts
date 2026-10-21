@@ -35,4 +35,17 @@ export async function sendMemberWelcome(user: User) {
 export function announceMemberSession(user: User) {
   try { localStorage.setItem("sase:auth", JSON.stringify(user)); } catch { /* Storage may be disabled. */ }
   window.dispatchEvent(new CustomEvent("sase:auth", { detail: { user } }));
+  // Reconcile payments made before registration without delaying sign-in or check-in.
+  void fetch("/api/membership/verify-payment", { method: "POST", keepalive: true })
+    .catch(() => undefined);
+  void requestWorkshopCredit();
+}
+
+export async function requestWorkshopCredit(): Promise<boolean> {
+  try {
+    const response = await fetch("/api/workshop-credit/claim", { method: "POST", keepalive: true });
+    if (!response.ok) return false;
+    const result = await response.json();
+    return result.awarded === true;
+  } catch { return false; }
 }

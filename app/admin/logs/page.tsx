@@ -81,6 +81,14 @@ export default function AdminLogsPage() {
         const actorName = log.actor_first_name ? `${log.actor_first_name} ${log.actor_last_name}` : "Unknown User";
         const title = log.details?.title ? `"${String(log.details.title)}"` : "";
 
+        if (log.action === "workshop_roster_claim") {
+            return {
+                icon: <Activity className="text-blue-500" size={20} />,
+                bg: "bg-blue-100",
+                text: <span>GitHub workshop: {log.actor_id ? "credit reserved for" : "credit owed to"} <span className="font-bold">{String(log.details?.name || "attendee")}</span> · {String(log.details?.points || 30)} points</span>,
+            };
+        }
+
         if (log.action === "update_role" && log.entity_type === "profiles") {
             const subjectName = String(log.details?.user_name || "a user");
             const newRole = String(log.details?.new_role || "member");

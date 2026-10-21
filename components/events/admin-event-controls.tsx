@@ -1,42 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import supabase from "@/lib/auth";
-import { useEffect, useState } from "react";
+import { useProfileRole } from "@/components/use-profile-role";
 
 export default function AdminEventControls() {
-    const [isAdmin, setIsAdmin] = useState(false);
+    const { role, loading } = useProfileRole();
 
-    useEffect(() => {
-        async function checkAdmin() {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
-
-            if (!user) {
-                setIsAdmin(false);
-                return;
-            }
-
-            const { data: profile, error } = await supabase
-                .from("profiles")
-                .select("role")
-                .eq("id", user.id)
-                .single();
-
-            if (error) {
-                console.error("Could not check admin role:", error);
-                setIsAdmin(false);
-                return;
-            }
-
-            setIsAdmin(profile.role === "admin");
-        }
-
-        checkAdmin();
-    }, []);
-
-    if (!isAdmin) {
+    if (loading || role !== "admin") {
         return null;
     }
 

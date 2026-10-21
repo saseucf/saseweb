@@ -63,19 +63,20 @@ export default function AdminUsersPage() {
     async function toggleRole(userId: string, currentRole: string) {
         const newRole = currentRole === "admin" ? "member" : "admin";
         
-        // Optimistic update
-        setProfiles(current => current.map(p => p.id === userId ? { ...p, role: newRole } : p));
-
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from("profiles")
             .update({ role: newRole })
-            .eq("id", userId);
+            .eq("id", userId)
+            .select("role")
+            .single();
 
         if (error) {
             console.error("Error updating role:", error);
             alert("Failed to update role. Please ensure you have run the required SQL migration to grant admins UPDATE permissions on profiles.");
             // Revert on error
             setProfiles(current => current.map(p => p.id === userId ? { ...p, role: currentRole } : p));
+        } else {
+            setProfiles(current => current.map(p => p.id === userId ? { ...p, role: data.role } : p));
         }
     }
 

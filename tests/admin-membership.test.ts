@@ -206,6 +206,19 @@ test("workspace marks wrong-amount and refunded payments as ineligible", async (
   }
 });
 
+test("workspace surfaces an email conflict even when matched payments are hidden", async () => {
+  const result = await getAdminMembershipWorkspace(false, dependencies({
+    listMembers: async () => ({ ok: true, data: [member({ email: " BUYER@example.com " }), member({ id: ADMIN_ID, email: "other@example.com", paidMember: true })] }),
+    listActiveMatches: async () => ({ ok: true, data: [match({ profileId: ADMIN_ID })] }),
+  }));
+  assert.equal(result.ok, true);
+  if (result.ok) {
+    assert.equal(result.data.payments.length, 1);
+    assert.match(result.data.payments[0].emailConflict ?? "", /already assigned to another account/);
+    assert.equal(result.data.payments[0].match?.profileId, ADMIN_ID);
+  }
+});
+
 test("matching re-fetches the trusted Zeffy payment before calling the database RPC", async () => {
   const savedInputs: Parameters<AdminMembershipDependencies["matchPayment"]>[0][] = [];
   const result = await matchAdminMembershipPayment(

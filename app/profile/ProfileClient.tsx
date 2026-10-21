@@ -1,6 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import AutoVerifyPayment from "@/components/membership/auto-verify-payment";
+import AutoClaimWorkshopCredit from "@/components/membership/auto-claim-workshop-credit";
+import { requestWorkshopCredit } from "@/lib/member-session";
+import MajorSelect from "@/components/major-select";
+import { normalizeMajor } from "@/lib/majors";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import {
     AlertCircle,
@@ -72,6 +77,7 @@ const getEventTypeColor = (type: string) => {
 export default function ProfileClient({ initialProfile, checkout, initialAttendances, hasPasswordAuth, userEmail }: { initialProfile: ProfileData, checkout: MembershipCheckoutConfigurationResult, initialAttendances: AttendedEvent[], hasPasswordAuth: boolean, userEmail: string }) {
     const router = useRouter();
     const [profile, setProfile] = useState(initialProfile);
+    const markPaymentVerified = useCallback(() => setProfile(current => ({ ...current, paid_member: true })), []);
     const [firstName, setFirstName] = useState(initialProfile.first_name || "");
     const [lastName, setLastName] = useState(initialProfile.last_name || "");
     const [major, setMajor] = useState(initialProfile.major || "");
@@ -100,7 +106,7 @@ export default function ProfileClient({ initialProfile, checkout, initialAttenda
         const updates = {
             first_name: firstName.trim(),
             last_name: lastName.trim(),
-            major: major.trim(),
+            major: normalizeMajor(major),
             school: school.trim(),
             year: graduationYear.trim(),
             phone_number: phoneNumber.trim(),
@@ -117,6 +123,7 @@ export default function ProfileClient({ initialProfile, checkout, initialAttenda
         } else {
             setSuccessMessage("Profile updated successfully!");
             setProfile({ ...profile, ...updates });
+            void requestWorkshopCredit().then(awarded => { if (awarded) router.refresh(); });
         }
         setSaving(false);
     };
@@ -158,6 +165,8 @@ export default function ProfileClient({ initialProfile, checkout, initialAttenda
 
     return (
         <main className="sase-page pt-[120px] sase-member-page">
+            {!profile.paid_member ? <AutoVerifyPayment onVerified={markPaymentVerified} /> : null}
+            <AutoClaimWorkshopCredit />
             <div className="flex flex-wrap items-center justify-between gap-6 mb-8">
                 <div className="sase-page-header !mb-0">
                     <p className="sase-eyebrow !text-[#4266a4] dark:!text-[#89abe3]">UCF SASE / Profile</p>
@@ -221,14 +230,7 @@ export default function ProfileClient({ initialProfile, checkout, initialAttenda
                             <label className="text-sm font-semibold text-[#171d52] dark:text-gray-200" htmlFor="major">
                                 Major
                             </label>
-                            <input
-                                id="major"
-                                className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]"
-                                value={major}
-                                onChange={(e) => setMajor(e.target.value)}
-                                placeholder="e.g. Computer Science"
-                                required
-                            />
+                            <MajorSelect id="major" className="w-full rounded border border-[#cbd5e8] bg-transparent p-3 text-sm outline-none focus:border-[#5579bd] focus:ring-2 focus:ring-[#dbe5fa]" value={major} onChange={setMajor} required />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">

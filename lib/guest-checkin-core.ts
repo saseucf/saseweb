@@ -2,10 +2,8 @@ import type { parseMemberInput } from "@/lib/member-tools";
 
 type GuestInput = ReturnType<typeof parseMemberInput>;
 export type GuestEvent = { status?: string | null; start_time: string; end_time: string };
-export function guestCheckinIsOpen(event: GuestEvent | null, now: number) {
-  if (!event || event.status === "cancelled") return false;
-  const start = Date.parse(event.start_time), end = Date.parse(event.end_time);
-  return Number.isFinite(start) && Number.isFinite(end) && end >= start && now >= start - 3600000 && now <= end + 3600000;
+export function guestCheckinIsOpen(event: GuestEvent | null) {
+  return event !== null && event.status !== "cancelled";
 }
 
 export async function registerGuestAttendance(input: GuestInput, dependencies: {

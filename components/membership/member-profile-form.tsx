@@ -1,5 +1,8 @@
 "use client";
 
+import MajorSelect from "@/components/major-select";
+import { normalizeMajor } from "@/lib/majors";
+import { requestWorkshopCredit } from "@/lib/member-session";
 import { FormEvent, useState } from "react";
 import { AlertCircle, ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -52,7 +55,7 @@ export default function MemberProfileForm({ profile }: MemberProfileFormProps) {
         .update({
           first_name: firstName.trim(),
           last_name: lastName.trim(),
-          major: major.trim(),
+          major: normalizeMajor(major),
           phone_number: phoneNumber.trim(),
           school: school.trim(),
           year: graduationYear.trim(),
@@ -65,6 +68,7 @@ export default function MemberProfileForm({ profile }: MemberProfileFormProps) {
       }
 
       setSaved(true);
+      void requestWorkshopCredit().then(awarded => { if (awarded) router.refresh(); });
       router.refresh();
     } catch {
       setError("Your profile could not be updated. Check your details and try again.");
@@ -141,13 +145,7 @@ export default function MemberProfileForm({ profile }: MemberProfileFormProps) {
       <div className="grid gap-5 sm:grid-cols-3">
         <label className="space-y-2 text-sm font-bold" htmlFor="major">
           <span>Major</span>
-          <input
-            id="major"
-            className={inputClassName}
-            value={major}
-            onChange={(event) => setMajor(event.target.value)}
-            required
-          />
+          <MajorSelect id="major" className={inputClassName} value={major} onChange={setMajor} required />
         </label>
 
         <label className="space-y-2 text-sm font-bold" htmlFor="school">

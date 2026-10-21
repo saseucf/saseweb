@@ -1,0 +1,47 @@
+.display {
+  height: calc(100dvh - 78px);
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 20px 20px;
+}
+
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.toolbar a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid currentColor; border-radius: 8px; font-size: .8125rem; font-weight: 700; }
+.toolbar a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.content { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px; min-height: 0; min-width: 0; }
+.copy { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-width: 0; text-align: center; }
+.title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; max-width: 26ch; overflow-wrap: anywhere; font-size: clamp(1.25rem, 3.4svh, 2rem); line-height: 1.08; font-weight: 900; letter-spacing: -.025em; text-transform: uppercase; }
+.subtitle { font-size: clamp(.9375rem, 2.5svh, 1.25rem); line-height: 1.3; font-weight: 700; opacity: .8; }
+.instructions { display: none; max-width: 32ch; font-size: .9375rem; line-height: 1.6; opacity: .8; }
+.counter { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid color-mix(in srgb, currentColor 20%, transparent); border-radius: 999px; padding: 8px 16px; font-size: .8125rem; font-weight: 700; }
+.counter strong { font-size: 1.25rem; line-height: 1; font-weight: 900; }
+
+/* Both dimensions come from the remaining grid track, keeping the square
+   within the screen on short laptops and portrait/landscape phones. */
+.qrArea { container-type: size; display: grid; place-items: center; min-width: 0; min-height: 0; }
+.panel { width: min(100cqw, 100cqh, 640px); aspect-ratio: 1; padding: clamp(10px, 2vw, 22px); border-radius: 24px; box-shadow: 0 14px 40px rgb(0 0 0 / .12); }
+.panel svg { display: block; }
+
+@media (min-width: 768px), (orientation: landscape) {
+  .display { gap: 16px; padding: 16px 32px 24px; }
+  .content { width: min(100%, 1320px); justify-self: center; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); grid-template-rows: minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); }
+  .copy { align-items: flex-start; gap: clamp(12px, 2.5svh, 28px); text-align: left; }
+  .title { -webkit-line-clamp: 3; max-width: 18ch; font-size: clamp(1.5rem, 5.5svh, 3.75rem); }
+  .subtitle { font-size: clamp(1rem, 3svh, 1.75rem); }
+  .instructions { display: block; }
+  .counter { padding: 12px 20px; font-size: .9375rem; }
+  .counter strong { font-size: clamp(1.5rem, 4svh, 2.5rem); }
+}
+
+@media (max-height: 600px) {
+  .display { gap: 8px; padding: 8px 16px 12px; }
+  .toolbar a { min-height: 36px; padding-block: 6px; }
+  .copy { gap: 8px; }
+  .title { -webkit-line-clamp: 2; font-size: clamp(1.125rem, 4svh, 1.75rem); }
+  .instructions { display: none; }
+  .counter { padding: 7px 12px; font-size: .75rem; }
+  .counter strong { font-size: 1.25rem; }
+  .panel { border-radius: 16px; padding: 10px; }
+}

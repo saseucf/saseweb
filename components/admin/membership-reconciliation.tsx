@@ -89,6 +89,7 @@ export default function MembershipReconciliation() {
   const [error, setError] = useState<ApiError | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
+  const [syncMessage, setSyncMessage] = useState("");
 
   const loadWorkspace = useCallback(async (signal?: AbortSignal) => {
     const requestId = requestIdRef.current + 1;
@@ -96,6 +97,15 @@ export default function MembershipReconciliation() {
     setLoading(true);
     setError(null);
     try {
+      const syncResponse = await fetch("/api/admin/membership-payments/sync", { method: "POST", signal });
+      const sync = await readEnvelope<{ matched: number; failed: number }>(syncResponse);
+      if (requestId === requestIdRef.current) {
+        if (!sync.ok) setSyncMessage(sync.error.message);
+        else {
+          setSyncMessage(sync.data.failed ? "Some matching payments could not be assigned. Refresh to retry." : sync.data.matched ? `${sync.data.matched} memberships matched automatically by email.` : "Exact email matches are up to date. Payments already assigned to another member require officer review.");
+          if (sync.data.matched) setAnnouncement(`${sync.data.matched} memberships matched automatically by email.`);
+        }
+      }
       const response = await fetch(
         `/api/admin/membership-payments?includeMatched=${includeMatched}`,
         { cache: "no-store", signal },
@@ -274,7 +284,7 @@ export default function MembershipReconciliation() {
         <div>
           <p className="sase-eyebrow !text-[#4266a4] dark:!text-[#89abe3]">UCF SASE / Admin workspace</p>
           <h1>Membership payments</h1>
-          <p>Review Zeffy dues and assign each confirmed payment to one member.</p>
+          <p>Matching registered emails are marked paid automatically. Review payments made with a different email below.</p>
         </div>
         <button
           type="button"
@@ -287,6 +297,7 @@ export default function MembershipReconciliation() {
         </button>
       </div>
 
+      {syncMessage ? <p className="mx-auto mt-4 max-w-[1180px] text-sm text-muted-foreground" role="status">{syncMessage}</p> : null}
       <section
         className="mx-auto mt-10 max-w-[1180px]"
         aria-labelledby="payment-list-heading"
@@ -383,7 +394,7 @@ export default function MembershipReconciliation() {
                       {formatMoney(payment.netAmountCents, payment.currency)}
                     </span>
                     <span className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider">
-                      {payment.match ? (
+                      {payment.emailConflict ? <><AlertCircle className="size-4 text-amber-600" aria-hidden="true" />Email conflict</> : payment.match ? (
                         <>
                           <CheckCircle2 className="size-4 text-emerald-600" aria-hidden="true" />
                           Matched
@@ -591,6 +602,7 @@ export default function MembershipReconciliation() {
                 </div>
               </dl>
 
+              {selectedPayment.emailConflict ? <p role="status" className="mb-4 border border-amber-500/40 bg-amber-500/10 p-4 text-sm">{selectedPayment.emailConflict}</p> : null}
               {!selectedPayment.eligible && !selectedPayment.match ? (
                 <div className="mt-6 flex gap-3 border border-destructive/35 bg-destructive/10 p-4" role="alert">
                   <AlertCircle className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />

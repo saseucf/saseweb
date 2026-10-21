@@ -1,5 +1,6 @@
 "use client"
 
+import MajorSelect from "@/components/major-select";
 import { FormEvent, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FaDiscord } from "react-icons/fa"
@@ -82,17 +83,24 @@ export function LoginForm() {
             if (step === "profile") {
                 const { data, error } = await createMemberFromProfile({
                     email, password, first_name: firstName, last_name: lastName, major, year, school: "University of Central Florida",
-                }, callbackUrl(), credentials => supabase.auth.signUp(credentials))
+                }, callbackUrl(), async credentials => {
+                    const response = await fetch("/api/auth/register", {
+                        method: "POST", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: credentials.email, password: credentials.password, ...credentials.options.data }),
+                    })
+                    const result = await response.json()
+                    if (!response.ok) throw new Error(result.error || "Unable to create your account.")
+                    return supabase.auth.signInWithPassword({ email: credentials.email, password: credentials.password })
+                })
                 if (error) throw error
                 if (!data.session) {
-                    setStep("verify"); setPassword("")
-                    setNotice("Check your email for a confirmation link to finish joining and continue. If you already have an account, sign in with your existing password or use Forgot password.")
-                    return
+                    throw new Error("Your account was created. Please sign in to continue.")
                 }
                 const destination = await memberDestination(data.session.user, redirectUrl)
                 announceMemberSession(data.session.user)
                 await sendMemberWelcome(data.session.user)
                 router.replace(destination)
+                router.refresh()
                 return
             }
             const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password })
@@ -112,6 +120,7 @@ export function LoginForm() {
             announceMemberSession(data.user)
             await sendMemberWelcome(data.user)
             router.replace(destination)
+            router.refresh()
         } catch (error) { setError(error instanceof Error ? error.message : "Unable to connect. Please try again.") }
         finally { setIsLoading(false) }
     }
@@ -189,7 +198,7 @@ export function LoginForm() {
                         <label className={styles.field}>First name<input className={styles.input} autoComplete="given-name" value={firstName} onChange={event => setFirstName(event.target.value)} required maxLength={100} /></label>
                         <label className={styles.field}>Last name<input className={styles.input} autoComplete="family-name" value={lastName} onChange={event => setLastName(event.target.value)} required maxLength={100} /></label>
                     </div>
-                    <label className={styles.field}>Major<input className={styles.input} value={major} onChange={event => setMajor(event.target.value)} required maxLength={150} placeholder="e.g. Computer Science" /></label>
+                    <label className={styles.field}>Major<MajorSelect className={styles.input} value={major} onChange={setMajor} required /></label>
                     <label className={styles.field}>Graduation year<input className={styles.input} inputMode="numeric" pattern="[0-9]{4}" minLength={4} maxLength={4} value={year} onChange={event => setYear(event.target.value)} required placeholder="e.g. 2028" /></label>
                     <button type="button" disabled={isLoading} className={styles.forgotLink} onClick={() => { setStep("credentials"); setNotice(""); setError("") }}>Back to sign in</button>
                 </fieldset>}

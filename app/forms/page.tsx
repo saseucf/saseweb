@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import supabase from "@/lib/auth";
+import { searchEditableItems } from "@/lib/admin-list-order";
 
 type AvailableForm = {
     id: string;
@@ -10,7 +11,9 @@ type AvailableForm = {
     title: string;
     description: string | null;
     type: string | null;
-    events: { event_type: string } | null;
+    created_at: string;
+    updated_at: string | null;
+    events: { event_type: string; title: string; location: string | null; start_time: string } | null;
 };
 
 export default function Forms(){
@@ -42,7 +45,7 @@ export default function Forms(){
         async function loadAvailableForms() {
             const { data, error } = await supabase
                 .from("forms")
-                .select("id, slug, title, description, type, events(event_type)")
+                .select("id, slug, title, description, type, created_at, updated_at, events(event_type, title, location, start_time)")
                 .eq("is_open", true)
                 .order("created_at", { ascending: false });
 
@@ -65,16 +68,14 @@ export default function Forms(){
     // Compute display types for each form and unique types for filter
     const formsWithTypes = availableForms.map(form => ({
         ...form,
+        start_time: form.events?.start_time,
         displayType: form.events?.event_type || form.type || "General"
     }));
 
     const uniqueTypes = Array.from(new Set(formsWithTypes.map(f => f.displayType))).sort();
 
-    const filteredForms = formsWithTypes.filter(form => {
-        const matchesSearch = form.title.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesType = selectedType ? form.displayType === selectedType : true;
-        return matchesSearch && matchesType;
-    });
+    const filteredForms = searchEditableItems(formsWithTypes.filter(form => !selectedType || form.displayType === selectedType), searchQuery,
+        form => [form.description, form.slug, form.displayType, form.events?.title, form.events?.location]);
 
     return (
         <main className="sase-page sase-member-page">
@@ -110,7 +111,8 @@ export default function Forms(){
                         </div>
                         <input
                             type="text"
-                            placeholder="Search forms by name..."
+                            aria-label="Search open forms"
+                            placeholder="Search forms, descriptions, or types..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="block w-full pl-10 pr-3 py-2 border border-border rounded-xl leading-5 bg-card placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#e9eef8] focus:border-[#89abe3] transition-all sm:text-sm"

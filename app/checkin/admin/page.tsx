@@ -1,4 +1,5 @@
 "use client"
+import { normalizeMajor } from "@/lib/majors";
 import CsvDownloadButton from "@/components/csv-download-button";
 
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, LogOut, CheckCircle, XCircle, Camera, QrCode, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import QRScanner from "@/components/checkin/QRScanner";
+import Link from "next/link";
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
@@ -339,6 +341,8 @@ export default function AdminDashboard() {
         )}
       </div>
 
+      {selectedEvent && <Link href={`/checkin/admin/event/${selectedEvent}/appearance`} className="block w-full rounded-xl border border-border bg-card px-4 py-3 text-center text-sm font-bold text-foreground hover:bg-muted">Check-in appearance</Link>}
+
       {/* Results / Status Card */}
       {checkInLoading && (
         <div className="w-full p-8 bg-card border border-border rounded-xl shadow-sm flex flex-col items-center justify-center space-y-4">
@@ -368,7 +372,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="bg-muted p-3 rounded-lg border border-[#e9eef8]">
                 <span className="text-muted-foreground font-semibold block text-[10px] uppercase tracking-wider mb-1">Major</span>
-                <span className="font-bold text-foreground">{scannedUser.major || "N/A"}</span>
+                <span className="font-bold text-foreground">{normalizeMajor(scannedUser.major) || "N/A"}</span>
               </div>
               <div className="bg-muted p-3 rounded-lg border border-[#e9eef8]">
                 <span className="text-muted-foreground font-semibold block text-[10px] uppercase tracking-wider mb-1">Year</span>

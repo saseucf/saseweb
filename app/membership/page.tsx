@@ -9,6 +9,8 @@ import { redirect } from "next/navigation";
 
 import MemberQr from "@/components/membership/member-qr";
 import VerifyPaymentButton from "@/components/membership/verify-payment-button";
+import AutoVerifyPayment from "@/components/membership/auto-verify-payment";
+import AutoClaimWorkshopCredit from "@/components/membership/auto-claim-workshop-credit";
 import { getMemberNames } from "@/lib/member-names";
 import { getMembershipCheckoutConfiguration } from "@/lib/membership-checkout";
 import { createAdminSupabase, createServerSupabase } from "@/lib/supabase-server";
@@ -76,6 +78,8 @@ export default async function MembershipPage() {
 
   return (
     <main className="sase-page" style={{ paddingTop: "120px" }}>
+      {!profile.paid_member ? <AutoVerifyPayment /> : null}
+      <AutoClaimWorkshopCredit />
       <div className="sase-page-header">
         <h1>Hi, {greetingName}</h1>
       </div>

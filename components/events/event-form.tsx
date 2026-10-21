@@ -7,6 +7,7 @@ import Link from "next/link";
 import { PRESET_EVENT_TYPES, getEventTypeColor } from "@/lib/event-type-colors";
 import { saveEvent } from "@/app/actions/events";
 import { getAcademicFields } from "@/app/actions/academic-fields";
+import { DEFAULT_EVENT_LOCATION, DEFAULT_EVENT_POINTS, EVENT_DURATIONS, durationMinutes, eventEndFromDuration, localDateTimeValue as toDateTimeLocal } from "@/lib/event-scheduling";
 
 type EventData = {
     id: string;
@@ -26,20 +27,6 @@ type EventData = {
 type EventFormProps = {
     event?: EventData;
 };
-
-function toDateTimeLocal(timestamp?: string) {
-    if (!timestamp) return "";
-
-    const date = new Date(timestamp);
-
-    // Convert the stored UTC timestamp back into local time
-    // for the datetime-local input.
-    const offset = date.getTimezoneOffset() * 60_000;
-
-    return new Date(date.getTime() - offset)
-        .toISOString()
-        .slice(0, 16);
-}
 
 export default function EventForm({
     event: existingEvent,
@@ -78,11 +65,18 @@ export default function EventForm({
         isWorkshopSub ? initialType.replace("Workshop - ", "") : ""
     );
     const [customEventType, setCustomEventType] = useState(isPreset || isWorkshopSub ? "" : initialType);
+    const initialDuration = durationMinutes(existingEvent?.start_time, existingEvent?.end_time);
+    const [startValue, setStartValue] = useState(toDateTimeLocal(existingEvent?.start_time));
+    const [duration, setDuration] = useState(EVENT_DURATIONS.includes(initialDuration) ? String(initialDuration) : Number.isSafeInteger(initialDuration) && initialDuration <= 10080 ? "custom" : "manual");
+    const [customMinutes, setCustomMinutes] = useState(String(initialDuration));
+    const [manualEnd, setManualEnd] = useState(toDateTimeLocal(existingEvent?.end_time));
+    const endValue = duration === "manual" ? manualEnd : toDateTimeLocal(eventEndFromDuration(startValue, Number(duration === "custom" ? customMinutes : duration)));
 
     async function handleSubmit(
         submitEvent: React.FormEvent<HTMLFormElement>
     ) {
         submitEvent.preventDefault();
+        if (isSubmitting) return;
 
         setErrorMessage(null);
         setIsSubmitting(true);
@@ -138,9 +132,8 @@ export default function EventForm({
             formData.get("host") ?? ""
         ).trim();
 
-        const points = Number(
-            formData.get("points") ?? 1
-        );
+        const pointsValue = String(formData.get("points") ?? "").trim();
+        const points = pointsValue === "" ? DEFAULT_EVENT_POINTS : Number(pointsValue);
 
         // Capacity is optional. Store an empty field as NULL
         // instead of an empty string because the database expects an integer.
@@ -162,8 +155,12 @@ export default function EventForm({
             return;
         }
 
-        // Prevent an event from ending before or at its start time.
-        if (new Date(endTime) <= new Date(startTime)) {
+        const startTimestamp = Date.parse(startTime);
+        const calculatedEnd = duration === "manual" ? endTime : eventEndFromDuration(startTime, Number(duration === "custom" ? customMinutes : duration));
+        const endTimestamp = Date.parse(calculatedEnd);
+        // Preserve elapsed duration even when a daylight-saving change repeats
+        // a local clock time. Do not re-parse the displayed calculated end time.
+        if (!Number.isFinite(startTimestamp) || !Number.isFinite(endTimestamp) || endTimestamp <= startTimestamp) {
             setErrorMessage(
                 "Event end time must be after the start time."
             );
@@ -173,33 +170,37 @@ export default function EventForm({
 
         // datetime-local returns a timezone-less local value.
         // Convert it to an ISO UTC timestamp before storing it in TIMESTAMPTZ.
-        const startTimeISO = new Date(startTime).toISOString();
-        const endTimeISO = new Date(endTime).toISOString();
+        const startTimeISO = new Date(startTimestamp).toISOString();
+        const endTimeISO = new Date(endTimestamp).toISOString();
 
         const eventData = {
             title,
             description: description || null,
             event_type: eventType,
-            location: location || null,
+            location: location || DEFAULT_EVENT_LOCATION,
             start_time: startTimeISO,
             end_time: endTimeISO,
             capacity,
             points,
             host: host || null,
             status,
-            academic_field_id: academicFieldId,
+            ...(formData.has("academic_field_id") ? { academic_field_id: academicFieldId } : {}),
         };
 
         try {
-            await saveEvent(eventData, existingEvent?.id);
+            const result = await saveEvent(eventData, existingEvent?.id);
+            if (!result.ok) {
+                setErrorMessage(`Could not save event. ${result.error}`);
+                setIsSubmitting(false);
+                return;
+            }
             
             // After creating or editing, return to the admin event management page.
             router.push("/admin/events");
             router.refresh();
         } catch (error: unknown) {
             console.error("Could not save event:", error);
-            const message = error instanceof Error ? error.message : "Check your dates and fields.";
-            setErrorMessage(`Could not save event. ${message}`);
+            setErrorMessage("Could not reach event management. Your entries are still here. Please try again.");
             setIsSubmitting(false);
         }
         }
@@ -325,7 +326,7 @@ export default function EventForm({
                 </div>
             </div>
 
-            <div className="flex flex-col gap-1">
+            {(academicFields.length > 0 || existingEvent?.academic_field_id) && <div className="flex flex-col gap-1">
                 <label
                     htmlFor="academic_field_id"
                     className="text-sm font-semibold text-foreground"
@@ -343,7 +344,7 @@ export default function EventForm({
                         <option key={f.id} value={f.id}>{f.name}</option>
                     ))}
                 </select>
-            </div>
+            </div>}
 
             <div className="flex flex-col gap-1">
                 <label
@@ -358,6 +359,7 @@ export default function EventForm({
                     name="location"
                     type="text"
                     defaultValue={existingEvent?.location ?? ""}
+                    placeholder="TBD"
                     className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                 />
             </div>
@@ -376,29 +378,42 @@ export default function EventForm({
                         id="start_time"
                         name="start_time"
                         type="datetime-local"
-                        defaultValue={toDateTimeLocal(
-                            existingEvent?.start_time
-                        )}
+                        value={startValue}
+                        onChange={event => setStartValue(event.target.value)}
                         required
                         className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
                 </div>
 
                 <div className="flex flex-col gap-1">
+                    <label htmlFor="duration" className="text-sm font-semibold text-foreground">Duration</label>
+                    <select id="duration" value={duration} onChange={event => {
+                        if (event.target.value === "manual") setManualEnd(endValue);
+                        setDuration(event.target.value);
+                    }} className="border rounded-md p-2 bg-muted text-foreground">
+                        {EVENT_DURATIONS.map(minutes => <option key={minutes} value={minutes}>{minutes < 60 ? `${minutes} minutes` : `${minutes / 60} ${minutes === 60 ? "hour" : "hours"}`}</option>)}
+                        <option value="custom">Custom duration</option>
+                        <option value="manual">Set end time manually</option>
+                    </select>
+                    {duration === "custom" && <label className="mt-2 text-sm">Duration in minutes<input aria-label="Custom duration in minutes" type="number" min={1} max={10080} step={1} required value={customMinutes} onChange={event => setCustomMinutes(event.target.value)} className="mt-1 w-full rounded-md border bg-muted p-2 text-foreground" /></label>}
+                    <p className="text-xs text-muted-foreground">End time updates automatically when the start or duration changes.</p>
+                </div>
+
+                <div className="flex flex-col gap-1 sm:col-span-2">
                     <label
                         htmlFor="end_time"
                         className="text-sm font-semibold text-foreground"
                     >
-                        End Time
+                        End Time {duration !== "manual" && "(calculated)"}
                     </label>
 
                     <input
                         id="end_time"
                         name="end_time"
                         type="datetime-local"
-                        defaultValue={toDateTimeLocal(
-                            existingEvent?.end_time
-                        )}
+                        value={endValue}
+                        readOnly={duration !== "manual"}
+                        onChange={event => setManualEnd(event.target.value)}
                         required
                         className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
@@ -420,7 +435,7 @@ export default function EventForm({
                         name="points"
                         type="number"
                         min="0"
-                        defaultValue={existingEvent?.points ?? 1}
+                        defaultValue={existingEvent?.points ?? DEFAULT_EVENT_POINTS}
                         required
                         className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />
@@ -464,7 +479,7 @@ export default function EventForm({
 
             {/* Display submission errors without leaving the form. */}
             {errorMessage && (
-                <div className="p-3 bg-red-50 text-red-800 border border-red-200 rounded-md text-sm">
+                <div role="alert" className="p-3 bg-red-50 text-red-800 border border-red-200 rounded-md text-sm">
                     {errorMessage}
                 </div>
             )}
