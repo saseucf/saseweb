@@ -7,7 +7,7 @@ import supabase from "@/lib/auth";
 
 type Question = {
   id: string;
-  type: "short_text" | "paragraph" | "multiple_choice" | "checkbox" | "select";
+  type: "short_text" | "paragraph" | "multiple_choice" | "checkbox";
   label: string;
   required: boolean;
   options?: string[];
@@ -241,18 +241,6 @@ export default function FormResponsePage() {
                     </label>
                   ))}
                 </div>
-              )}
-
-              {question.type === "select" && (
-                <select
-                  className="w-full rounded-xl border border-border bg-gray-50 p-4 outline-none focus:bg-card focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
-                  value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
-                  onChange={(event) => updateAnswer(question.id, event.target.value)}
-                  required={question.required}
-                >
-                  <option value="">Select an option</option>
-                  {question.options?.map((option) => <option key={option} value={option}>{option}</option>)}
-                </select>
               )}
 
               {question.type === "checkbox" && (

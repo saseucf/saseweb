@@ -13,9 +13,8 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LumaHacks | UCF SASE",
-  description: "Preregister for LumaHacks by UCF SASE.",
-  metadataBase: new URL("https://lumahacks.ucfsase.com"),
+  title: "UCF SASE",
+  description: "Society of Asian Scientists and Engineers UCF Chapter",
   manifest: "/manifest.webmanifest",
 };
 
@@ -26,6 +25,8 @@ export const viewport = {
   maximumScale: 1,
 };
 
+import GlobalNav from "@/components/GlobalNav";
+import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 
@@ -37,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
-        className={`${orbitron.variable} ${robotoMono.variable} font-sans antialiased min-h-screen flex flex-col`}
+        className={`${orbitron.variable} ${robotoMono.variable} font-sans antialiased pt-[78px] min-h-screen flex flex-col`}
         suppressHydrationWarning
       >
         <ThemeProvider
@@ -46,9 +47,11 @@ export default function RootLayout({
           forcedTheme="light"
           disableTransitionOnChange
         >
+          <GlobalNav />
           <div className="flex-1 flex flex-col">
             {children}
           </div>
+          <Footer />
           <Toaster position="bottom-right" richColors />
         </ThemeProvider>
       </body>

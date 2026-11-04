@@ -19,9 +19,6 @@ CREATE TABLE public.profiles (
     major TEXT NOT NULL,
     year TEXT NOT NULL,
     school TEXT NOT NULL,
-    -- Hackathon-specific fields remain independent from member profile data.
-    university TEXT,
-    hackathon_participating BOOLEAN DEFAULT FALSE NOT NULL,
     role TEXT DEFAULT 'member' NOT NULL,
     is_admin BOOLEAN DEFAULT FALSE NOT NULL,
     -- Names auto-filled from OAuth metadata are only a best guess (see
