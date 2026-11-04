@@ -29,12 +29,14 @@ import GlobalNav from "@/components/GlobalNav";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { headers } from "next/headers";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const requestHeaders = headers();
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
@@ -47,14 +49,30 @@ export default function RootLayout({
           forcedTheme="light"
           disableTransitionOnChange
         >
-          <GlobalNav />
-          <div className="flex-1 flex flex-col">
-            {children}
-          </div>
-          <Footer />
+          <ShellContent requestHeaders={requestHeaders}>{children}</ShellContent>
           <Toaster position="bottom-right" richColors />
         </ThemeProvider>
       </body>
     </html>
+  );
+}
+
+async function ShellContent({
+  requestHeaders,
+  children,
+}: {
+  requestHeaders: Promise<Headers>;
+  children: React.ReactNode;
+}) {
+  const host = (await requestHeaders).get("host")?.split(":")[0].toLowerCase();
+  const isLumaHacksHost = host === "lumahacks.ucfsase.com";
+  return (
+    <>
+      {!isLumaHacksHost && <GlobalNav />}
+      <div className="flex-1 flex flex-col">
+        {children}
+      </div>
+      {!isLumaHacksHost && <Footer />}
+    </>
   );
 }

@@ -1,0 +1,15 @@
+.page { min-height: 100svh; overflow: hidden; position: relative; display: grid; place-items: center; color: #e8fbff; background: radial-gradient(circle at 50% 24%, #0c4662 0, #062d48 31%, #031525 72%, #010b17 100%); font-family: var(--font-mono), monospace; }
+.hero { position: relative; z-index: 1; width: min(90vw, 680px); text-align: center; }
+.eyebrow { margin: 0 0 22px; color: #7de8eb; font-size: .68rem; letter-spacing: .3em; text-transform: uppercase; }
+.title { margin: 0; color: #e8fbff; font-family: var(--font-orbitron), sans-serif; font-size: clamp(3.2rem, 11vw, 8rem); font-weight: 900; letter-spacing: .08em; line-height: .95; text-shadow: 0 0 35px #43d5e566; }
+.title span { display: block; color: #6ee7e9; }
+.tagline { margin: 28px 0 10px; font-family: var(--font-orbitron), sans-serif; font-size: clamp(1rem, 2.4vw, 1.3rem); letter-spacing: .15em; }
+.location { margin: 0 0 36px; color: #9ac5d1; font-size: .75rem; letter-spacing: .08em; }
+.cta { display: inline-block; border-radius: 999px; background: #75e5e3; color: #042034; font-size: .75rem; font-weight: 700; letter-spacing: .15em; padding: 17px 34px; text-decoration: none; text-transform: uppercase; transition: transform .2s, box-shadow .2s, background .2s; }
+.cta:hover { background: #b7ffff; box-shadow: 0 0 30px #75e5e388; transform: translateY(-2px); }
+.ambient { inset: 0; overflow: hidden; pointer-events: none; position: absolute; }
+.glow { background: #46d9e822; border-radius: 50%; filter: blur(35px); height: 38vw; left: 31%; position: absolute; top: 8%; width: 38vw; }
+.bubble { border: 1px solid #80e9ef55; border-radius: 50%; position: absolute; }
+.bubbleOne { bottom: 8%; height: 11px; left: 16%; width: 11px; }
+.bubbleTwo { height: 7px; right: 18%; top: 23%; width: 7px; }
+.bubbleThree { bottom: 24%; height: 20px; right: 11%; width: 20px; }
