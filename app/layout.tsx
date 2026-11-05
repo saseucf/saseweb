@@ -13,7 +13,7 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "UCF SASE",
+  title: "LumaHacks | UCF SASE",
   description: "Society of Asian Scientists and Engineers UCF Chapter",
   manifest: "/manifest.webmanifest",
 };
@@ -64,15 +64,14 @@ async function ShellContent({
   requestHeaders: Promise<Headers>;
   children: React.ReactNode;
 }) {
-  const host = (await requestHeaders).get("host")?.split(":")[0].toLowerCase();
-  const isLumaHacksHost = host === "lumahacks.ucfsase.com";
+  const isLumaHacksLanding = (await requestHeaders).get("x-lumahacks-landing") === "true";
   return (
     <>
-      {!isLumaHacksHost && <GlobalNav />}
+      {!isLumaHacksLanding && <GlobalNav />}
       <div className="flex-1 flex flex-col">
         {children}
       </div>
-      {!isLumaHacksHost && <Footer />}
+      {!isLumaHacksLanding && <Footer />}
     </>
   );
 }
