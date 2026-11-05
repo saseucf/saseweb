@@ -7,7 +7,7 @@ import supabase from "@/lib/auth";
 
 type Question = {
   id: string;
-  type: "short_text" | "paragraph" | "multiple_choice" | "checkbox" | "select";
+  type: "short_text" | "paragraph" | "multiple_choice" | "checkbox" | "select" | "wheel";
   label: string;
   required: boolean;
   options?: string[];
@@ -32,6 +32,8 @@ export default function FormResponsePage() {
   const [answers, setAnswers] = useState<Answers>({});
   const [message, setMessage] = useState("Loading form...");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [wheelSelections, setWheelSelections] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function loadForm() {
@@ -77,6 +79,11 @@ export default function FormResponsePage() {
 
   function updateAnswer(questionId: string, value: string | string[]) {
     setAnswers((current) => ({ ...current, [questionId]: value }));
+  }
+
+  function updateWheelAnswer(questionId: string, value: string) {
+    setWheelSelections((current) => ({ ...current, [questionId]: value }));
+    updateAnswer(questionId, value === "Other" ? "" : value);
   }
 
   function toggleCheckbox(questionId: string, option: string, checked: boolean) {
@@ -174,6 +181,29 @@ export default function FormResponsePage() {
     );
   }
 
+  const isLumaHacks = params.slug === "lumahacks";
+
+  if (isLumaHacks && !hasStarted) {
+    return (
+      <main className="sase-page">
+        <div className="max-w-3xl mx-auto text-center py-16 md:py-28 px-6">
+          <p className="sase-eyebrow">UCF SASE presents</p>
+          <h1 className="mt-4">LumaHacks</h1>
+          <p className="text-xl text-gray-600 mt-6 max-w-xl mx-auto">
+            {form.description || "Join us for LumaHacks. Preregister now to save your spot."}
+          </p>
+          <button
+            type="button"
+            className="sase-primary-button mt-10 min-w-48"
+            onClick={() => setHasStarted(true)}
+          >
+            Start preregistration
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="sase-page">
       <div className="sase-page-header">
@@ -255,6 +285,31 @@ export default function FormResponsePage() {
                     <option key={option} value={option}>{option}</option>
                   ))}
                 </select>
+              )}
+
+              {question.type === "wheel" && (
+                <div className="flex flex-col gap-3">
+                  <select
+                    className="w-full rounded-xl border border-border bg-gray-50 p-4 outline-none focus:bg-card focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
+                    value={wheelSelections[question.id] || ""}
+                    onChange={(event) => updateWheelAnswer(question.id, event.target.value)}
+                    required={question.required && wheelSelections[question.id] !== "Other"}
+                  >
+                    <option value="">Spin to choose an option</option>
+                    {question.options?.map((option) => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                  {wheelSelections[question.id] === "Other" && (
+                    <input
+                      className="w-full rounded-xl border border-border bg-gray-50 p-4 outline-none focus:bg-card focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
+                      placeholder="Type your answer"
+                      value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
+                      onChange={(event) => updateAnswer(question.id, event.target.value)}
+                      required={question.required}
+                    />
+                  )}
+                </div>
               )}
 
               {question.type === "checkbox" && (
