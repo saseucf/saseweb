@@ -85,6 +85,7 @@ export default function GlobalNav() {
         <NavItem href="/" active={pathname === "/" && !hash} onClick={(e) => handleAnchorNav(e, "")}>Home</NavItem>
         <NavItem href="/about" active={!!pathname?.includes('/about')}>About</NavItem>
         <NavItem href="/events" active={!!pathname?.includes('/events')}>Events</NavItem>
+        <NavItem href="/lumahacks" active={!!pathname?.startsWith('/lumahacks')}>LumaHacks</NavItem>
         <NavItem href="/programs" active={!!pathname?.includes('/programs')}>Programs</NavItem>
         <NavItem href="/team" active={!!pathname?.includes('/team')}>Team</NavItem>
         <NavItem href="/membership" active={!!pathname?.startsWith('/membership')}>Membership</NavItem>

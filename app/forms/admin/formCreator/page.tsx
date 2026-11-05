@@ -8,7 +8,7 @@ import { PlusCircle, Trash2, CheckCircle2 } from "lucide-react";
 
 type Question = {
   id: string;
-  type: "short_text" | "paragraph" | "multiple_choice" | "checkbox";
+  type: "short_text" | "paragraph" | "multiple_choice" | "checkbox" | "select";
   label: string;
   required: boolean;
   options?: string[];
@@ -195,7 +195,7 @@ function FormCreator() {
               ...question,
               type: newType,
               options:
-                newType === "multiple_choice" || newType === "checkbox"
+                newType === "multiple_choice" || newType === "checkbox" || newType === "select"
                   ? question.options || ["Option 1", "Option 2"]
                   : undefined,
             }
@@ -520,6 +520,7 @@ function FormCreator() {
                 <option value="paragraph">Paragraph</option>
                 <option value="multiple_choice">Multiple Choice</option>
                 <option value="checkbox">Checkbox</option>
+                <option value="select">Dropdown</option>
               </select>
             </div>
 
@@ -535,12 +536,14 @@ function FormCreator() {
               )}
 
               {/* Multiple Choice & Checkbox */}
-              {(question.type === "multiple_choice" || question.type === "checkbox") && (
+              {(question.type === "multiple_choice" || question.type === "checkbox" || question.type === "select") && (
                 <div className="flex flex-col gap-3">
                   {question.options?.map((option, optionIndex) => (
                     <div key={optionIndex} className="flex items-center gap-3">
                       {question.type === "multiple_choice" ? (
                         <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                      ) : question.type === "select" ? (
+                        <div className="w-5 h-4 border border-gray-300 rounded"></div>
                       ) : (
                         <div className="w-4 h-4 rounded border-2 border-gray-300"></div>
                       )}
