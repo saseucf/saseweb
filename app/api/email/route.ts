@@ -119,6 +119,7 @@ export async function POST(req: NextRequest) {
         const dividerBorder = isLuma ? "2px solid rgba(0, 210, 255, 0.25)" : "2px solid #e0f2fe";
         const signoffColor1 = isLuma ? "#506b8e" : "#0369a1";
         const signoffColor2 = isLuma ? "#00d2ff" : "#0284c7";
+        const signoffTeam = isLuma ? "UCF SASE Hackathon Team | 2026-2027" : "UCF SASE Event Team";
         const footerBg = isLuma ? "#00051a" : "#0f172a";
 
         const fullHtmlContent = `
@@ -138,7 +139,7 @@ export async function POST(req: NextRequest) {
                         <!-- Sign-off -->
                         <div style="margin-top: 36px; padding-top: 24px; border-top: ${dividerBorder};">
                             <p style="color: ${signoffColor1}; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Sincerely,</p>
-                            <p style="color: ${signoffColor2}; font-size: 18px; font-weight: 700; margin: 0;">UCF SASE & LumaHacks Team</p>
+                            <p style="color: ${signoffColor2}; font-size: 18px; font-weight: 700; margin: 0;">${signoffTeam}</p>
                         </div>
                     </div>
 
