@@ -343,14 +343,14 @@
 
 .fish::before {
   position: absolute;
-  top: 0.45rem;
-  left: -1.35rem;
-  width: 1.4rem;
-  height: 1.4rem;
-  border-top: 2px solid var(--luma-cyan);
-  border-left: 2px solid var(--luma-cyan);
+  top: 0.1rem;
+  left: -1.4rem;
+  width: 1.55rem;
+  height: 2.2rem;
+  background: var(--luma-cyan);
   content: "";
-  transform: rotate(-45deg);
+  clip-path: polygon(100% 0, 100% 100%, 0 50%);
+  opacity: 0.9;
 }
 
 .fish::after {
