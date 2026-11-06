@@ -187,16 +187,38 @@
   );
 }
 
-/* School boid (tiny) */
+/* School boid (interactive school fishes) */
 .boid {
-  width: 8px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(0, 210, 255, 0.7);
-  box-shadow: 0 0 6px 2px rgba(0, 210, 255, 0.5);
+  width: 14px;
+  height: 7px;
+  border-radius: 65% 35% 35% 65%;
+  background: radial-gradient(circle at 70% 50%, #ffffff 0%, #00d2ff 60%, #0052ff 100%);
+  box-shadow: 0 0 10px 2px rgba(0, 210, 255, 0.75), 0 0 20px rgba(0, 82, 255, 0.4);
+  position: absolute;
+  pointer-events: none;
+  will-change: transform;
 }
 
-/* Fish swimming positions */
+.boid::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: 1px;
+  width: 0;
+  height: 0;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  border-left: 6px solid #00d2ff;
+  transform-origin: left center;
+  animation: tailWiggle 0.25s ease-in-out infinite alternate;
+}
+
+@keyframes tailWiggle {
+  from { transform: rotate(-16deg); }
+  to { transform: rotate(16deg); }
+}
+
+/* Background ambient swimming fish positions */
 .fish1  { top: 18%;  animation-duration: 28s; animation-delay: 0s;    }
 .fish2  { top: 35%;  animation-duration: 22s; animation-delay: -7s;   transform: scale(0.65); }
 .fish3  { top: 55%;  animation-duration: 34s; animation-delay: -14s;  }
@@ -205,13 +227,6 @@
 .fish6  { top: 60%;  animation-duration: 25s; animation-delay: -11s;  transform: scale(0.4); }
 .fish7  { top: 42%;  animation-duration: 38s; animation-delay: -5s;   transform: scale(0.7); }
 .fish8  { top: 80%;  animation-duration: 30s; animation-delay: -18s;  transform: scale(0.55); }
-/* boid school */
-.boid1  { top: 30%;  animation-duration: 16s; animation-delay: 0s;    }
-.boid2  { top: 31%;  animation-duration: 16s; animation-delay: -0.3s; }
-.boid3  { top: 29.5%;animation-duration: 16s; animation-delay: -0.6s; }
-.boid4  { top: 32%;  animation-duration: 16s; animation-delay: -0.9s; }
-.boid5  { top: 30.5%;animation-duration: 16s; animation-delay: -1.2s; }
-.boid6  { top: 28%;  animation-duration: 16s; animation-delay: -1.5s; }
 
 @keyframes fishSwim {
   0%   { left: -120px; }
@@ -369,19 +384,15 @@
 
 .heroTitle {
   margin: 0 0 1.5rem;
-  font-size: clamp(4rem, 12vw, 9rem);
+  font-size: clamp(3.2rem, 10vw, 7.5rem);
   font-weight: 900;
-  letter-spacing: -0.045em;
-  line-height: 0.9;
+  letter-spacing: -0.04em;
+  line-height: 1;
   color: #ffffff;
-}
-
-.heroTitleAccent {
-  display: block;
-  color: #00d2ff;
+  white-space: nowrap;
   text-shadow:
-    0 0 40px rgba(0, 210, 255, 0.6),
-    0 0 80px rgba(0, 210, 255, 0.3);
+    0 0 40px rgba(0, 210, 255, 0.4),
+    0 0 80px rgba(0, 82, 255, 0.2);
 }
 
 .heroSubtitle {

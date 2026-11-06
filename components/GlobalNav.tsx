@@ -41,7 +41,7 @@ export default function GlobalNav() {
   };
 
   const isAdminLogin = pathname?.includes("/checkin/admin/login");
-  const isLumaHacks = pathname?.startsWith("/lumahacks");
+  const isLumaHacks = pathname === "/lumahacks" || pathname?.startsWith("/forms/lumahacks");
 
   if (isAdminLogin) return null;
 
@@ -53,18 +53,38 @@ export default function GlobalNav() {
       return <div className="w-16 h-4 bg-muted animate-pulse rounded"></div>;
     }
 
-    const NavItem = ({ href, active, onClick, children }: { href: string; active: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }) => (
-      <Link
-        className={`${isMobile ? 'text-sm py-3 border-b border-border w-full block' : 'text-xs whitespace-nowrap'} font-bold tracking-widest uppercase transition-colors ${active ? (isLumaHacks ? "text-[#5de7ff]" : "text-[#4266a4] dark:text-[#89abe3]") : (isLumaHacks ? "text-[#a7b9d8] hover:text-[#5de7ff]" : "text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3]")}`}
-        href={href}
-        onClick={(e) => {
-          if (onClick) onClick(e);
-          else setIsMobileMenuOpen(false);
-        }}
-      >
-        {children}
-      </Link>
-    );
+    const NavItem = ({ href, active, onClick, children }: { href: string; active: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }) => {
+      const isLumaLink = href === "/lumahacks";
+
+      let colorClasses = "";
+      if (isLumaLink) {
+        // LumaHacks navbar option: dark blue on light mode, white on dark mode (or neon cyan when active on abyssal page)
+        if (isLumaHacks) {
+          colorClasses = active ? "text-[#00d2ff]" : "text-[#506b8e] hover:text-[#00d2ff]";
+        } else {
+          colorClasses = active
+            ? "text-[#141b4d] dark:text-white"
+            : "text-[#141b4d] hover:text-[#0052ff] dark:text-white dark:hover:text-[#00d2ff]";
+        }
+      } else {
+        colorClasses = active
+          ? (isLumaHacks ? "text-[#00d2ff]" : "text-[#4266a4] dark:text-[#89abe3]")
+          : (isLumaHacks ? "text-[#a7b9d8] hover:text-[#00d2ff]" : "text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3]");
+      }
+
+      return (
+        <Link
+          className={`${isMobile ? 'text-sm py-3 border-b border-border w-full block' : 'text-xs whitespace-nowrap'} font-bold tracking-widest uppercase transition-colors ${colorClasses}`}
+          href={href}
+          onClick={(e) => {
+            if (onClick) onClick(e);
+            else setIsMobileMenuOpen(false);
+          }}
+        >
+          {children}
+        </Link>
+      );
+    };
 
     if (isAdmin) {
       return (
@@ -86,7 +106,7 @@ export default function GlobalNav() {
         <NavItem href="/" active={pathname === "/" && !hash} onClick={(e) => handleAnchorNav(e, "")}>Home</NavItem>
         <NavItem href="/about" active={!!pathname?.includes('/about')}>About</NavItem>
         <NavItem href="/events" active={!!pathname?.includes('/events')}>Events</NavItem>
-        <NavItem href="/lumahacks" active={!!pathname?.startsWith('/lumahacks')}>LumaHacks</NavItem>
+        <NavItem href="/lumahacks" active={isLumaHacks}>LumaHacks</NavItem>
         <NavItem href="/programs" active={!!pathname?.includes('/programs')}>Programs</NavItem>
         <NavItem href="/team" active={!!pathname?.includes('/team')}>Team</NavItem>
         <NavItem href="/membership" active={!!pathname?.startsWith('/membership')}>Membership</NavItem>
@@ -95,7 +115,7 @@ export default function GlobalNav() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 shadow-md border-b ${isLumaHacks ? "bg-[#050d2b] border-[#17366e]" : "bg-background border-border"}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 shadow-md border-b ${isLumaHacks ? "bg-[#00072D]/90 backdrop-blur-xl border-[rgba(0,210,255,0.2)]" : "bg-background border-border"}`}>
       
       <Link href="/" className="flex items-center" aria-label="SASE home" onClick={() => setIsMobileMenuOpen(false)}>
         <Image 

@@ -1,9 +1,12 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ChevronDown, Search, X } from "lucide-react";
 import supabase from "@/lib/auth";
+import { MAJORS } from "@/lib/majors";
+import { UNIVERSITIES } from "@/lib/universities";
 import styles from "./lumahacks.module.css";
 
 /* ---- Types ------------------------------------------------ */
@@ -27,23 +30,60 @@ type FormRecord = {
 
 type Answers = Record<string, string | string[]>;
 
-/* ---- Countdown hook --------------------------------------- */
+/* ---- Curated Diet Options for LumaHacks ---- */
+const DIET_OPTIONS = [
+  "No restrictions",
+  "Vegetarian",
+  "Vegan",
+  "Halal",
+  "Kosher",
+  "Gluten-free",
+  "Dairy-free / Lactose intolerant",
+  "Pescatarian",
+  "Nut allergy",
+  "Peanut allergy",
+  "Shellfish allergy",
+  "Egg allergy",
+  "Soy allergy",
+  "Celiac disease",
+  "Other",
+];
+
+/* ---- Precise Countdown hook with Months, Days, Hours, Minutes, Seconds ---- */
 function useCountdown(target: Date) {
-  const [delta, setDelta] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [delta, setDelta] = useState({ months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
+
   useEffect(() => {
     function tick() {
-      const diff = Math.max(0, target.getTime() - Date.now());
-      setDelta({
-        days:    Math.floor(diff / 86_400_000),
-        hours:   Math.floor((diff % 86_400_000) / 3_600_000),
-        minutes: Math.floor((diff % 3_600_000) / 60_000),
-        seconds: Math.floor((diff % 60_000) / 1_000),
-      });
+      const now = new Date();
+      if (now >= target) {
+        setDelta({ months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      let months = (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
+      const tempDate = new Date(now);
+      tempDate.setMonth(tempDate.getMonth() + months);
+
+      if (tempDate > target) {
+        months--;
+        tempDate.setMonth(tempDate.getMonth() - 1);
+      }
+
+      const diffMs = Math.max(0, target.getTime() - tempDate.getTime());
+      const days = Math.floor(diffMs / 86_400_000);
+      const hours = Math.floor((diffMs % 86_400_000) / 3_600_000);
+      const minutes = Math.floor((diffMs % 3_600_000) / 60_000);
+      const seconds = Math.floor((diffMs % 60_000) / 1_000);
+
+      setDelta({ months, days, hours, minutes, seconds });
     }
+
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, [target]);
+
   return delta;
 }
 
@@ -68,14 +108,11 @@ export default function FormResponsePage() {
   const [message, setMessage] = useState("Loading form...");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const [collegeConfirmed, setCollegeConfirmed] = useState(false);
   const [wheelSelections, setWheelSelections] = useState<Record<string, string>>({});
 
   /* landing-specific state */
   const [email, setEmail] = useState("");
-  const [landingSubmitted, setLandingSubmitted] = useState(false);
   const [landingError, setLandingError] = useState("");
-  const [tridentShock, setTridentShock] = useState(false);
   const [isLandingSubmitting, setIsLandingSubmitting] = useState(false);
 
   /* cursor spotlight */
@@ -91,8 +128,9 @@ export default function FormResponsePage() {
     return () => window.removeEventListener("mousemove", move);
   }, []);
 
-  /* countdown target — March 6, 2026 */
-  const countdown = useCountdown(new Date("2026-03-06T09:00:00-05:00"));
+  /* countdown target — March 6, 2027 09:00:00 EST */
+  const countdownTarget = useRef(new Date("2027-03-06T09:00:00-05:00")).current;
+  const countdown = useCountdown(countdownTarget);
 
   /* load form */
   useEffect(() => {
@@ -147,44 +185,174 @@ export default function FormResponsePage() {
     updateAnswer(questionId, checked ? [...current, option] : current.filter((v) => v !== option));
   }
 
-  /* landing email pre-registration */
+  /* landing email capture — prompt to complete full registration */
   async function handleLandingSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!email.includes("@")) { setLandingError("Please enter a valid email."); return; }
+    if (!email.includes("@")) {
+      setLandingError("Please enter a valid college or university email.");
+      return;
+    }
     setLandingError("");
     setIsLandingSubmitting(true);
 
-    // Store interest email in a simple form_submissions entry if the form exists
     if (form) {
-      const { error } = await supabase.from("form_submissions").insert({
-        form_id: form.id,
-        user_id: null,
-        responses: { interest_email: email, college_eligibility: "pre-registration interest" },
-      });
-      if (error && error.code !== "23505") {
-        setLandingError("Something went wrong. Please try again.");
-        setIsLandingSubmitting(false);
-        return;
+      const emailField = form.schema.find((q) => q.id === "email" || q.label.toLowerCase().includes("email"));
+      if (emailField) {
+        updateAnswer(emailField.id, email);
       }
     }
 
-    setLandingSubmitted(true);
     setIsLandingSubmitting(false);
-    setTridentShock(true);
-    setTimeout(() => setTridentShock(false), 2000);
+    setHasStarted(true);
   }
 
-  /* full form submit */
+  const isLumaHacks = params.slug === "lumahacks";
+
+  /* Reorder and normalize questions specifically for LumaHacks:
+     - Level of study: Undergraduate or Graduate only (no high school)
+     - College/school: searchable wheel
+     - Major: searchable wheel with MAJORS
+     - Diet: searchable wheel with DIET_OPTIONS
+     - Graduation year: included
+     - Agreement checkboxes (code of conduct, info sharing, partnership) placed at the very end
+  */
+  const displayQuestions = useMemo(() => {
+    if (!form) return [];
+    if (!isLumaHacks) return form.schema;
+
+    const baseList: Question[] = [];
+    let hasGraduationYear = false;
+
+    form.schema.forEach((q) => {
+      // 0. Age: MUST be 18+
+      if (q.id === "age" || q.label.toLowerCase().includes("age")) {
+        baseList.push({
+          ...q,
+          id: "age",
+          type: "select",
+          label: "Age (Must be 18+ to participate)",
+          options: ["18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30+"],
+          required: true,
+        });
+        return;
+      }
+
+      // 1. Level of study: Undergraduate or Graduate only
+      if (q.id === "level_of_study" || q.label.toLowerCase().includes("level of study")) {
+        baseList.push({
+          ...q,
+          id: "level_of_study",
+          type: "multiple_choice",
+          label: "Level of Study (College/University)",
+          options: ["Undergraduate", "Graduate"],
+          required: true,
+        });
+        return;
+      }
+
+      // 2. School/college: searchable wheel with full UNIVERSITIES list
+      if (q.id === "school" || q.label.toLowerCase().includes("school")) {
+        baseList.push({
+          ...q,
+          id: "school",
+          type: "wheel",
+          label: "College or University (Official Name)",
+          options: UNIVERSITIES,
+          required: true,
+        });
+        return;
+      }
+
+      // 3. Major: searchable wheel with MAJORS list
+      if (q.id === "major" || q.label.toLowerCase().includes("major")) {
+        baseList.push({
+          ...q,
+          id: "major",
+          type: "wheel",
+          label: "Major or Field of Study",
+          options: [...MAJORS],
+          required: true,
+        });
+        return;
+      }
+
+      // 4. Diet: searchable wheel with DIET_OPTIONS
+      if (q.id === "dietary_restrictions" || q.label.toLowerCase().includes("diet")) {
+        baseList.push({
+          ...q,
+          id: "dietary_restrictions",
+          type: "wheel",
+          label: "Dietary Restrictions or Needs",
+          options: DIET_OPTIONS,
+          required: false,
+        });
+        return;
+      }
+
+      if (q.id === "graduation_year" || q.label.toLowerCase().includes("graduation year")) {
+        hasGraduationYear = true;
+      }
+
+      baseList.push(q);
+    });
+
+    // If schema doesn't already have graduation year, inject it right after school/level of study
+    if (!hasGraduationYear) {
+      const gradYearQuestion: Question = {
+        id: "graduation_year",
+        type: "select",
+        label: "Expected Graduation Year",
+        required: true,
+        options: ["2026", "2027", "2028", "2029", "2030", "2031+"],
+      };
+
+      const schoolIndex = baseList.findIndex((q) => q.id === "school");
+      if (schoolIndex !== -1) {
+        baseList.splice(schoolIndex + 1, 0, gradYearQuestion);
+      } else {
+        baseList.push(gradYearQuestion);
+      }
+    }
+
+    // Partition: separate agreement checkboxes to position at the very end
+    const nonAgreement: Question[] = [];
+    const agreementCheckboxes: Question[] = [];
+
+    baseList.forEach((q) => {
+      const isAgreement =
+        q.type === "checkbox" ||
+        q.id.includes("code_of_conduct") ||
+        q.id.includes("info_sharing") ||
+        q.id.includes("partnership") ||
+        q.label.toLowerCase().includes("terms") ||
+        q.label.toLowerCase().includes("agreement") ||
+        q.label.toLowerCase().includes("policy") ||
+        q.label.toLowerCase().includes("authorization");
+
+      if (isAgreement) {
+        agreementCheckboxes.push(q);
+      } else {
+        nonAgreement.push(q);
+      }
+    });
+
+    return [...nonAgreement, ...agreementCheckboxes];
+  }, [form, isLumaHacks]);
+
+  /* full registration form submit */
   async function submitForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!form) return;
 
-    const missingRequired = form.schema.some((q) => {
+    const missingRequired = displayQuestions.some((q) => {
       const a = answers[q.id];
       return q.required && (!a || (Array.isArray(a) && a.length === 0) || (!Array.isArray(a) && a.trim() === ""));
     });
 
-    if (missingRequired) { setMessage("Please answer all required questions."); return; }
+    if (missingRequired) {
+      setMessage("Please answer all required questions.");
+      return;
+    }
 
     setIsSubmitting(true);
     setMessage("");
@@ -203,6 +371,36 @@ export default function FormResponsePage() {
       return;
     }
 
+    // Extract registrant's email and first name
+    const submittedEmail = (answers["email"] || email || "") as string;
+    const submittedFirstName = (answers["first_name"] || "") as string;
+
+    // Send the custom themed confirmation email
+    let emailSent = false;
+    if (submittedEmail && submittedEmail.includes("@")) {
+      try {
+        const emailRes = await fetch("/api/email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "lumahacks_registration",
+            email: submittedEmail.trim(),
+            firstName: submittedFirstName.trim(),
+            eventTitle: "LumaHacks 2027",
+          }),
+        });
+        if (emailRes.ok) {
+          emailSent = true;
+        } else {
+          const errData = await emailRes.json().catch(() => null);
+          console.warn("Email API response not ok:", errData);
+        }
+      } catch (err) {
+        console.error("Failed to trigger LumaHacks confirmation email:", err);
+      }
+    }
+
+    // Auto-RSVP if the form is linked to an event
     let rsvpMessage = "";
     if (form.event_id && user?.id) {
       const { error: rsvpError } = await supabase.from("event_rsvps").insert({
@@ -211,36 +409,19 @@ export default function FormResponsePage() {
         status: "Going",
       });
       if (!rsvpError) {
-        rsvpMessage = " You have also been RSVP'd to the associated event!";
-        try {
-          const [eventRes, profileRes] = await Promise.all([
-            supabase.from("events").select("title").eq("id", form.event_id).single(),
-            supabase.from("profiles").select("first_name, email, wants_email_notifications").eq("id", user.id).single(),
-          ]);
-          if (eventRes.data && profileRes.data?.email && profileRes.data.wants_email_notifications !== false) {
-            await fetch("/api/email", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: profileRes.data.email,
-                firstName: profileRes.data.first_name,
-                eventTitle: eventRes.data.title,
-              }),
-            });
-          }
-        } catch (e) {
-          console.error("Failed to send RSVP email", e);
-        }
-      } else if (rsvpError.code !== "23505") {
-        console.error("Error auto-RSVPing user:", rsvpError);
+        rsvpMessage = " You have also been RSVP'd to the event!";
       }
     }
 
-    setMessage(`Your form was submitted successfully.${rsvpMessage}`);
+    const emailNote = emailSent
+      ? " A registration email has been dispatched to your inbox. (Note: Official confirmation will take place closer to the event on a separate site.)"
+      : submittedEmail
+      ? ` Registration email dispatched for ${submittedEmail}. (Official confirmation will follow later on a separate site.)`
+      : "";
+
+    setMessage(`Your registration was submitted successfully!${emailNote}${rsvpMessage}`);
     setIsSubmitting(false);
   }
-
-  const isLumaHacks = params.slug === "lumahacks";
 
   /* ---- Loading / unavailable state ------------------------ */
   if (!form) {
@@ -298,32 +479,43 @@ export default function FormResponsePage() {
   }
 
   /* ================================================================
-     LUMAHACKS — Abyssal Descent Landing
+     LUMAHACKS — Abyssal Pre-registration Landing
      ================================================================ */
 
-  /* ---- STEP 2: Full registration form ---------------------- */
+  /* ---- FULL REGISTRATION FORM VIEW ------------------------- */
   if (hasStarted) {
     return (
       <main className={`${styles.lumaPage} ${styles.formShell}`}>
         {/* Parallax layers */}
         <AbyssalLayers scrollMultiplier={0} />
 
-        {/* Cursor */}
+        {/* Cursor spotlight */}
         <div ref={spotlightRef} className={styles.cursorSpotlight} aria-hidden="true" />
 
         <div className={styles.formHeader}>
-          <p className="sase-eyebrow">UCF SASE / LumaHacks 2026</p>
-          <h1>{form.title}</h1>
-          <Link href="/forms" className="sase-secondary-button mx-auto block max-w-max text-center mt-6">
-            ← Back to Forms
-          </Link>
-          {form.description && <p className="mt-4" style={{ color: "#506b8e" }}>{form.description}</p>}
+          <p className="sase-eyebrow" style={{ color: "#00d2ff" }}>UCF SASE / LumaHacks 2027</p>
+          <h1>Complete Full Registration</h1>
+          <button
+            type="button"
+            onClick={() => setHasStarted(false)}
+            className="sase-secondary-button mx-auto block max-w-max text-center mt-6"
+            style={{
+              borderColor: "rgba(0,210,255,0.35)",
+              color: "#00d2ff",
+              background: "transparent",
+            }}
+          >
+            ← Back to Overview
+          </button>
+          <p className="mt-4" style={{ color: "#506b8e", textAlign: "center", fontSize: "0.95rem" }}>
+            24-hour in-person hackathon · March 6–7, 2027 at UCF · Open strictly to currently enrolled college and university students.
+          </p>
         </div>
 
-        <div className={`bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden ${styles.formCard}`}>
+        <div className={`rounded-3xl border border-[rgba(0,210,255,0.2)] p-8 md:p-12 max-w-3xl mx-auto mt-6 relative overflow-hidden ${styles.formCard}`}>
           <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#00d2ff] to-transparent" />
-          <form className="flex flex-col gap-10 mt-4" onSubmit={submitForm}>
-            {form.schema.map((question) => (
+          <form className="flex flex-col gap-8 mt-4" onSubmit={submitForm}>
+            {displayQuestions.map((question) => (
               <FormQuestion
                 key={question.id}
                 question={question}
@@ -335,67 +527,64 @@ export default function FormResponsePage() {
                 dark
               />
             ))}
+
             {message && (
               <div className={message.includes("successfully") ? styles.successPulse : styles.errorPulse}>
                 {message}
               </div>
             )}
+
             <button
-              className="w-full py-4 rounded-xl font-bold uppercase tracking-wider text-sm transition-all mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 rounded-xl font-bold uppercase tracking-wider text-sm transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 background: "linear-gradient(135deg, #00d2ff, #0052ff)",
                 color: "#00072D",
-                boxShadow: "0 0 30px rgba(0,210,255,0.3)",
+                boxShadow: "0 0 30px rgba(0,210,255,0.4)",
               }}
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting…" : "Submit Registration"}
+              {isSubmitting ? "Submitting Registration…" : "Complete Registration & Receive Email"}
             </button>
           </form>
         </div>
 
-        {/* Seabed hint at bottom */}
         <div style={{ height: "6rem" }} />
       </main>
     );
   }
 
-  /* ---- STEP 1: Cinematic landing page ---------------------- */
+  /* ---- HERO PRE-REGISTRATION LANDING VIEW ------------------- */
   return (
     <main className={styles.lumaPage}>
       {/* Cursor spotlight */}
       <div ref={spotlightRef} className={styles.cursorSpotlight} aria-hidden="true" />
 
-      {/* ===== PARALLAX LAYERS (fixed, behind everything) ===== */}
+      {/* ===== PARALLAX LAYERS ===== */}
       <AbyssalLayers scrollMultiplier={1} />
 
       {/* ===================================================
-          HERO ZONE — The Surface
+          HERO ZONE
           =================================================== */}
       <section className={styles.heroZone}>
-        <div className={styles.depthIndicator} aria-hidden="true">
-          <span className={styles.depthDot} />
-          0M — Surface
-        </div>
-
         <p className={styles.heroEyebrow}>UCF SASE presents</p>
 
+        {/* Title: Single word in one line */}
         <h1 className={styles.heroTitle}>
-          Luma
-          <span className={styles.heroTitleAccent}>Hacks</span>
+          LumaHacks
         </h1>
 
         <p className={styles.heroSubtitle}>
-          {form.description || "A cinematic 48-hour descent into building, designing, and shipping — with the UCF tech community."}
+          An exclusive 24-hour in-person hackathon uniting tech and design at the University of Central Florida. Open strictly to currently enrolled college and university students.
         </p>
 
-        {/* Event meta pills */}
+        {/* Event meta badges */}
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center", marginBottom: "2.5rem" }}>
           {[
-            { label: "When", value: "March 6–7, 2026" },
-            { label: "Who", value: "College students" },
-            { label: "Format", value: "Hybrid" },
+            { label: "When", value: "March 6–7, 2027" },
+            { label: "Duration", value: "24-Hour Hackathon" },
+            { label: "Format", value: "In-Person (UCF)" },
+            { label: "Who", value: "College Students Only" },
           ].map(({ label, value }) => (
             <div
               key={label}
@@ -416,13 +605,14 @@ export default function FormResponsePage() {
           ))}
         </div>
 
-        {/* Countdown */}
+        {/* Countdown including Months */}
         <div className={styles.countdown} aria-label="Countdown to LumaHacks">
           {[
+            { n: countdown.months,  label: "Months" },
             { n: countdown.days,    label: "Days" },
-            { n: countdown.hours,   label: "Hrs" },
-            { n: countdown.minutes, label: "Min" },
-            { n: countdown.seconds, label: "Sec" },
+            { n: countdown.hours,   label: "Hours" },
+            { n: countdown.minutes, label: "Mins" },
+            { n: countdown.seconds, label: "Secs" },
           ].map(({ n, label }, i, arr) => (
             <div key={label} style={{ display: "flex", alignItems: "center", gap: "inherit" }}>
               <div className={styles.countUnit}>
@@ -434,306 +624,76 @@ export default function FormResponsePage() {
           ))}
         </div>
 
-        {/* Email pre-reg capture */}
-        {!landingSubmitted ? (
-          <form className={styles.emailCapture} onSubmit={handleLandingSubmit}>
-            <div className={styles.eligibilityCheck}>
-              <input
-                id="college-eligibility"
-                type="checkbox"
-                checked={collegeConfirmed}
-                onChange={(e) => {
-                  setCollegeConfirmed(e.target.checked);
-                  updateAnswer("college_eligibility", e.target.checked ? "I am currently enrolled in college or university." : "");
-                }}
-              />
-              <label htmlFor="college-eligibility">
-                <strong>College students only</strong>
-                I confirm that I am currently enrolled in a college or university and am eligible to participate in LumaHacks.
-              </label>
-            </div>
-
-            <div className={styles.emailWrapper}>
-              <input
-                className={styles.emailInput}
-                type="email"
-                placeholder="your@email.edu"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={!collegeConfirmed}
-                required
-              />
-              <button
-                type="submit"
-                className={styles.submitOrb}
-                disabled={!collegeConfirmed || isLandingSubmitting}
-                aria-label="Submit pre-registration"
-              >
-                →
-              </button>
-            </div>
-
-            {landingError && <p className={styles.errorPulse}>{landingError}</p>}
-
-            <p style={{ color: "#506b8e", fontSize: "0.75rem", textAlign: "center", margin: 0 }}>
-              Pre-register your interest · Full registration coming soon
-            </p>
-
+        {/* Email pre-registration field & Registration action */}
+        <form className={styles.emailCapture} onSubmit={handleLandingSubmit}>
+          <div className={styles.emailWrapper}>
+            <input
+              className={styles.emailInput}
+              type="email"
+              placeholder="Enter your college email (.edu)"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
             <button
-              type="button"
-              onClick={() => setHasStarted(true)}
-              disabled={!collegeConfirmed}
-              style={{
-                marginTop: "0.5rem",
-                background: "transparent",
-                border: "1px solid rgba(0,210,255,0.3)",
-                borderRadius: "999px",
-                color: "#00d2ff",
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                padding: "0.65rem 1.5rem",
-                cursor: collegeConfirmed ? "pointer" : "not-allowed",
-                opacity: collegeConfirmed ? 1 : 0.4,
-                transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-              }}
+              type="submit"
+              className={styles.submitOrb}
+              disabled={isLandingSubmitting}
+              aria-label="Proceed to registration"
+              title="Proceed to registration"
             >
-              Full Registration Form →
-            </button>
-          </form>
-        ) : (
-          <div className={styles.emailCapture}>
-            <span className={styles.successPulse}>You&apos;re on the list — dive deeper</span>
-            <button
-              type="button"
-              onClick={() => { setCollegeConfirmed(true); setHasStarted(true); }}
-              style={{
-                marginTop: "0.75rem",
-                background: "linear-gradient(135deg, #00d2ff, #0052ff)",
-                border: "none",
-                borderRadius: "999px",
-                color: "#00072D",
-                fontSize: "0.78rem",
-                fontWeight: 800,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                padding: "0.8rem 2rem",
-                cursor: "pointer",
-                boxShadow: "0 0 30px rgba(0,210,255,0.4)",
-              }}
-            >
-              Complete Full Registration →
+              →
             </button>
           </div>
-        )}
 
-        {/* Scroll cue */}
-        <div className={styles.scrollCue} aria-hidden="true">
-          <span className={styles.scrollLine} />
-          Descend
-        </div>
-      </section>
+          {landingError && <p className={styles.errorPulse}>{landingError}</p>}
 
-      {/* ===================================================
-          TRENCH ZONE — Content Cards
-          =================================================== */}
-      <section className={styles.trenchZone}>
-        {/* Tracks */}
-        <div className={styles.sectionLabel}>Tracks</div>
-        <div className={styles.trenchCard}>
-          <span className={styles.depthLabel}>200M depth</span>
-          <h2 className={styles.trenchCardTitle}>What will you build?</h2>
-          <p className={styles.trenchCardBody}>
-            Choose your path and go deep. Each track is an entire ocean waiting to be mapped.
-          </p>
-          <div className={styles.trenchGrid} style={{ marginTop: "2rem" }}>
-            {[
-              { icon: "⚡", name: "AI & Machine Learning", desc: "Build intelligent systems. Train models. Predict the unknowable." },
-              { icon: "🌊", name: "Design & UX", desc: "Craft interfaces that feel like breathing underwater — intuitive and alive." },
-              { icon: "🔗", name: "Open Innovation", desc: "No constraints. Any tech. Any problem. Any depth." },
-              { icon: "🛡️", name: "Cybersecurity", desc: "Defend, detect, disrupt. Build tools that protect the digital reef." },
-            ].map(({ icon, name, desc }) => (
-              <div key={name} className={styles.trackTile}>
-                <span className={styles.trackIcon}>{icon}</span>
-                <p className={styles.trackName}>{name}</p>
-                <p className={styles.trackDesc}>{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.lightLeak} aria-hidden="true" />
-
-        {/* Prizes */}
-        <div className={styles.sectionLabel}>Prizes</div>
-        <div className={styles.trenchCard}>
-          <span className={styles.depthLabel}>1,500M depth</span>
-          <h2 className={styles.trenchCardTitle}>Surface with something to show</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "1.5rem" }}>
-            {[
-              { rank: "1st", name: "Grand Prize", value: "$1,500" },
-              { rank: "2nd", name: "Runner Up", value: "$750" },
-              { rank: "3rd", name: "Third Place", value: "$400" },
-              { rank: "★", name: "Best Design", value: "Special Award" },
-              { rank: "★", name: "Best AI Use", value: "Special Award" },
-            ].map(({ rank, name, value }, i) => (
-              <div key={i} className={styles.prizeRow}>
-                <span className={styles.prizeRank}>{rank}</span>
-                <div className={styles.prizeInfo}>
-                  <p className={styles.prizeName}>{name}</p>
-                  <p className={styles.prizeValue}>{value}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.lightLeak} aria-hidden="true" />
-
-        {/* Schedule */}
-        <div className={styles.sectionLabel}>Schedule</div>
-        <div className={styles.trenchCard}>
-          <span className={styles.depthLabel}>4,000M depth</span>
-          <h2 className={styles.trenchCardTitle}>48 hours. One descent.</h2>
-          <div style={{ marginTop: "1.5rem" }}>
-            {[
-              { time: "SAT 9:00 AM", event: "Opening Ceremony", detail: "Welcome & track kickoffs" },
-              { time: "SAT 10:00 AM", event: "Hacking Begins", detail: "Teams lock in. Dive starts." },
-              { time: "SAT 1:00 PM", event: "Sponsor Workshops", detail: "AI tools, design systems, cloud infra" },
-              { time: "SAT 7:00 PM", event: "Midnight Checkpoint", detail: "Optional mentor rounds" },
-              { time: "SUN 10:00 AM", event: "Submission Deadline", detail: "Project freeze" },
-              { time: "SUN 12:00 PM", event: "Demos & Judging", detail: "Panel reviews each track" },
-              { time: "SUN 4:00 PM", event: "Awards Ceremony", detail: "Surface. Celebrate. Repeat." },
-            ].map(({ time, event, detail }) => (
-              <div key={time} className={styles.scheduleItem}>
-                <span className={styles.scheduleTime}>{time}</span>
-                <span className={styles.scheduleEvent}>
-                  {event}
-                  <small>{detail}</small>
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.lightLeak} aria-hidden="true" />
-
-        {/* FAQ */}
-        <div className={styles.sectionLabel}>FAQ</div>
-        <div className={styles.trenchCard}>
-          <span className={styles.depthLabel}>7,000M depth</span>
-          <h2 className={styles.trenchCardTitle}>Before you dive in</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", marginTop: "1.5rem" }}>
-            {[
-              { q: "Who can participate?", a: "Any currently enrolled college or university student. All majors and skill levels are welcome." },
-              { q: "Is it in-person or remote?", a: "LumaHacks is hybrid — attend at UCF or compete remotely from anywhere." },
-              { q: "Do I need a team?", a: "Teams of 1–4. Solo divers welcome. We'll help match you with teammates at kickoff." },
-              { q: "Is there a cost?", a: "LumaHacks is completely free to participate in. Food and swag provided on-site." },
-            ].map(({ q, a }) => (
-              <div key={q}>
-                <p style={{ color: "#e0f2fe", fontWeight: 700, margin: "0 0 0.35rem", fontSize: "0.95rem" }}>{q}</p>
-                <p style={{ color: "#506b8e", margin: 0, fontSize: "0.9rem", lineHeight: 1.6 }}>{a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===================================================
-          SEABED TERMINAL — Ocean Floor
-          =================================================== */}
-      <section className={styles.seabed}>
-        <div className={styles.seabedContent}>
-          <p className={styles.terminalLabel}>Terminal depth reached</p>
-          <p className={styles.depthReadout}>
-            11,034<span>M</span>
-          </p>
-          <p style={{ color: "#506b8e", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: "2rem" }}>
-            Challenger Deep · Mariana Trench
+          <p style={{ color: "#506b8e", fontSize: "0.78rem", textAlign: "center", margin: "0.25rem 0 0" }}>
+            Enrolled college & university students only · Enter email to complete full registration
           </p>
 
-          {/* THE TRIDENT */}
-          <div className={`${styles.tridentWrap} ${tridentShock ? styles.submitted : ""}`} aria-hidden="true">
-            {/* Shockwave rings */}
-            <div className={styles.shockwave} />
-            <div className={styles.shockwave} />
-            <div className={styles.shockwave} />
-
-            {/* Aura */}
-            <div className={styles.tridentAura} />
-
-            {/* Trident geometry */}
-            <div className={styles.trident}>
-              <div className={styles.tridentHead}>
-                <div className={styles.tineCentre} />
-                <div className={styles.tineLeft} />
-                <div className={styles.tineRight} />
-                <div className={styles.crossbar} />
-              </div>
-              <div className={styles.tridentShaft} />
-            </div>
-          </div>
-
-          <h2 className={styles.seabedTitle}>Ready to descend?</h2>
-          <p className={styles.seabedSubtitle}>
-            Pre-register now and be first to receive full application details when registration opens.
-          </p>
-
-          {!landingSubmitted ? (
-            <form onSubmit={handleLandingSubmit} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", width: "100%", maxWidth: "28rem" }}>
-              <div className={styles.emailWrapper} style={{ width: "100%" }}>
-                <input
-                  className={styles.emailInput}
-                  type="email"
-                  placeholder="your@email.edu"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <button type="submit" className={styles.submitOrb} disabled={isLandingSubmitting} aria-label="Submit pre-registration">
-                  →
-                </button>
-              </div>
-              {landingError && <p className={styles.errorPulse}>{landingError}</p>}
-            </form>
-          ) : (
-            <span className={styles.successPulse}>Descent confirmed — we&apos;ll be in touch</span>
-          )}
-
-          <div style={{ marginTop: "3rem", display: "flex", gap: "1.5rem", flexWrap: "wrap", justifyContent: "center" }}>
-            <Link
-              href="/forms"
-              style={{ color: "#506b8e", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.1em", textDecoration: "none", textTransform: "uppercase" }}
-            >
-              ← All Forms
-            </Link>
-            <button
-              type="button"
-              onClick={() => { setCollegeConfirmed(true); setHasStarted(true); }}
-              style={{ color: "#00d2ff", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.1em", background: "none", border: "none", cursor: "pointer", textTransform: "uppercase", padding: 0 }}
-            >
-              Full Application →
-            </button>
-          </div>
-        </div>
-
-        {/* Basalt rocks & gravel (purely decorative) */}
-        <div className={styles.gravel} aria-hidden="true" />
-        <div className={styles.rocks} aria-hidden="true" />
+          <button
+            type="button"
+            onClick={() => {
+              if (email && email.includes("@")) {
+                const emailField = form.schema.find((q) => q.id === "email" || q.label.toLowerCase().includes("email"));
+                if (emailField) updateAnswer(emailField.id, email);
+              }
+              setHasStarted(true);
+            }}
+            style={{
+              marginTop: "0.75rem",
+              background: "linear-gradient(135deg, #00d2ff, #0052ff)",
+              border: "none",
+              borderRadius: "999px",
+              color: "#00072D",
+              fontSize: "0.82rem",
+              fontWeight: 800,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              padding: "0.95rem 2.25rem",
+              cursor: "pointer",
+              boxShadow: "0 0 35px rgba(0,210,255,0.45)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+            }}
+          >
+            Complete Full Registration →
+          </button>
+        </form>
       </section>
     </main>
   );
 }
 
 /* ================================================================
-   ABYSSAL LAYERS — fixed parallax background system
+   ABYSSAL LAYERS — fixed parallax background system with Fish School
    ================================================================ */
 function AbyssalLayers({ scrollMultiplier }: { scrollMultiplier: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const schoolRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollMultiplier === 0) return; // static on form page
+    if (scrollMultiplier === 0) return;
     function onScroll() {
       const y = window.scrollY;
       if (!ref.current) return;
@@ -747,6 +707,76 @@ function AbyssalLayers({ scrollMultiplier }: { scrollMultiplier: number }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [scrollMultiplier]);
 
+  // Interactive School of Fishes that swim to and orbit/surround the cursor
+  useEffect(() => {
+    const container = schoolRef.current;
+    if (!container) return;
+
+    const fishes = Array.from(container.children) as HTMLElement[];
+    const count = fishes.length;
+    if (count === 0) return;
+
+    let targetX = typeof window !== "undefined" ? window.innerWidth / 2 : 500;
+    let targetY = typeof window !== "undefined" ? window.innerHeight / 2 : 400;
+
+    const onMouseMove = (e: MouseEvent) => {
+      targetX = e.clientX;
+      targetY = e.clientY;
+    };
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+
+    const boids = fishes.map((_, i) => ({
+      x: targetX + (Math.random() - 0.5) * 800,
+      y: targetY + (Math.random() - 0.5) * 600,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      orbitRadius: 40 + Math.random() * 85,
+      orbitSpeed: (0.015 + Math.random() * 0.03) * (i % 2 === 0 ? 1 : -1),
+      angle: (i / count) * Math.PI * 2,
+      followSpeed: 0.02 + Math.random() * 0.045,
+      wobbleFreq: 2 + Math.random() * 3,
+      wobbleAmp: 5 + Math.random() * 8,
+      scale: 0.75 + Math.random() * 0.5,
+    }));
+
+    let animId: number;
+    let time = 0;
+
+    const loop = () => {
+      time += 0.03;
+
+      boids.forEach((boid, i) => {
+        const el = fishes[i];
+        if (!el) return;
+
+        boid.angle += boid.orbitSpeed;
+        const currentRadius = boid.orbitRadius + Math.sin(time * boid.wobbleFreq + i) * boid.wobbleAmp;
+
+        const desiredX = targetX + Math.cos(boid.angle) * currentRadius;
+        const desiredY = targetY + Math.sin(boid.angle) * currentRadius;
+
+        boid.x += (desiredX - boid.x) * boid.followSpeed;
+        boid.y += (desiredY - boid.y) * boid.followSpeed;
+
+        const nextX = targetX + Math.cos(boid.angle + boid.orbitSpeed) * currentRadius;
+        const nextY = targetY + Math.sin(boid.angle + boid.orbitSpeed) * currentRadius;
+        const headingRad = Math.atan2(nextY - boid.y, nextX - boid.x);
+        const headingDeg = (headingRad * 180) / Math.PI;
+
+        el.style.transform = `translate3d(${boid.x}px, ${boid.y}px, 0) rotate(${headingDeg}deg) scale(${boid.scale})`;
+      });
+
+      animId = requestAnimationFrame(loop);
+    };
+
+    animId = requestAnimationFrame(loop);
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      cancelAnimationFrame(animId);
+    };
+  }, []);
+
   return (
     <div ref={ref} style={{ position: "fixed", inset: 0, pointerEvents: "none" }} aria-hidden="true">
       {/* Layer 5 — Abyssal plumes */}
@@ -756,7 +786,7 @@ function AbyssalLayers({ scrollMultiplier }: { scrollMultiplier: number }) {
         <div className={styles.trenchPlume} />
       </div>
 
-      {/* Layer 4 — Deep-sea fish */}
+      {/* Layer 4 — Deep-sea fish & School that surrounds cursor */}
       <div className={styles.layerFish} data-parallax="0.3">
         <div className={`${styles.fish} ${styles.anglerfish} ${styles.fish1}`} />
         <div className={`${styles.fish} ${styles.lanternfish} ${styles.fish2}`} />
@@ -766,13 +796,12 @@ function AbyssalLayers({ scrollMultiplier }: { scrollMultiplier: number }) {
         <div className={`${styles.fish} ${styles.anglerfish} ${styles.fish6}`} />
         <div className={`${styles.fish} ${styles.lanternfish} ${styles.fish7}`} />
         <div className={`${styles.fish} ${styles.lanternfish} ${styles.fish8}`} />
-        {/* boid school */}
-        <div className={`${styles.fish} ${styles.boid} ${styles.boid1}`} />
-        <div className={`${styles.fish} ${styles.boid} ${styles.boid2}`} />
-        <div className={`${styles.fish} ${styles.boid} ${styles.boid3}`} />
-        <div className={`${styles.fish} ${styles.boid} ${styles.boid4}`} />
-        <div className={`${styles.fish} ${styles.boid} ${styles.boid5}`} />
-        <div className={`${styles.fish} ${styles.boid} ${styles.boid6}`} />
+
+        <div ref={schoolRef} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+          {Array.from({ length: 14 }).map((_, i) => (
+            <div key={i} className={styles.boid} style={{ top: 0, left: 0 }} />
+          ))}
+        </div>
       </div>
 
       {/* Layer 3 — Wireframe jellies */}
@@ -811,7 +840,166 @@ function AbyssalLayers({ scrollMultiplier }: { scrollMultiplier: number }) {
 }
 
 /* ================================================================
-   SHARED — Form question renderer (unchanged logic, style-agnostic)
+   SEARCHABLE WHEEL SELECT (with Instant Filter Search)
+   ================================================================ */
+function SearchableWheelSelect({
+  value,
+  onChange,
+  options = [],
+  placeholder = "Select or search...",
+  required = false,
+  dark = false,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  options?: string[];
+  placeholder?: string;
+  required?: boolean;
+  dark?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isOpen]);
+
+  const filteredOptions = useMemo(() => {
+    if (!query.trim()) return options;
+    const lower = query.toLowerCase();
+    return options.filter((opt) => opt.toLowerCase().includes(lower));
+  }, [options, query]);
+
+  const displaySelected = value || "";
+
+  return (
+    <div ref={dropdownRef} className="relative w-full">
+      {/* Hidden input for native HTML form validity */}
+      <input
+        type="text"
+        value={value}
+        onChange={() => {}}
+        required={required}
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden="true"
+      />
+
+      {/* Trigger Button */}
+      <div
+        role="combobox"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full rounded-xl p-4 flex items-center justify-between cursor-pointer transition-all ${
+          dark
+            ? "border border-[rgba(0,210,255,0.22)] bg-[rgba(0,7,45,0.7)] hover:border-[#00d2ff] text-[#e0f2fe]"
+            : "border border-border bg-gray-50 hover:border-[#5579bd] text-[#171d52]"
+        } ${isOpen ? (dark ? "border-[#00d2ff] ring-2 ring-[rgba(0,210,255,0.2)]" : "border-[#5579bd] ring-2 ring-[#e9eef8]") : ""}`}
+      >
+        <span className={`font-medium truncate ${displaySelected ? (dark ? "text-white" : "text-[#171d52]") : "text-gray-400"}`}>
+          {displaySelected || placeholder}
+        </span>
+        <div className="flex items-center gap-1.5 ml-2 shrink-0 text-[#00d2ff]">
+          {displaySelected && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange("");
+                setQuery("");
+              }}
+              className="p-1 hover:text-white transition-colors"
+              aria-label="Clear selection"
+            >
+              <X size={14} />
+            </button>
+          )}
+          <ChevronDown size={18} className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        </div>
+      </div>
+
+      {/* Dropdown Menu with Search */}
+      {isOpen && (
+        <div
+          className={`absolute z-50 left-0 right-0 mt-2 rounded-xl shadow-2xl overflow-hidden border backdrop-blur-2xl ${
+            dark
+              ? "bg-[#000a38]/95 border-[rgba(0,210,255,0.3)] shadow-[0_15px_40px_rgba(0,0,0,0.8)]"
+              : "bg-white border-border shadow-xl"
+          }`}
+        >
+          {/* Search Box */}
+          <div className="p-3 border-b border-white/10 flex items-center gap-2">
+            <Search size={16} className={dark ? "text-[#00d2ff]" : "text-gray-400"} />
+            <input
+              type="text"
+              autoFocus
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Type to filter..."
+              className={`w-full bg-transparent text-sm outline-none font-medium ${
+                dark ? "text-white placeholder:text-gray-400" : "text-gray-800 placeholder:text-gray-400"
+              }`}
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="text-gray-400 hover:text-white text-xs px-1"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+
+          {/* Options List */}
+          <div className="max-h-60 overflow-y-auto p-1.5 flex flex-col gap-0.5">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((opt) => {
+                const isSelected = value === opt;
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => {
+                      onChange(opt);
+                      setIsOpen(false);
+                      setQuery("");
+                    }}
+                    className={`w-full text-left px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-between ${
+                      isSelected
+                        ? (dark ? "bg-[#00d2ff] text-[#00072D] font-bold" : "bg-[#5579bd] text-white font-bold")
+                        : (dark ? "text-[#e0f2fe] hover:bg-white/10" : "text-gray-800 hover:bg-gray-100")
+                    }`}
+                  >
+                    <span className="truncate">{opt}</span>
+                    {isSelected && <span className="text-xs">✓</span>}
+                  </button>
+                );
+              })
+            ) : (
+              <div className="p-4 text-center text-xs text-gray-400">
+                No matching options found.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ================================================================
+   SHARED — Form question renderer
    ================================================================ */
 function FormQuestion({
   question,
@@ -836,17 +1024,42 @@ function FormQuestion({
 
   const labelTextCls = dark ? "text-[#e0f2fe]" : "text-[#171d52]";
   const legendCls = dark
-    ? "text-xl font-black text-white mb-4 w-full leading-snug"
+    ? "text-lg font-bold text-white mb-3 w-full leading-snug"
     : "text-xl font-black text-[#171d52] mb-4 w-full leading-snug";
 
+  const isWheelLike = question.type === "wheel" || (dark && (question.id === "major" || question.id === "school" || question.id === "dietary_restrictions"));
+
   return (
-    <fieldset className="border-b border-gray-100 pb-8 last:border-0 last:pb-0" style={dark ? { borderColor: "rgba(0,82,255,0.15)" } : {}}>
+    <fieldset className="border-b border-gray-100 pb-6 last:border-0 last:pb-0" style={dark ? { borderColor: "rgba(0,82,255,0.15)" } : {}}>
       <legend className={legendCls}>
         {question.label || "Untitled question"}
-        {question.required && <span className="ml-1 text-red-400">*</span>}
+        {question.required && <span className="ml-1 text-[#00d2ff]">*</span>}
       </legend>
 
-      {question.type === "short_text" && (
+      {/* Searchable wheel dropdown for major, diet, college, or any wheel question */}
+      {isWheelLike && (
+        <div className="flex flex-col gap-3">
+          <SearchableWheelSelect
+            value={wheelSelections[question.id] || (typeof answers[question.id] === "string" ? (answers[question.id] as string) : "")}
+            onChange={(val) => updateWheelAnswer(question.id, val)}
+            options={question.options || []}
+            placeholder={`Select or search ${question.label.toLowerCase()}...`}
+            required={question.required && wheelSelections[question.id] !== "Other"}
+            dark={dark}
+          />
+          {wheelSelections[question.id] === "Other" && (
+            <input
+              className={inputCls}
+              placeholder={`Specify your ${question.label.toLowerCase()}`}
+              value={typeof answers[question.id] === "string" ? (answers[question.id] as string) : ""}
+              onChange={(e) => updateAnswer(question.id, e.target.value)}
+              required={question.required}
+            />
+          )}
+        </div>
+      )}
+
+      {question.type === "short_text" && !isWheelLike && (
         <input
           className={inputCls}
           placeholder="Your answer"
@@ -856,7 +1069,7 @@ function FormQuestion({
         />
       )}
 
-      {question.type === "paragraph" && (
+      {question.type === "paragraph" && !isWheelLike && (
         <textarea
           className={`min-h-32 resize-y ${inputCls}`}
           placeholder="Your answer"
@@ -866,10 +1079,10 @@ function FormQuestion({
         />
       )}
 
-      {question.type === "multiple_choice" && (
-        <div className="flex flex-col gap-4">
+      {question.type === "multiple_choice" && !isWheelLike && (
+        <div className="flex flex-col gap-3">
           {question.options?.map((option) => (
-            <label key={option} className="flex items-center gap-4 cursor-pointer group p-2 -ml-2 rounded-lg hover:bg-gray-50 transition-colors" style={dark ? { "--tw-bg-opacity": "0", backgroundColor: "transparent" } as React.CSSProperties : {}}>
+            <label key={option} className="flex items-center gap-4 cursor-pointer group p-2 -ml-2 rounded-lg hover:bg-white/5 transition-colors">
               <div className="relative flex items-center">
                 <input
                   type="radio"
@@ -884,55 +1097,30 @@ function FormQuestion({
                   <div className="w-2.5 h-2.5 rounded-full bg-[#00d2ff] opacity-0 peer-checked:opacity-100 transition-opacity" />
                 </div>
               </div>
-              <span className={`${labelTextCls} font-medium text-lg`}>{option}</span>
+              <span className={`${labelTextCls} font-medium text-base`}>{option}</span>
             </label>
           ))}
         </div>
       )}
 
-      {question.type === "select" && (
+      {question.type === "select" && !isWheelLike && (
         <select
           className={inputCls}
           value={typeof answers[question.id] === "string" ? (answers[question.id] as string) : ""}
           onChange={(e) => updateAnswer(question.id, e.target.value)}
           required={question.required}
         >
-          <option value="">Select an option</option>
+          <option value="" style={{ background: "#00072D", color: "#e0f2fe" }}>Select an option</option>
           {question.options?.map((option) => (
-            <option key={option} value={option}>{option}</option>
+            <option key={option} value={option} style={{ background: "#00072D", color: "#e0f2fe" }}>{option}</option>
           ))}
         </select>
       )}
 
-      {question.type === "wheel" && (
+      {question.type === "checkbox" && !isWheelLike && (
         <div className="flex flex-col gap-3">
-          <select
-            className={inputCls}
-            value={wheelSelections[question.id] || ""}
-            onChange={(e) => updateWheelAnswer(question.id, e.target.value)}
-            required={question.required && wheelSelections[question.id] !== "Other"}
-          >
-            <option value="">Spin to choose an option</option>
-            {question.options?.map((option) => (
-              <option key={option} value={option}>{option}</option>
-            ))}
-          </select>
-          {wheelSelections[question.id] === "Other" && (
-            <input
-              className={inputCls}
-              placeholder="Type your answer"
-              value={typeof answers[question.id] === "string" ? (answers[question.id] as string) : ""}
-              onChange={(e) => updateAnswer(question.id, e.target.value)}
-              required={question.required}
-            />
-          )}
-        </div>
-      )}
-
-      {question.type === "checkbox" && (
-        <div className="flex flex-col gap-4">
           {question.options?.map((option) => (
-            <label key={option} className="flex items-center gap-4 cursor-pointer group p-2 -ml-2 rounded-lg transition-colors">
+            <label key={option} className="flex items-center gap-4 cursor-pointer group p-2 -ml-2 rounded-lg hover:bg-white/5 transition-colors">
               <div className="relative flex items-center">
                 <input
                   type="checkbox"
@@ -940,13 +1128,13 @@ function FormQuestion({
                   onChange={(e) => toggleCheckbox(question.id, option, e.target.checked)}
                   className="peer sr-only"
                 />
-                <div className="w-5 h-5 rounded border-2 border-border peer-checked:border-[#00d2ff] peer-checked:bg-[#00d2ff] transition-all flex items-center justify-center">
+                <div className="w-5 h-5 rounded border-2 border-[rgba(0,210,255,0.4)] peer-checked:border-[#00d2ff] peer-checked:bg-[#00d2ff] transition-all flex items-center justify-center">
                   <svg className="w-3.5 h-3.5 text-[#00072D] opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
               </div>
-              <span className={`${labelTextCls} font-medium text-lg`}>{option}</span>
+              <span className={`${labelTextCls} font-medium text-base`}>{option}</span>
             </label>
           ))}
         </div>
