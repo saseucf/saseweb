@@ -544,7 +544,7 @@ export default function FormResponsePage() {
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting Registration…" : "Complete Registration & Receive Email"}
+              {isSubmitting ? "Submitting Registration…" : "Complete Registration"}
             </button>
           </form>
         </div>
