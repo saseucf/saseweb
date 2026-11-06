@@ -115,7 +115,7 @@ export default function GlobalNav() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 shadow-md border-b ${isLumaHacks ? "bg-[#00072D]/90 backdrop-blur-xl border-[rgba(0,210,255,0.2)]" : "bg-background border-border"}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between px-6 py-4 shadow-md border-b ${isLumaHacks ? "bg-[#00072D]/90 backdrop-blur-xl border-[rgba(0,210,255,0.2)]" : "bg-background border-border"}`}>
       
       <Link href="/" className="flex items-center" aria-label="SASE home" onClick={() => setIsMobileMenuOpen(false)}>
         <Image 
