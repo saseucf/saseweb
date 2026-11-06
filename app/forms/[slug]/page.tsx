@@ -223,7 +223,29 @@ export default function FormResponsePage() {
     const baseList: Question[] = [];
     let hasGraduationYear = false;
 
-    form.schema.forEach((q) => {
+    form.schema.forEach((rawQ) => {
+      let q = rawQ;
+
+      // Filter out MLH questions / options for now
+      const isMlhQuestion =
+        q.id === "code_of_conduct" ||
+        q.id === "info_sharing" ||
+        q.id === "partnership" ||
+        q.id.toLowerCase().includes("mlh") ||
+        q.label.toLowerCase().includes("mlh") ||
+        (q.options && q.options.length > 0 && q.options.every((opt) => opt.toLowerCase().includes("mlh")));
+
+      if (isMlhQuestion) {
+        return;
+      }
+
+      // If a multi-option question has MLH options mixed in, strip them out
+      if (q.options && q.options.some((opt) => opt.toLowerCase().includes("mlh"))) {
+        const cleanedOptions = q.options.filter((opt) => !opt.toLowerCase().includes("mlh"));
+        if (cleanedOptions.length === 0) return;
+        q = { ...q, options: cleanedOptions };
+      }
+
       // 0. Age: MUST be 18+
       if (q.id === "age" || q.label.toLowerCase().includes("age")) {
         baseList.push({
