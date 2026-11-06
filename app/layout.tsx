@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
-import { Orbitron, Roboto_Mono } from "next/font/google";
+import { Inter, Orbitron, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
 
 const orbitron = Orbitron({
   variable: "--font-orbitron",
@@ -38,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
-        className={`${orbitron.variable} ${robotoMono.variable} font-sans antialiased pt-[78px] min-h-screen flex flex-col`}
+        className={`${inter.variable} ${orbitron.variable} ${robotoMono.variable} font-sans antialiased pt-[78px] min-h-screen flex flex-col`}
         suppressHydrationWarning
       >
         <ThemeProvider

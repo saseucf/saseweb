@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import supabase from "@/lib/auth";
+import styles from "./lumahacks.module.css";
 
 type Question = {
   id: string;
@@ -33,6 +34,7 @@ export default function FormResponsePage() {
   const [message, setMessage] = useState("Loading form...");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [collegeConfirmed, setCollegeConfirmed] = useState(false);
   const [wheelSelections, setWheelSelections] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -185,16 +187,66 @@ export default function FormResponsePage() {
 
   if (isLumaHacks && !hasStarted) {
     return (
-      <main className="sase-page">
-        <div className="max-w-3xl mx-auto text-center py-16 md:py-28 px-6">
-          <p className="sase-eyebrow">UCF SASE presents</p>
-          <h1 className="mt-4">LumaHacks</h1>
-          <p className="text-xl text-gray-600 mt-6 max-w-xl mx-auto">
-            {form.description || "Join us for LumaHacks. Preregister now to save your spot."}
-          </p>
+      <main className={`sase-page ${styles.lumaPage}`}>
+        <div className={styles.landing}>
+          <div className={styles.ocean} aria-hidden="true">
+            <span className={`${styles.bubble} ${styles.bubbleOne}`} />
+            <span className={`${styles.bubble} ${styles.bubbleTwo}`} />
+            <span className={`${styles.bubble} ${styles.bubbleThree}`} />
+            <span className={`${styles.fish} ${styles.fishOne}`} />
+            <span className={`${styles.fish} ${styles.fishTwo}`} />
+            <span className={styles.jellyfish} />
+            <span className={styles.octopus} />
+          </div>
+          <div className={styles.hero}>
+            <div>
+              <p className={styles.eyebrow}>UCF SASE presents</p>
+              <h1 className={styles.title}>Luma<span>Hacks</span></h1>
+              <p className={styles.intro}>
+                {form.description || "A weekend of building, learning, and creating with the UCF tech community."}
+              </p>
+              <div className={styles.metaGrid} aria-label="LumaHacks event details">
+                <div className={styles.metaCard}>
+                  <span className={styles.metaLabel}>When</span>
+                  <strong className={styles.metaValue}>March 6–7</strong>
+                </div>
+                <div className={styles.metaCard}>
+                  <span className={styles.metaLabel}>Who</span>
+                  <strong className={styles.metaValue}>College students</strong>
+                </div>
+                <div className={styles.metaCard}>
+                  <span className={styles.metaLabel}>Format</span>
+                  <strong className={styles.metaValue}>Build together</strong>
+                </div>
+              </div>
+            </div>
+            <div className={styles.visual} aria-hidden="true">
+              <div className={styles.visualGrid} />
+              <div className={styles.visualCopy}>
+                <strong>Make it<br />glow.</strong>
+                <span>Ideas into impact</span>
+              </div>
+            </div>
+          </div>
+          <div className={styles.eligibility}>
+            <input
+              id="college-eligibility"
+              type="checkbox"
+              checked={collegeConfirmed}
+              onChange={(event) => {
+                setCollegeConfirmed(event.target.checked);
+                updateAnswer("college_eligibility", event.target.checked ? "I am currently enrolled in college or university." : "");
+              }}
+            />
+            <label htmlFor="college-eligibility">
+              <strong>College students only</strong>
+              I confirm that I am currently enrolled in a college or university and am eligible to participate in LumaHacks.
+            </label>
+          </div>
           <button
             type="button"
-            className="sase-primary-button mt-10 min-w-48"
+            className={styles.startButton}
+            disabled={!collegeConfirmed}
             onClick={() => setHasStarted(true)}
           >
             Start preregistration
@@ -205,8 +257,17 @@ export default function FormResponsePage() {
   }
 
   return (
-    <main className="sase-page">
-      <div className="sase-page-header">
+    <main className={`sase-page ${isLumaHacks ? `${styles.lumaPage} ${styles.formShell}` : ""}`}>
+      {isLumaHacks && (
+        <div className={styles.ocean} aria-hidden="true">
+          <span className={`${styles.bubble} ${styles.bubbleOne}`} />
+          <span className={`${styles.bubble} ${styles.bubbleTwo}`} />
+          <span className={`${styles.fish} ${styles.fishOne}`} />
+          <span className={styles.jellyfish} />
+          <span className={styles.octopus} />
+        </div>
+      )}
+      <div className={`sase-page-header ${isLumaHacks ? styles.formHeader : ""}`}>
         <p className="sase-eyebrow">UCF SASE / Form</p>
         <h1>{form.title}</h1>
         <Link
@@ -218,7 +279,7 @@ export default function FormResponsePage() {
         {form.description && <p className="mt-4">{form.description}</p>}
       </div>
       
-      <div className="bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden">
+      <div className={`bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden ${isLumaHacks ? styles.formCard : ""}`}>
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#171d52] via-[#5579bd] to-[#171d52]"></div>
         
         <form className="flex flex-col gap-10 mt-4" onSubmit={submitForm}>

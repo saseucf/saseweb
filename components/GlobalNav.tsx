@@ -41,6 +41,7 @@ export default function GlobalNav() {
   };
 
   const isAdminLogin = pathname?.includes("/checkin/admin/login");
+  const isLumaHacks = pathname?.startsWith("/lumahacks");
 
   if (isAdminLogin) return null;
 
@@ -54,7 +55,7 @@ export default function GlobalNav() {
 
     const NavItem = ({ href, active, onClick, children }: { href: string; active: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }) => (
       <Link
-        className={`${isMobile ? 'text-sm py-3 border-b border-border w-full block' : 'text-xs whitespace-nowrap'} font-bold tracking-widest uppercase transition-colors ${active ? "text-[#4266a4] dark:text-[#89abe3]" : "text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3]"}`}
+        className={`${isMobile ? 'text-sm py-3 border-b border-border w-full block' : 'text-xs whitespace-nowrap'} font-bold tracking-widest uppercase transition-colors ${active ? (isLumaHacks ? "text-[#5de7ff]" : "text-[#4266a4] dark:text-[#89abe3]") : (isLumaHacks ? "text-[#a7b9d8] hover:text-[#5de7ff]" : "text-foreground hover:text-[#4266a4] dark:hover:text-[#89abe3]")}`}
         href={href}
         onClick={(e) => {
           if (onClick) onClick(e);
@@ -94,7 +95,7 @@ export default function GlobalNav() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-background shadow-md border-b border-border">
+    <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 shadow-md border-b ${isLumaHacks ? "bg-[#050d2b] border-[#17366e]" : "bg-background border-border"}`}>
       
       <Link href="/" className="flex items-center" aria-label="SASE home" onClick={() => setIsMobileMenuOpen(false)}>
         <Image 
@@ -111,7 +112,7 @@ export default function GlobalNav() {
           alt="SASE Logo" 
           width={120} 
           height={26}
-          className="w-[90px] md:w-[120px] h-auto object-contain block dark:hidden"
+          className={`w-[90px] md:w-[120px] h-auto object-contain ${isLumaHacks ? "hidden" : "block dark:hidden"}`}
           style={{ height: "auto" }}
           priority
         />
