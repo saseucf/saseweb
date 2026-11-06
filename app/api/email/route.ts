@@ -48,6 +48,40 @@ export async function POST(req: NextRequest) {
                     We're thrilled to have you as part of our community. If you have any questions, feel free to reach out to any officer!
                 </p>
             `;
+        } else if (type === "lumahacks_registration") {
+            subject = "Registration Received: LumaHacks 2027";
+            contentHtml = `
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <span style="display: inline-block; padding: 4px 14px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; border-radius: 999px; color: #00d2ff; font-size: 12px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase;">
+                        Registration Received · LumaHacks
+                    </span>
+                </div>
+                <h2 style="color: #00d2ff; margin-top: 0; font-size: 26px; font-weight: 800; text-align: center; letter-spacing: -0.02em;">
+                    Registration Received, ${firstName || "Hacker"}!
+                </h2>
+                <p style="color: #e0f2fe; font-size: 16px; line-height: 1.6; text-align: center;">
+                    You have successfully registered for <strong>LumaHacks 2027</strong>!
+                </p>
+                <div style="background: rgba(0, 82, 255, 0.15); border-left: 3px solid #00d2ff; padding: 14px 18px; border-radius: 8px; margin: 20px 0; text-align: left;">
+                    <p style="margin: 0; color: #e0f2fe; font-size: 14px; line-height: 1.5;">
+                        <strong style="color: #00d2ff;">Important Status Note:</strong> You are currently <strong>registered</strong>. Official attendee confirmation and spot verification will take place closer to the event date on a separate event platform.
+                    </p>
+                </div>
+                <div style="background: rgba(0, 7, 45, 0.6); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 12px; padding: 20px; margin: 24px 0; text-align: left;">
+                    <p style="margin: 0 0 10px 0; color: #506b8e; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Mission Briefing</p>
+                    <p style="margin: 0 0 8px 0; color: #ffffff; font-size: 15px;"><strong>Duration:</strong> 24-Hour Hackathon</p>
+                    <p style="margin: 0 0 8px 0; color: #ffffff; font-size: 15px;"><strong>Date:</strong> March 6–7, 2027</p>
+                    <p style="margin: 0 0 8px 0; color: #ffffff; font-size: 15px;"><strong>Format:</strong> In-Person at UCF</p>
+                    <p style="margin: 0 0 8px 0; color: #ffffff; font-size: 15px;"><strong>Eligibility:</strong> Enrolled College & University Students (18+)</p>
+                    <p style="margin: 0; color: #ffffff; font-size: 15px;"><strong>Status:</strong> Successfully Registered (Confirmation later on separate site)</p>
+                </div>
+                <p style="color: #cbd5e1; font-size: 15px; line-height: 1.6; text-align: left;">
+                    Prepare your gear. You will dive deep into 24 hours of intense building, designing, and collaboration alongside passionate student innovators. Keep an eye on your inbox as we approach March 2027—we will send instructions on how to confirm your attendance on our dedicated event portal.
+                </p>
+                <p style="color: #00d2ff; font-size: 15px; line-height: 1.6; font-weight: 600; text-align: center; margin-top: 28px;">
+                    See you at the ocean floor.
+                </p>
+            `;
         } else {
             if (!eventTitle) {
                 return NextResponse.json(
@@ -71,30 +105,46 @@ export async function POST(req: NextRequest) {
             `;
         }
 
-        // Ocean-themed email template with GitHub CDN logo, deep ocean gradient header & semi-transparent ocean body
+        // Themed HTML wrap
+        const isLuma = type === "lumahacks_registration";
+        const emailOuterBg = isLuma ? "#00072D" : "#f0f9ff";
+        const containerBorder = isLuma ? "1px solid rgba(0, 210, 255, 0.4)" : "1px solid #bae6fd";
+        const containerShadow = isLuma ? "0 10px 40px rgba(0, 82, 255, 0.35)" : "0 10px 25px rgba(2, 132, 199, 0.15)";
+        const headerBg = isLuma
+            ? "linear-gradient(135deg, #00072D 0%, #001242 50%, #0052ff 100%)"
+            : "linear-gradient(135deg, #171d52 0%, #0369a1 50%, #0284c7 100%)";
+        const bodyBg = isLuma
+            ? "background-color: #000c36; background-image: radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.12) 0%, rgba(0, 7, 45, 0.95) 75%);"
+            : "background-color: #ffffff; background-image: radial-gradient(circle at 50% 100%, rgba(186, 230, 253, 0.25) 0%, rgba(255, 255, 255, 0.95) 70%);";
+        const dividerBorder = isLuma ? "2px solid rgba(0, 210, 255, 0.25)" : "2px solid #e0f2fe";
+        const signoffColor1 = isLuma ? "#506b8e" : "#0369a1";
+        const signoffColor2 = isLuma ? "#00d2ff" : "#0284c7";
+        const signoffTeam = isLuma ? "UCF SASE Hackathon Team | 2026-2027" : "UCF SASE Event Team";
+        const footerBg = isLuma ? "#00051a" : "#0f172a";
+
         const fullHtmlContent = `
-            <div style="background-color: #f0f9ff; padding: 40px 15px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                <div style="max-width: 600px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15); border: 1px solid #bae6fd;">
+            <div style="background-color: ${emailOuterBg}; padding: 40px 15px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                <div style="max-width: 600px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: ${containerShadow}; border: ${containerBorder};">
                     
-                    <!-- Deep Ocean Gradient Header with Blue Flask SASE Logo -->
-                    <div style="background: linear-gradient(135deg, #171d52 0%, #0369a1 50%, #0284c7 100%); padding: 36px 24px; text-align: center;">
+                    <!-- Gradient Header with SASE Logo -->
+                    <div style="background: ${headerBg}; padding: 36px 24px; text-align: center;">
                         ${logoHtml}
                     </div>
 
-                    <!-- Main Email Body with Semi-Transparent Ocean Background -->
-                    <div style="padding: 40px 32px; background-color: #ffffff; background-image: radial-gradient(circle at 50% 100%, rgba(186, 230, 253, 0.25) 0%, rgba(255, 255, 255, 0.95) 70%); background-size: cover;">
+                    <!-- Main Email Body -->
+                    <div style="padding: 40px 32px; ${bodyBg} background-size: cover;">
                         
                         ${contentHtml}
 
-                        <!-- Professional Ocean Sign-off -->
-                        <div style="margin-top: 36px; padding-top: 24px; border-top: 2px solid #e0f2fe;">
-                            <p style="color: #0369a1; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Sincerely,</p>
-                            <p style="color: #0284c7; font-size: 18px; font-weight: 700; margin: 0;">SASE Team</p>
+                        <!-- Sign-off -->
+                        <div style="margin-top: 36px; padding-top: 24px; border-top: ${dividerBorder};">
+                            <p style="color: ${signoffColor1}; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Sincerely,</p>
+                            <p style="color: ${signoffColor2}; font-size: 18px; font-weight: 700; margin: 0;">${signoffTeam}</p>
                         </div>
                     </div>
 
                     <!-- Footer -->
-                    <div style="background-color: #0f172a; padding: 20px; text-align: center;">
+                    <div style="background-color: ${footerBg}; padding: 20px; text-align: center;">
                         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
                             © ${new Date().getFullYear()} UCF Society of Asian Scientists & Engineers. All rights reserved.
                         </p>
