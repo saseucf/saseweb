@@ -1,17 +1,19 @@
 .lumaPage {
-  --luma-ink: #17204f;
-  --luma-muted: #59617e;
-  --luma-blue: #5279d9;
-  --luma-cyan: #62d6d3;
-  --luma-lilac: #b6a4ff;
-  --luma-surface: #ffffff;
-  --luma-canvas: #f5f7ff;
+  --luma-ink: #f2f7ff;
+  --luma-muted: #a7b9d8;
+  --luma-blue: #5de7ff;
+  --luma-cyan: #5dffc9;
+  --luma-lilac: #b9a2ff;
+  --luma-surface: rgba(13, 31, 76, 0.88);
+  --luma-canvas: #050d2b;
+  --luma-deep: #02071d;
   color: var(--luma-ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   background:
-    radial-gradient(circle at 8% 12%, rgba(98, 214, 211, 0.18), transparent 28rem),
-    radial-gradient(circle at 92% 20%, rgba(182, 164, 255, 0.2), transparent 30rem),
+    radial-gradient(circle at 8% 12%, rgba(93, 231, 255, 0.14), transparent 28rem),
+    radial-gradient(circle at 92% 20%, rgba(185, 162, 255, 0.16), transparent 30rem),
     var(--luma-canvas);
+  min-height: calc(100svh - 78px);
 }
 
 .lumaPage h1,
@@ -37,9 +39,9 @@
   inset: 0;
   z-index: -1;
   content: "";
-  opacity: 0.4;
-  background-image: linear-gradient(rgba(82, 121, 217, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(82, 121, 217, 0.08) 1px, transparent 1px);
+  opacity: 0.35;
+  background-image: linear-gradient(rgba(93, 231, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(93, 231, 255, 0.1) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: linear-gradient(to bottom, black, transparent 72%);
 }
@@ -63,7 +65,7 @@
 .title {
   max-width: 8ch;
   margin: 0.75rem 0 1.25rem;
-  color: var(--luma-ink);
+  color: #ffffff;
   font-size: clamp(3.5rem, 10vw, 7.5rem);
   font-weight: 800;
   letter-spacing: -0.085em;
@@ -73,6 +75,7 @@
 .title span {
   display: block;
   color: var(--luma-blue);
+  text-shadow: 0 0 28px rgba(93, 231, 255, 0.5);
 }
 
 .intro {
@@ -93,10 +96,10 @@
 .metaCard {
   min-height: 7rem;
   padding: 1rem;
-  border: 1px solid rgba(82, 121, 217, 0.2);
+  border: 1px solid rgba(93, 231, 255, 0.3);
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 12px 30px rgba(23, 32, 79, 0.06);
+  background: rgba(13, 31, 76, 0.72);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25), inset 0 0 22px rgba(93, 231, 255, 0.04);
 }
 
 .metaLabel {
@@ -111,7 +114,7 @@
 
 .metaValue {
   display: block;
-  color: var(--luma-ink);
+  color: #ffffff;
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.25;
@@ -121,8 +124,8 @@
   position: relative;
   min-height: 23rem;
   border-radius: 2rem;
-  background: linear-gradient(145deg, #17204f, #314c9b 58%, #62d6d3);
-  box-shadow: 0 30px 70px rgba(23, 32, 79, 0.2);
+  background: linear-gradient(145deg, #08143e, #182f78 58%, #146b82);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4), 0 0 55px rgba(93, 231, 255, 0.12);
   overflow: hidden;
 }
 
@@ -191,10 +194,10 @@
   max-width: 44rem;
   margin: 3rem auto 0;
   padding: 1.25rem;
-  border: 1px solid rgba(82, 121, 217, 0.25);
+  border: 1px solid rgba(93, 231, 255, 0.3);
   border-radius: 1rem;
   background: var(--luma-surface);
-  box-shadow: 0 16px 38px rgba(23, 32, 79, 0.07);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.3);
 }
 
 .eligibility input {
@@ -205,7 +208,7 @@
 }
 
 .eligibility label {
-  color: var(--luma-ink);
+  color: #dce8ff;
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -221,8 +224,9 @@
   margin: 1.5rem auto 0;
   border: 0;
   border-radius: 999px;
-  background: var(--luma-ink);
-  color: white;
+  background: var(--luma-blue);
+  color: #03102e;
+  box-shadow: 0 0 28px rgba(93, 231, 255, 0.3);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 800;
@@ -233,7 +237,7 @@
 }
 
 .startButton:hover:not(:disabled) {
-  background: var(--luma-blue);
+  background: var(--luma-cyan);
   transform: translateY(-2px);
 }
 
@@ -257,29 +261,182 @@
 }
 
 .formShell .formHeader h1 {
-  color: var(--luma-ink);
+  color: #ffffff;
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   letter-spacing: -0.07em;
 }
 
+.formShell .formHeader > p:last-child {
+  color: var(--luma-muted);
+}
+
+.formShell .formHeader .sase-secondary-button {
+  border-color: rgba(93, 231, 255, 0.4);
+  color: var(--luma-blue);
+}
+
+.formShell .formHeader .sase-secondary-button:hover {
+  background: rgba(93, 231, 255, 0.1);
+  border-color: var(--luma-blue);
+}
+
 .formCard {
-  border: 1px solid rgba(82, 121, 217, 0.2);
+  border: 1px solid rgba(93, 231, 255, 0.26);
   border-radius: 1.5rem;
   background: var(--luma-surface);
-  box-shadow: 0 20px 50px rgba(23, 32, 79, 0.09);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 0 40px rgba(93, 231, 255, 0.06);
 }
 
 .formCard input,
 .formCard select,
 .formCard textarea {
-  border-color: rgba(82, 121, 217, 0.25);
+  border-color: rgba(93, 231, 255, 0.28);
   border-radius: 0.75rem;
-  background: #f8faff;
+  background: #081944;
+  color: #f2f7ff;
   font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 .formCard legend {
-  color: var(--luma-ink);
+  color: #ffffff;
+}
+
+.formCard label,
+.formCard span {
+  color: #dce8ff;
+}
+
+.formCard .text-\[\#171d52\] {
+  color: #dce8ff !important;
+}
+
+.ocean {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid rgba(93, 231, 255, 0.65);
+  border-radius: 50%;
+  animation: rise 8s linear infinite;
+}
+
+.bubbleOne { left: 16%; bottom: 8%; animation-delay: -2s; }
+.bubbleTwo { left: 72%; bottom: 2%; width: 0.8rem; height: 0.8rem; animation-delay: -5s; }
+.bubbleThree { left: 88%; bottom: 20%; animation-delay: -7s; }
+
+.fish {
+  position: absolute;
+  width: 4.5rem;
+  height: 2.4rem;
+  border: 2px solid var(--luma-cyan);
+  border-radius: 58% 48% 48% 58%;
+  filter: drop-shadow(0 0 8px rgba(93, 255, 201, 0.55));
+  animation: swim 18s linear infinite;
+}
+
+.fish::before {
+  position: absolute;
+  top: 0.45rem;
+  left: -1.35rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-top: 2px solid var(--luma-cyan);
+  border-left: 2px solid var(--luma-cyan);
+  content: "";
+  transform: rotate(-45deg);
+}
+
+.fish::after {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.65rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: var(--luma-cyan);
+  box-shadow: 0 0 6px var(--luma-cyan);
+  content: "";
+}
+
+.fishOne { top: 28%; left: -6rem; }
+.fishTwo { top: 64%; left: -10rem; transform: scale(0.65); animation-delay: -9s; }
+
+.jellyfish {
+  position: absolute;
+  right: 9%;
+  bottom: 8%;
+  width: 4rem;
+  height: 3rem;
+  border: 2px solid var(--luma-lilac);
+  border-radius: 50% 50% 28% 28%;
+  filter: drop-shadow(0 0 12px rgba(185, 162, 255, 0.6));
+  animation: float 5s ease-in-out infinite;
+}
+
+.jellyfish::before,
+.jellyfish::after {
+  position: absolute;
+  top: 2.3rem;
+  width: 1px;
+  height: 4rem;
+  background: var(--luma-lilac);
+  box-shadow: 1.2rem 0 0 var(--luma-lilac), 2.4rem 0 0 var(--luma-lilac);
+  content: "";
+}
+
+.jellyfish::before { left: 0.7rem; }
+.jellyfish::after { left: 0.95rem; transform: translateY(0.5rem); }
+
+.octopus {
+  position: absolute;
+  right: 22%;
+  bottom: 1.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: 2px solid var(--luma-blue);
+  border-radius: 50% 50% 42% 42%;
+  filter: drop-shadow(0 0 10px rgba(93, 231, 255, 0.55));
+  animation: float 6s ease-in-out -2s infinite;
+}
+
+.octopus::after {
+  position: absolute;
+  right: -0.5rem;
+  bottom: -1.5rem;
+  width: 4.5rem;
+  height: 2rem;
+  border-bottom: 2px solid var(--luma-blue);
+  border-radius: 50%;
+  content: "";
+  box-shadow: -1rem 0.4rem 0 -0.5px var(--luma-blue), 1rem 0.4rem 0 -0.5px var(--luma-blue);
+}
+
+@keyframes swim {
+  from { transform: translateX(0) scaleX(1); }
+  48% { transform: translateX(calc(100vw + 12rem)) scaleX(1); }
+  50% { transform: translateX(calc(100vw + 12rem)) scaleX(-1); }
+  to { transform: translateX(0) scaleX(-1); }
+}
+
+@keyframes rise {
+  from { transform: translateY(0) scale(0.7); opacity: 0; }
+  15% { opacity: 1; }
+  to { transform: translateY(-80vh) scale(1.2); opacity: 0; }
+}
+
+@keyframes float {
+  50% { transform: translateY(-0.75rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble, .fish, .jellyfish, .octopus { animation: none; }
 }
 
 @media (max-width: 700px) {

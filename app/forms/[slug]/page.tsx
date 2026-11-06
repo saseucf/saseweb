@@ -189,6 +189,15 @@ export default function FormResponsePage() {
     return (
       <main className={`sase-page ${styles.lumaPage}`}>
         <div className={styles.landing}>
+          <div className={styles.ocean} aria-hidden="true">
+            <span className={`${styles.bubble} ${styles.bubbleOne}`} />
+            <span className={`${styles.bubble} ${styles.bubbleTwo}`} />
+            <span className={`${styles.bubble} ${styles.bubbleThree}`} />
+            <span className={`${styles.fish} ${styles.fishOne}`} />
+            <span className={`${styles.fish} ${styles.fishTwo}`} />
+            <span className={styles.jellyfish} />
+            <span className={styles.octopus} />
+          </div>
           <div className={styles.hero}>
             <div>
               <p className={styles.eyebrow}>UCF SASE presents</p>
@@ -249,6 +258,15 @@ export default function FormResponsePage() {
 
   return (
     <main className={`sase-page ${isLumaHacks ? `${styles.lumaPage} ${styles.formShell}` : ""}`}>
+      {isLumaHacks && (
+        <div className={styles.ocean} aria-hidden="true">
+          <span className={`${styles.bubble} ${styles.bubbleOne}`} />
+          <span className={`${styles.bubble} ${styles.bubbleTwo}`} />
+          <span className={`${styles.fish} ${styles.fishOne}`} />
+          <span className={styles.jellyfish} />
+          <span className={styles.octopus} />
+        </div>
+      )}
       <div className={`sase-page-header ${isLumaHacks ? styles.formHeader : ""}`}>
         <p className="sase-eyebrow">UCF SASE / Form</p>
         <h1>{form.title}</h1>
