@@ -58,7 +58,7 @@ INSERT INTO public.forms (
 )
 SELECT
     'LumaHacks Preregistration',
-    'Preregister for LumaHacks by UCF SASE.',
+    'LumaHacks runs March 6–7 and is open to currently enrolled college students. Preregister by UCF SASE.',
     'lumahacks',
     '[
       {"id":"first_name","type":"short_text","label":"First Name","required":true},
