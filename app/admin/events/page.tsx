@@ -116,6 +116,7 @@ export default async function AdminEventsPage() {
                 </div>
 
                 <div className="flex gap-3 mt-4 sm:mt-0">
+                    <Link href="/admin/hackathons" className="sase-secondary-button">Manage Hackathons</Link>
                     <Link
                         href="/forms/admin"
                         className="sase-secondary-button"

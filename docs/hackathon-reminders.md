@@ -1,8 +1,10 @@
 # Hackathon event reminders
 
-Apply `database/changes/add-hackathon-reminders.sql` after the existing event status migration. It adds `hackathons`, `events.hackathon_id`, the private delivery ledger, and two service-only RPCs. It seeds LumaHacks 2027 with no Discord destination; configure its `discord_channel_id` and `discord_role_id` through the Supabase admin SQL/table editor before enabling the bot. These are Discord snowflake IDs, not names.
+Apply `database/changes/add-hackathon-reminders.sql` after the existing event status migration. It adds `hackathons`, `events.hackathon_id`, the private delivery ledger, and two service-only RPCs. It seeds LumaHacks 2027 with no Discord destination; configure its channel and role in Admin → Events → Manage Hackathons before enabling the bot. These are Discord snowflake IDs, not names.
 
 ## Organizer workflow
+
+Open Admin → Events → Manage Hackathons to create a hackathon or edit its name, unique lowercase slug, announcement channel ID, and reminder role ID. Enable Discord Developer Mode to copy those IDs. You may leave the destination unset while planning; reminders are skipped until both IDs are configured. Saving does not create Discord roles or assign members to them. The page uses admin authorization and database RLS; no additional migration is needed beyond the migration above.
 
 In Admin → Events, choose an Event group when creating or editing a session. New hackathon sessions default to zero points unless explicitly overridden. Existing events and point values are preserved. Filter the admin list by hackathon or SASE chapter events. Publish sessions when ready; draft and cancelled sessions never qualify for reminders.
 
