@@ -227,7 +227,7 @@ export default function EventForm({
                     <option value="">SASE chapter event</option>
                     {hackathons.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
                 </select>
-                <p className="text-sm text-muted-foreground">Hackathon sessions use their own reminders and stay out of the SASE calendar and digests.</p>
+                <p className="text-sm text-muted-foreground">Published hackathon sessions appear in the SASE event listing. Their reminders use the selected hackathon’s Discord channel and role instead of chapter digests.</p>
             </div>
             {/* Basic event information */}
             <div className="flex flex-col gap-1">
