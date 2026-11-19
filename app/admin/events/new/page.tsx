@@ -2,6 +2,9 @@ import { getAdminHackathons } from "@/lib/hackathons";
 import EventForm from "@/components/events/event-form";
 import Link from "next/link";
 
+// Hackathon options require the signed-in administrator's session, never build-time access.
+export const dynamic = "force-dynamic";
+
 export default async function NewEventPage() {
     const hackathons = await getAdminHackathons();
     return (
