@@ -31,7 +31,6 @@ export default async function EventsPage() {
         .from("events")
         .select("*, forms(slug, is_open)")
         .eq("status", "published")
-        .is("hackathon_id", null)
         .order("start_time", { ascending: true });
 
     if (error) console.error("Could not load events:", error);
@@ -43,7 +42,7 @@ export default async function EventsPage() {
                     <div className={styles.heroCopy}>
                         <p className={styles.eyebrow}>Events</p>
                         <h1>Make time<br />for SASE.</h1>
-                        <p>Workshops, socials, and chapter meetings.</p>
+                        <p>Workshops, socials, chapter meetings, and hackathon sessions.</p>
                         <a href="#schedule" className={styles.heroLink}>Find an event <ArrowDown size={18} aria-hidden="true" /></a>
                     </div>
                     <figure className={styles.heroPhoto}>

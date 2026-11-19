@@ -147,6 +147,7 @@ function EventRow({ event, now, animateLayout }: { event: PublicEvent; now: stri
             <div className={styles.eventContent} data-event-motion="position">
                 <div className={styles.eventTags}>
                     <span>{event.event_type}</span>
+                    {event.hackathon_id && <span>Hackathon session</span>}
                     {timingLabel ? <span className={styles.live}>{timingLabel}</span> : null}
                 </div>
                 <h4 id={`event-${event.id}`}>{event.title}</h4>

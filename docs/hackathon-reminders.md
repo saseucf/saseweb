@@ -8,7 +8,7 @@ Open Admin → Events → Manage Hackathons to create a hackathon or edit its na
 
 In Admin → Events, choose an Event group when creating or editing a session. New hackathon sessions default to zero points unless explicitly overridden. Existing events and point values are preserved. Filter the admin list by hackathon or SASE chapter events. Publish sessions when ready; draft and cancelled sessions never qualify for reminders.
 
-Hackathon sessions are excluded from the ordinary public event list/detail routes and SASE daily/weekly digests. No public hackathon schedule page is added here. Registration forms and submissions are unchanged.
+Published hackathon sessions appear alongside chapter events in the regular public event listing and detail pages, with a Hackathon session badge. Draft and cancelled events remain hidden. Hackathon sessions are still excluded from SASE daily/weekly Discord digests; their one-hour reminders use the channel and role configured for the selected hackathon. No separate public hackathon schedule page is needed. Registration forms and submissions are unchanged.
 
 ## Deployment order
 
