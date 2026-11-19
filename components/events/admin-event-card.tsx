@@ -11,6 +11,7 @@ export default function AdminEventCard({ event, now }: { event: AdminListEvent; 
     <div>
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className={`rounded px-2 py-1 text-[.65rem] font-bold uppercase tracking-wider ${event.status === "published" ? "bg-blue-50 text-blue-800" : event.status === "draft" ? "bg-gray-100 text-gray-700" : "bg-red-50 text-red-700"}`}>{event.status}</span>
+        {event.hackathon_id && <span className="rounded bg-indigo-50 px-2 py-1 text-xs font-bold text-indigo-800">Hackathon session</span>}
         {completed && <span className="rounded bg-green-100 px-2 py-1 text-[.65rem] font-bold uppercase tracking-wider text-green-800">Date passed</span>}
       </div>
       <h3 className="text-xl font-bold text-foreground">{event.title}</h3>

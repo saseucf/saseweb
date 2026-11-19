@@ -20,6 +20,7 @@ export type PublicEvent = {
     status: "draft" | "published" | "cancelled";
     forms?: { slug: string; is_open: boolean }[];
     academic_field_id?: string | null;
+    hackathon_id?: string | null;
 };
 
 export function eventDateKey(value: string | Date): string {

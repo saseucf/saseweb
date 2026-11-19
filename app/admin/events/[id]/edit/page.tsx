@@ -1,3 +1,4 @@
+import { getAdminHackathons } from "@/lib/hackathons";
 import EventForm from "@/components/events/event-form";
 import { createServerSupabase } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
@@ -14,6 +15,7 @@ export default async function EditEventPage({
     params,
 }: EditEventPageProps) {
     const { id } = await params;
+    const hackathons = await getAdminHackathons();
     const supabase = createServerSupabase();
 
     // Load the event being edited.
@@ -39,7 +41,7 @@ export default async function EditEventPage({
             </div>
 
             <div className="sase-creator-panel mt-8">
-                <EventForm event={event} />
+                <EventForm event={event} hackathons={hackathons} />
             </div>
         </main>
     );

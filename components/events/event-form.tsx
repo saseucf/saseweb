@@ -22,16 +22,22 @@ type EventData = {
     host: string | null;
     status: "draft" | "published" | "cancelled";
     academic_field_id?: string | null;
+    hackathon_id?: string | null;
 };
 
 type EventFormProps = {
     event?: EventData;
+    hackathons: { id: string; name: string }[];
 };
 
 export default function EventForm({
     event: existingEvent,
+    hackathons,
 }: EventFormProps) {
     const router = useRouter();
+    const [hackathonId, setHackathonId] = useState(existingEvent?.hackathon_id ?? "");
+    const [pointsInput, setPointsInput] = useState(String(existingEvent?.points ?? DEFAULT_EVENT_POINTS));
+    const [pointsEdited, setPointsEdited] = useState(false);
 
     // Track submission errors and prevent duplicate submissions.
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -133,7 +139,7 @@ export default function EventForm({
         ).trim();
 
         const pointsValue = String(formData.get("points") ?? "").trim();
-        const points = pointsValue === "" ? DEFAULT_EVENT_POINTS : Number(pointsValue);
+        const points = pointsValue === "" ? (hackathonId ? 0 : DEFAULT_EVENT_POINTS) : Number(pointsValue);
 
         // Capacity is optional. Store an empty field as NULL
         // instead of an empty string because the database expects an integer.
@@ -182,6 +188,7 @@ export default function EventForm({
             end_time: endTimeISO,
             capacity,
             points,
+            hackathon_id: hackathonId || null,
             host: host || null,
             status,
             ...(formData.has("academic_field_id") ? { academic_field_id: academicFieldId } : {}),
@@ -210,6 +217,18 @@ export default function EventForm({
             onSubmit={handleSubmit}
             className="flex flex-col gap-5 sase-creator-page"
         >
+            <div className="flex flex-col gap-1">
+                <label htmlFor="hackathon_id" className="text-sm font-semibold">Event group</label>
+                <select id="hackathon_id" name="hackathon_id" value={hackathonId}
+                    onChange={e => {
+                        setHackathonId(e.target.value);
+                        if (!existingEvent && !pointsEdited) setPointsInput(String(e.target.value ? 0 : DEFAULT_EVENT_POINTS));
+                    }} className="border rounded-md p-2 bg-muted text-foreground">
+                    <option value="">SASE chapter event</option>
+                    {hackathons.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
+                </select>
+                <p className="text-sm text-muted-foreground">Published hackathon sessions appear in the SASE event listing. Their reminders use the selected hackathon’s Discord channel and role instead of chapter digests.</p>
+            </div>
             {/* Basic event information */}
             <div className="flex flex-col gap-1">
                 <label
@@ -435,7 +454,8 @@ export default function EventForm({
                         name="points"
                         type="number"
                         min="0"
-                        defaultValue={existingEvent?.points ?? DEFAULT_EVENT_POINTS}
+                        value={pointsInput}
+                        onChange={e => { setPointsInput(e.target.value); setPointsEdited(true); }}
                         required
                         className="border rounded-md p-2 bg-muted text-foreground focus:border-[#89abe3] focus:outline-none focus:ring-2 focus:ring-[#dbe5fa]"
                     />

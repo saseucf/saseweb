@@ -87,6 +87,9 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
                         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 mb-8">
                             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-tight max-w-2xl flex flex-wrap items-center gap-4">
                                 {event.title}
+                                {event.hackathon_id && (
+                                    <span className="rounded-full border border-border bg-muted px-3 py-1 text-sm font-bold">Hackathon session</span>
+                                )}
                                 {isPast && (
                                     <span className="bg-[#ACA39A]/20 text-[#ACA39A] text-sm uppercase tracking-wider font-bold px-3 py-1 rounded-lg border border-[#ACA39A]/30 self-center">
                                         Finished
