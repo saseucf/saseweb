@@ -41,6 +41,7 @@ export function searchEditableItems<T extends EditableItem>(items: T[], query: s
 }
 
 export type AdminListEvent = EditableItem & {
+  hackathon_id?: string | null;
   description: string | null; event_type: string; location: string | null;
   start_time: string; end_time: string; capacity: number | null; points: number;
   host: string | null; status: "draft" | "published" | "cancelled";

@@ -111,3 +111,33 @@ test("edit history is recorded after a successful write with the authorized acto
   assert.deepEqual(result, { ok: true });
   assert.deepEqual(calls, ["write", "history", "refresh"]);
 });
+
+test("hackathon sessions default to zero points and persist association", async () => {
+  const result = await executeEventMutation({ type: "save", eventData: { ...fields, points: undefined, hackathon_id: id } }, dependencies({ write: async mutation => {
+    assert.equal(mutation.type, "save");
+    if (mutation.type === "save") {
+      assert.equal(mutation.eventData.points, 0);
+      assert.equal(mutation.eventData.hackathon_id, id);
+    }
+    return { error: null };
+  } }));
+  assert.equal(result.ok, true);
+});
+
+test("existing explicit points and clearing a hackathon association are preserved", async () => {
+  const result = await executeEventMutation({ type: "save", existingId: id, eventData: { ...fields, points: 12, hackathon_id: null } }, dependencies({ write: async mutation => {
+    if (mutation.type === "save") {
+      assert.equal(mutation.eventData.points, 12);
+      assert.equal(mutation.eventData.hackathon_id, null);
+    }
+    return { error: null };
+  } }));
+  assert.equal(result.ok, true);
+});
+
+test("invalid hackathon ID is rejected before any database write", async () => {
+  for (const hackathon_id of ["not-a-uuid", 12, ""]) {
+    const result = await executeEventMutation({ type: "save", eventData: { ...fields, hackathon_id } }, dependencies({ write: async () => assert.fail("Invalid association must not be written") }));
+    assert.equal(result.ok, false);
+  }
+});

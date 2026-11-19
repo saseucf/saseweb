@@ -46,6 +46,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
         .select("*")
         .eq("id", resolvedParams.id)
         .eq("status", "published")
+        .is("hackathon_id", null)
         .single();
 
     if (error || !event) {

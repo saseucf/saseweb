@@ -31,6 +31,7 @@ export default async function EventsPage() {
         .from("events")
         .select("*, forms(slug, is_open)")
         .eq("status", "published")
+        .is("hackathon_id", null)
         .order("start_time", { ascending: true });
 
     if (error) console.error("Could not load events:", error);

@@ -1,3 +1,4 @@
+import { getAdminHackathons } from "@/lib/hackathons";
 import Link from "next/link";
 import { createServerSupabase } from "@/lib/supabase-server";
 import AdminEventsClient from "@/components/events/admin-events-client";
@@ -26,6 +27,7 @@ type Event = {
 
 export default async function AdminEventsPage() {
     const supabase = createServerSupabase();
+    const hackathons = await getAdminHackathons();
 
     // Fetch events
     const { data: eventsData, error: eventsError } = await supabase
@@ -129,7 +131,7 @@ export default async function AdminEventsPage() {
                 </div>
             </div>
 
-            <AdminEventsClient events={events} initialNow={Date.now()} />
+            <AdminEventsClient hackathons={hackathons} events={events} initialNow={Date.now()} />
         </main>
     );
 }

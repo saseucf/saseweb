@@ -7,9 +7,10 @@ import AdminEventCard from "@/components/events/admin-event-card";
 import supabase from "@/lib/auth";
 import { organizeAdminEvents, type AdminListEvent } from "@/lib/admin-list-order";
 
-export default function AdminEventsClient({ events: initialEvents, initialNow }: { events: AdminListEvent[]; initialNow: number }) {
+export default function AdminEventsClient({ events: initialEvents, initialNow, hackathons }: { events: AdminListEvent[]; initialNow: number; hackathons: { id: string; name: string }[] }) {
   const [events, setEvents] = useState(initialEvents);
   const [searchQuery, setSearchQuery] = useState("");
+  const [eventGroup, setEventGroup] = useState("all");
   const [now, setNow] = useState(initialNow);
   useEffect(() => { setEvents(initialEvents); }, [initialEvents]);
   useEffect(() => {
@@ -24,11 +25,17 @@ export default function AdminEventsClient({ events: initialEvents, initialNow }:
     return () => { void supabase.removeChannel(channel); };
   }, []);
 
-  const { matching, upcoming, folders } = organizeAdminEvents(events, searchQuery, now);
+  const { matching, upcoming, folders } = organizeAdminEvents(events.filter(event => eventGroup === "all" || (eventGroup === "chapter" ? !event.hackathon_id : event.hackathon_id === eventGroup)), searchQuery, now);
   const searching = searchQuery.trim().length > 0;
   const cards = (items: AdminListEvent[]) => <div className="sase-form-grid !mt-0">{items.map(event => <AdminEventCard key={event.id} event={event} now={now} />)}</div>;
 
   return <section className="sase-content-section">
+    <label className="mb-4 flex flex-col gap-2 text-sm font-semibold">Event group
+      <select value={eventGroup} onChange={e => setEventGroup(e.target.value)} className="rounded border border-border bg-card p-2">
+        <option value="all">All events</option><option value="chapter">SASE chapter events</option>
+        {hackathons.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
+      </select>
+    </label>
     <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
       <div className="relative w-full max-w-xl">
         <Search size={18} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />

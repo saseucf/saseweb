@@ -1,7 +1,9 @@
+import { getAdminHackathons } from "@/lib/hackathons";
 import EventForm from "@/components/events/event-form";
 import Link from "next/link";
 
-export default function NewEventPage() {
+export default async function NewEventPage() {
+    const hackathons = await getAdminHackathons();
     return (
         <main className="sase-page sase-admin-page pt-[120px]">
             <Link href="/admin/events" className="sase-secondary-button mb-6 inline-block">
@@ -13,7 +15,7 @@ export default function NewEventPage() {
             </div>
 
             <div className="sase-creator-panel mt-8">
-                <EventForm />
+                <EventForm hackathons={hackathons} />
             </div>
         </main>
     );

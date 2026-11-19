@@ -27,7 +27,7 @@ function validatedEvent(input: Record<string, unknown>) {
   const start = typeof input.start_time === "string" ? Date.parse(input.start_time) : NaN;
   const end = typeof input.end_time === "string" ? Date.parse(input.end_time) : NaN;
   if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) throw new Error("Choose valid dates with the end after the start.");
-  const points = input.points == null || input.points === "" ? DEFAULT_EVENT_POINTS : input.points;
+  const points = input.points == null || input.points === "" ? (input.hackathon_id ? 0 : DEFAULT_EVENT_POINTS) : input.points;
   if (!Number.isSafeInteger(points) || (points as number) < 0) throw new Error("Points must be a whole number of zero or more.");
   if (input.capacity != null && (!Number.isSafeInteger(input.capacity) || (input.capacity as number) < 1)) throw new Error("Capacity must be a whole number of at least one, or left blank.");
   if (!["draft", "published", "cancelled"].includes(String(input.status))) throw new Error("Choose a valid event status.");
@@ -36,6 +36,10 @@ function validatedEvent(input: Record<string, unknown>) {
     start_time: new Date(start).toISOString(), end_time: new Date(end).toISOString(),
     points, capacity: input.capacity ?? null, status: input.status,
   };
+  if (Object.hasOwn(input, "hackathon_id")) {
+    if (input.hackathon_id != null && (typeof input.hackathon_id !== "string" || !uuid.test(input.hackathon_id))) throw new Error("Choose a valid hackathon.");
+    data.hackathon_id = input.hackathon_id ?? null;
+  }
   if (Object.hasOwn(input, "academic_field_id")) {
     if (input.academic_field_id != null && (typeof input.academic_field_id !== "string" || !uuid.test(input.academic_field_id))) throw new Error("Choose a valid event category.");
     data.academic_field_id = input.academic_field_id ?? null;

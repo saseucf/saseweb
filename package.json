@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "tsx --test tests/**/*.test.ts",
+    "test:reminders-db": "node --test database/tests/hackathon-reminders.test.mjs",
     "test:zeffy": "tsx --test tests/zeffy.test.ts",
     "typecheck": "tsc --noEmit"
   },
