@@ -37,8 +37,10 @@ try {
     alter table storage.objects enable row level security;
     create function storage.foldername(text) returns text[] language sql immutable as
       $$ select (string_to_array($1,'/'))[1:array_length(string_to_array($1,'/'),1)-1] $$;
-    grant usage on schema storage to authenticated;
+    grant usage on schema storage to anon,authenticated;
     grant select,insert,delete on storage.objects to authenticated;
+    grant select on storage.objects to anon;
+    create policy legacy_public_storage_read on storage.objects for select to anon,authenticated using(true);
   `);
   const migration = await readFile(new URL('../database/hackathon/001_backend.sql', import.meta.url), 'utf8');
   await check('migration requires the existing club database', async () => {
@@ -77,6 +79,18 @@ try {
     assert.deepEqual((await db.query('select * from public.event_attendances')).rows, attendanceBefore);
     assert.equal((await db.query('select name from public.teams')).rows[0].name, 'Club Team');
     assert.equal((await db.query('select name from public.sponsors')).rows[0].name, 'Club Sponsor');
+  });
+  await check('account cutover stays disabled until the separate release migration', async () => {
+    assert.equal((await as(null, 'select account_isolation_ready from hackathon.portal_configuration')).rows[0].account_isolation_ready, false);
+    await assert.rejects(as(users[0], "select hackathon.submit_application($1,'{}'::jsonb,'v1',true,true,false)", [h]), /not open yet/);
+    await db.exec(await readFile(new URL('../database/hackathon/002_account_isolation.sql', import.meta.url), 'utf8'));
+  });
+  await check('confirmed date-only details do not fabricate an operational event or open registration', async () => {
+    await db.exec(await readFile(new URL('../database/hackathon/004_confirmed_public_details.sql', import.meta.url), 'utf8'));
+    const details=(await as(null,'select public_details from hackathon.portal_configuration')).rows[0].public_details;
+    assert.equal(details.starts_on,'2027-03-06');
+    assert.equal(details.rsvp_deadline_on,'2027-02-15');
+    assert.equal((await db.query('select count(*)::int n from hackathon.hackathons')).rows[0].n,0);
   });
   await check('legacy preregistration no longer mutates club profiles', async () => {
     await db.exec('insert into public.form_submissions default values');
@@ -211,9 +225,16 @@ try {
     await as(users[1], "insert into storage.objects(bucket_id,name) values('hacker-resumes',$1)", [path]);
     await assert.rejects(as(users[2], "insert into storage.objects(bucket_id,name) values('hacker-resumes',$1)", [path]));
     assert.equal((await as(users[2], 'select * from storage.objects')).rows.length, 0);
+    assert.equal((await as(null, 'select * from storage.objects')).rows.length, 0);
     assert.equal((await as(admin, 'select * from storage.objects')).rows.length, 1);
     await as(users[1], 'select hackathon.update_hacker_profile($1,$2::jsonb)', [h, JSON.stringify({ resume_path: path })]);
     await assert.rejects(as(users[2], 'select hackathon.update_hacker_profile($1,$2::jsonb)', [h, JSON.stringify({ resume_path: path })]));
+  });
+  await check('restrictive resume guard preserves existing public bucket access', async () => {
+    await db.exec("insert into storage.objects(bucket_id,name) values('gbm1','public-photo.png')");
+    const rows=(await as(null,'select * from storage.objects')).rows;
+    assert.equal(rows.length,1);
+    assert.equal(rows[0].bucket_id,'gbm1');
   });
   await check('hackathon activity never changes an existing SASE member profile or club attendance', async () => {
     assert.deepEqual((await db.query('select * from public.profiles where id=$1', [users[0]])).rows[0], clubBefore.find(p => p.id===users[0]));

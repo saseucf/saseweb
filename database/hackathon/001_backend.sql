@@ -1,4 +1,4 @@
--- Apply ONCE to the EXISTING SASE Supabase database after deploying the club login update.
+-- Apply ONCE to the EXISTING SASE Supabase database. Deploy club code before 002.
 -- Adds a separate hackathon schema; preserves all existing club data and identities.
 begin;
 do $$
@@ -14,6 +14,19 @@ grant usage on schema hackathon to anon, authenticated, service_role;
 create schema if not exists hackathon_private;
 revoke all on schema hackathon_private from public;
 grant usage on schema hackathon_private to anon, authenticated;
+
+-- Public readiness flag, changed only by the release migration. This prevents
+-- portal registrations before the club login code and signup cutover are ready.
+create table hackathon.portal_configuration (
+  id boolean primary key default true check (id),
+  account_isolation_ready boolean not null default false
+);
+insert into hackathon.portal_configuration default values;
+alter table hackathon.portal_configuration enable row level security;
+revoke all on hackathon.portal_configuration from public,anon,authenticated;
+grant select on hackathon.portal_configuration to anon,authenticated;
+grant all on hackathon.portal_configuration to service_role;
+create policy readiness_read on hackathon.portal_configuration for select to anon,authenticated using (true);
 
 create table hackathon.hackathons (
   id uuid primary key default gen_random_uuid(),
@@ -306,6 +319,9 @@ returns uuid language plpgsql security definer set search_path = '' as $$
 declare a uuid; verified_email text;
 begin
   if auth.uid() is null then raise exception 'Sign in first'; end if;
+  if not exists(select 1 from hackathon.portal_configuration where account_isolation_ready) then
+    raise exception 'Applications are not open yet';
+  end if;
   select email into verified_email from auth.users where id=auth.uid() and email_confirmed_at is not null;
   if verified_email is null then raise exception 'Verify your email first'; end if;
   if not exists(select 1 from hackathon.hackathons where id=p_hackathon_id and is_published
@@ -501,17 +517,22 @@ create policy resume_admin_read on storage.objects for select to authenticated u
   bucket_id='hacker-resumes' and exists(select 1 from hackathon.hackathon_staff s
     where s.user_id=auth.uid() and s.role='admin' and s.hackathon_id::text=(storage.foldername(name))[1]));
 
--- Account creation is not club enrollment. The existing profile handler remains
--- intact, but only explicit club registrations/invitations invoke it at signup.
--- Provider signups from either site have no marker; club OAuth login explicitly
--- enrolls through ensure_club_profile after authentication. Metadata only opts
--- into ordinary membership, never elevated roles, payment status or club points.
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created after insert on auth.users
-for each row when (
-  NEW.raw_user_meta_data->>'signup_profile_complete' = 'true'
-  or NEW.raw_user_meta_data->>'account_context' = 'club'
-) execute function public.handle_new_user();
+-- Existing projects can have permissive policies such as USING(true). PostgreSQL
+-- ORs permissive policies, so private buckets alone do not guarantee privacy.
+-- Restrict only our bucket, leaving all existing public assets accessible.
+create function hackathon_private.can_read_resume(path text) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select auth.uid() is not null and (
+    (storage.foldername(path))[2]=auth.uid()::text or exists(
+      select 1 from hackathon.hackathon_staff s where s.user_id=auth.uid()
+      and s.role='admin' and s.hackathon_id::text=(storage.foldername(path))[1]
+    )
+  );
+$$;
+revoke all on function hackathon_private.can_read_resume(text) from public;
+grant execute on function hackathon_private.can_read_resume(text) to anon,authenticated;
+create policy hackathon_resume_read_guard on storage.objects as restrictive for select to public
+using (bucket_id <> 'hacker-resumes' or hackathon_private.can_read_resume(name));
 
 create function public.ensure_club_profile() returns void
 language plpgsql security definer set search_path = '' as $$
@@ -542,23 +563,13 @@ begin
     first_name := case when space_pos>0 then left(display_name,space_pos-1) else display_name end;
     last_name := case when space_pos>0 then substr(display_name,space_pos+1) else '' end;
   end if;
-  insert into public.profiles(id,first_name,last_name,email,major,year,school,name_confirmed,role,is_admin,paid_member,total_points)
+  insert into public.profiles(id,first_name,last_name,email,major,year,school,name_confirmed,role,paid_member,total_points)
   values(u.id,first_name,last_name,u.email,coalesce(meta->>'major',''),coalesce(meta->>'year',''),
-    coalesce(meta->>'school',''),false,'member',false,false,0)
+    coalesce(meta->>'school',''),false,'member',false,0)
   on conflict (id) do nothing;
 end;
 $$;
 revoke all on function public.ensure_club_profile() from public,anon;
 grant execute on function public.ensure_club_profile() to authenticated;
 
--- Legacy preregistration must no longer copy hackathon answers into club profiles.
--- Preserve historical submissions and profile values; do not infer applications
--- or consent from unverified preregistration emails.
-do $$
-begin
-  if to_regclass('public.form_submissions') is not null then
-    execute 'drop trigger if exists mark_luma_hacks_participant_on_submission on public.form_submissions';
-  end if;
-end;
-$$;
 commit;

@@ -2,8 +2,15 @@
 
 Use the **existing SASE Supabase project**. The portal remains a separate website,
 with its own application records and staff permissions, while sharing Auth accounts.
-No live database has been changed by this code update. The previous standalone
-migration was never applied; run only this revised version, once.
+The additive backend migration was applied to the existing `Saseweb` project
+through the Supabase connector on November 22, 2026. Existing club profile and
+attendance counts remained unchanged (245 profiles, 404 attendance records).
+Confirmed public dates/contact/Discord were recorded with `004`: March 6-7,
+2027; RSVP deadline February 15, 2027; ucfsase.tech@gmail.com; the supplied
+Discord invite. Exact event times, venue, application window and Devpost remain
+unset. Account cutover (`002`) is deferred until the club code is deployed. API exposure
+(`003`) was blocked by automatic approval review and awaits explicit approval.
+Do not rerun `001` in this project. The old standalone migration was never applied.
 
 ## Accounts and foreign keys
 
@@ -35,22 +42,25 @@ New account creation no longer automatically means club enrollment:
   verified applications or consent records. Do not reapply the old
   `database/changes/luma_hacks_preregistration.sql` migration afterward.
 
-## Apply once
+## Release in order
 
-1. Deploy this code update to the SASE site first, particularly
-   `lib/member-session.ts` and `lib/member-onboarding.ts`. Existing sign-ins continue
-   to work before the migration because their profiles already exist or are still
-   created by the old trigger. Deploying the migration first could temporarily
-   leave new club OAuth accounts without a profile on older code.
-2. In the **existing project's** SQL editor, run `001_backend.sql` once as
-   `postgres`. It is transactional and requires the existing `public.profiles`
-   table and `public.handle_new_user()` handler. It adds the new schemas, adjusts
-   the signup trigger, and provides the explicit club enrollment RPC. Do not rerun
-   `database/schema.sql`: that file drops club tables. No rollback of the old
-   standalone migration is needed because it was never applied.
-3. In Supabase API settings, **add `hackathon` to Exposed schemas**, preserving
-   `public` and any other existing entries and their order. Do not expose
-   `hackathon_private`. See [Supabase custom-schema setup](https://supabase.com/docs/guides/api/using-custom-schemas).
+1. **Backend creation:** `001_backend.sql` adds the new schemas, private resume
+   storage, RLS/RPCs, a readiness flag, and `public.ensure_club_profile()` without
+   changing the live signup trigger. This step is already applied. On another
+   existing SASE deployment, apply it once as `postgres`. It requires the existing
+   profile table and signup handler. Never rerun `database/schema.sql`: it drops
+   club tables.
+2. **Club deployment, then account cutover:** deploy the updated SASE code,
+   especially `lib/member-session.ts` and `lib/member-onboarding.ts`, then run
+   `002_account_isolation.sql`. It adjusts the existing signup trigger, disables
+   the old preregistration profile mutation, and marks account isolation ready.
+   Until then, the portal's auth controls and application RPC remain locked.
+3. **API exposure:** add `hackathon` to Exposed schemas, preserving `public` and
+   all existing entries and their order. Do not expose `hackathon_private`.
+   `003_expose_api.sql` is prepared for the current project's verified defaults;
+   live application requires explicit user approval after an automatic-review
+   rejection. Review custom exposure before using that SQL in a different project.
+   See [Supabase custom-schema setup](https://supabase.com/docs/guides/api/using-custom-schemas).
 4. Configure the portal with the same `NEXT_PUBLIC_SUPABASE_URL` and
    `NEXT_PUBLIC_SUPABASE_ANON_KEY` as SASE, as shown in this directory's `.env.example`.
    Keep `SUPABASE_SERVICE_ROLE_KEY` server-only if automation needs it.
@@ -84,8 +94,8 @@ New account creation no longer automatically means club enrollment:
     `hacker_resources` for Wi-Fi and `perks` for participant-facing redemption
     information with explicit unlock times. Never store server API secrets there.
 11. Run the checks below and smoke-test both sites with existing club members and
-    external attendees before opening applications. The portal UI and hosting are
-    separate work; this change provides the backend and client adapter.
+    external attendees before opening applications. The separate portal is built
+    in `apps/hacker-portal`; its README covers run commands and deployment.
 
 ## API contract
 
@@ -185,6 +195,8 @@ Supabase-hosted OAuth/email delivery and actual Storage upload/MIME enforcement
 still require a staging project smoke test with anonymous, hacker, volunteer and
 admin sessions. The stubs do not validate the hosted services.
 
-Not configured here: live migrations/API settings, actual event data, approved
-catalogs/terms, portal callback URLs, email notifications, portal UI, or hosting.
+Still pending: the club deployment/account cutover, API-exposure approval, actual
+event data, approved catalogs/terms, portal callback allowlisting, email
+notifications, and separate portal hosting. The portal UI and backend source are
+implemented, but live authenticated end-to-end verification awaits those steps.
 No new Supabase project, separate account directory, or SSO service is required.

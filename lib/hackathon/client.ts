@@ -7,6 +7,6 @@ export function createHackathonClient(): SupabaseClient {
   if (!url || !key) throw new Error("Configure the existing SASE Supabase project.");
   return createClient(url, key, {
     // Separate site sessions; the same email/password/provider account works on both.
-    auth: { storageKey: "hackathon-auth", persistSession: true, autoRefreshToken: true },
+    auth: { storageKey: "hackathon-auth", flowType: "pkce", detectSessionInUrl: false, persistSession: true, autoRefreshToken: true },
   });
 }
