@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: "Saltwater";
+  src: url("/fonts/saltwater-type-italic-personal.otf") format("opentype");
+  font-display: swap;
+  font-style: italic;
+  font-weight: 400;
+}
+
 @theme {
   --font-sans: var(--font-orbitron);
   --font-mono: var(--font-mono);
@@ -284,6 +292,148 @@ body:has([data-event-qr-display]) {
   color: var(--foreground);
   min-height: 100svh;
   padding: 48px 5vw 80px;
+}
+.lumahacks-page {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(180, 228, 237, 0.3), transparent 25%),
+    linear-gradient(180deg, #dff7fb 0%, #b4e4ed 42%, #5b8db4 100%);
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+.lumahacks-page::after {
+  background: linear-gradient(180deg, transparent 0%, rgba(20, 27, 77, 0.08) 80%, rgba(20, 27, 77, 0.25) 100%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+.lumahacks-intro,
+.lumahacks-header,
+.lumahacks-form-card {
+  position: relative;
+  z-index: 2;
+}
+.lumahacks-header {
+  text-align: center;
+}
+.lumahacks-title {
+  color: #141b4d;
+  font-family: "Saltwater", cursive;
+  font-size: clamp(4.5rem, 13vw, 9.5rem) !important;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.02em !important;
+  line-height: 0.9 !important;
+  text-shadow: 0 5px 0 rgba(255, 253, 229, 0.7);
+}
+.lumahacks-subtitle {
+  color: #244c70;
+  font-family: "Saltwater", cursive;
+  font-size: clamp(1.7rem, 4vw, 2.8rem);
+  font-style: italic;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  margin: 14px 0 0;
+}
+.lumahacks-form-card.is-lumahacks {
+  background: rgba(255, 253, 229, 0.94);
+  border-color: rgba(255, 253, 229, 0.85);
+  box-shadow: 0 22px 50px rgba(20, 27, 77, 0.2);
+}
+.lumahacks-form-card.is-lumahacks::before {
+  background: linear-gradient(90deg, #1d5b82, #b4e4ed, #1d5b82);
+  content: "";
+  height: 7px;
+  inset: 0 0 auto;
+  position: absolute;
+}
+.lumahacks-decorations {
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+.lumahacks-fish,
+.lumahacks-jellyfish,
+.lumahacks-bubbles {
+  position: absolute;
+}
+.lumahacks-fish {
+  animation: lumahacks-swim 18s linear infinite;
+  background: #34799a;
+  border-radius: 65% 35% 35% 65%;
+  height: 20px;
+  opacity: 0.6;
+  width: 42px;
+}
+.lumahacks-fish::before {
+  border-bottom: 10px solid transparent;
+  border-right: 17px solid #34799a;
+  border-top: 10px solid transparent;
+  content: "";
+  left: -13px;
+  position: absolute;
+  top: 0;
+}
+.lumahacks-fish::after {
+  background: #dff7fb;
+  border-radius: 50%;
+  content: "";
+  height: 4px;
+  position: absolute;
+  right: 9px;
+  top: 6px;
+  width: 4px;
+}
+.lumahacks-fish-one { left: 3%; top: 28%; }
+.lumahacks-fish-two { animation-delay: -7s; left: 78%; top: 45%; transform: scale(0.7); }
+.lumahacks-fish-three { animation-delay: -12s; left: 18%; top: 74%; transform: scale(0.55); }
+.lumahacks-fish-four { animation-delay: -3s; left: 86%; top: 82%; transform: scale(0.9); }
+.lumahacks-jellyfish {
+  animation: lumahacks-float 6s ease-in-out infinite alternate;
+  background: #7bafd0;
+  border-radius: 50% 50% 35% 35%;
+  height: 45px;
+  opacity: 0.65;
+  width: 62px;
+}
+.lumahacks-jellyfish::before,
+.lumahacks-jellyfish::after {
+  border-left: 2px solid #34799a;
+  border-radius: 50%;
+  content: "";
+  height: 42px;
+  position: absolute;
+  top: 30px;
+  width: 20px;
+}
+.lumahacks-jellyfish::before { left: 10px; }
+.lumahacks-jellyfish::after { left: 31px; }
+.lumahacks-jellyfish-one { left: 8%; top: 10%; transform: scale(0.8); }
+.lumahacks-jellyfish-two { animation-delay: -2s; right: 8%; top: 24%; transform: scale(0.6); }
+.lumahacks-jellyfish-three { animation-delay: -4s; right: 12%; top: 72%; transform: scale(0.9); }
+.lumahacks-bubbles {
+  border: 2px solid rgba(255, 253, 229, 0.6);
+  border-radius: 50%;
+  height: 15px;
+  width: 15px;
+}
+.lumahacks-bubbles-one { left: 27%; top: 18%; }
+.lumahacks-bubbles-two { bottom: 12%; right: 30%; height: 24px; width: 24px; }
+@keyframes lumahacks-swim {
+  0% { margin-left: -5vw; }
+  100% { margin-left: 110vw; }
+}
+@keyframes lumahacks-float {
+  from { translate: 0 0; }
+  to { translate: 0 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lumahacks-fish,
+  .lumahacks-jellyfish { animation: none; }
 }
 .sase-page-header { margin: 0 auto 34px; max-width: 1180px; }
 .sase-page-header h1 { font-size: clamp(2.5rem, 6vw, 4.8rem); letter-spacing: -0.04em; line-height: 0.95; margin: 12px 0 14px; }

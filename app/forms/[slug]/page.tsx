@@ -182,13 +182,16 @@ export default function FormResponsePage() {
   }
 
   const isLumaHacks = params.slug === "lumahacks";
+  const pageClassName = isLumaHacks ? "sase-page lumahacks-page" : "sase-page";
 
   if (isLumaHacks && !hasStarted) {
     return (
-      <main className="sase-page">
-        <div className="max-w-3xl mx-auto text-center py-16 md:py-28 px-6">
+      <main className={pageClassName}>
+        <LumaHacksDecorations />
+        <div className="lumahacks-intro max-w-3xl mx-auto text-center py-16 md:py-28 px-6">
           <p className="sase-eyebrow">UCF SASE presents</p>
-          <h1 className="mt-4">LumaHacks</h1>
+          <h1 className="lumahacks-title mt-4">LumaHacks</h1>
+          <p className="lumahacks-subtitle">Preregistration</p>
           <p className="text-xl text-gray-600 mt-6 max-w-xl mx-auto">
             {form.description || "Join us for LumaHacks. Preregister now to save your spot."}
           </p>
@@ -205,10 +208,14 @@ export default function FormResponsePage() {
   }
 
   return (
-    <main className="sase-page">
-      <div className="sase-page-header">
+    <main className={pageClassName}>
+      {isLumaHacks && <LumaHacksDecorations />}
+      <div className={isLumaHacks ? "sase-page-header lumahacks-header" : "sase-page-header"}>
         <p className="sase-eyebrow">UCF SASE / Form</p>
-        <h1>{form.title}</h1>
+        <h1 className={isLumaHacks ? "lumahacks-title" : undefined}>
+          {isLumaHacks ? "LumaHacks" : form.title}
+        </h1>
+        {isLumaHacks && <p className="lumahacks-subtitle">Preregistration</p>}
         <Link
           href="/forms"
           className="sase-secondary-button mx-auto block max-w-max text-center mt-6"
@@ -218,7 +225,7 @@ export default function FormResponsePage() {
         {form.description && <p className="mt-4">{form.description}</p>}
       </div>
       
-      <div className="bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden">
+      <div className={`lumahacks-form-card bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden${isLumaHacks ? " is-lumahacks" : ""}`}>
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#171d52] via-[#5579bd] to-[#171d52]"></div>
         
         <form className="flex flex-col gap-10 mt-4" onSubmit={submitForm}>
@@ -351,5 +358,21 @@ export default function FormResponsePage() {
         </form>
       </div>
     </main>
+  );
+}
+
+function LumaHacksDecorations() {
+  return (
+    <div className="lumahacks-decorations" aria-hidden="true">
+      <span className="lumahacks-bubbles lumahacks-bubbles-one" />
+      <span className="lumahacks-bubbles lumahacks-bubbles-two" />
+      <span className="lumahacks-jellyfish lumahacks-jellyfish-one" />
+      <span className="lumahacks-jellyfish lumahacks-jellyfish-two" />
+      <span className="lumahacks-jellyfish lumahacks-jellyfish-three" />
+      <span className="lumahacks-fish lumahacks-fish-one" />
+      <span className="lumahacks-fish lumahacks-fish-two" />
+      <span className="lumahacks-fish lumahacks-fish-three" />
+      <span className="lumahacks-fish lumahacks-fish-four" />
+    </div>
   );
 }
