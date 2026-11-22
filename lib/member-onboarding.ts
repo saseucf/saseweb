@@ -12,8 +12,10 @@ export async function onboardMember(input: ReturnType<typeof parseMemberInput>, 
 
   const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL || origin}/auth/callback?flow=setup`;
   const { data, error } = await admin.auth.admin.generateLink({
-    type: "invite", email: input.email,
-    options: { redirectTo, data: { first_name: input.firstName, last_name: input.lastName } },
+    // Magic links reuse an external hacker's existing Auth identity, and also
+    // create new accounts when needed. An invite would reject existing accounts.
+    type: "magiclink", email: input.email,
+    options: { redirectTo, data: { first_name: input.firstName, last_name: input.lastName, account_context: "club" } },
   });
   if (error || !data.user || !data.properties?.action_link) {
     // A simultaneous request may already have created this member.
@@ -21,6 +23,11 @@ export async function onboardMember(input: ReturnType<typeof parseMemberInput>, 
     if (concurrent) return { id: concurrent.id as string, created: false, emailSent: false };
     throw new Error("Unable to create membership. If you already have an account, please sign in.");
   }
+  const { error: profileError } = await admin.from("profiles").upsert({
+    id: data.user.id, email: input.email, first_name: input.firstName, last_name: input.lastName,
+    major: "", year: "", school: "", name_confirmed: false,
+  }, { onConflict: "id", ignoreDuplicates: true });
+  if (profileError) throw new Error("Unable to create the club profile. Please try again.");
   let emailSent = false;
   if (process.env.BREVO_API_KEY) {
     try {

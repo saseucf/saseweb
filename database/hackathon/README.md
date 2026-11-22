@@ -1,57 +1,107 @@
-# Standalone hackathon backend
+# Hackathon backend in the existing SASE database
 
-This backend belongs in a **new Supabase project**, not the SASE production project.
-It does not depend on SASE profiles, club membership, points, forms, or auth triggers.
-No live project has been created or migrated by this change.
-The migration refuses to run if it detects the existing SASE profile/attendance tables.
+Use the **existing SASE Supabase project**. The portal remains a separate website,
+with its own application records and staff permissions, while sharing Auth accounts.
+No live database has been changed by this code update. The previous standalone
+migration was never applied; run only this revised version, once.
 
-## Provision
+## Accounts and foreign keys
 
-1. Create a Supabase project for the hacker portal. Keep its credentials separate.
-2. Run `001_backend.sql` once in its SQL editor as `postgres`. It is transactional;
-   do not run `database/schema.sql` or the SASE migrations in this project.
-3. Configure Supabase Auth: portal Site URL, allowed redirect URLs, email
-   verification, production SMTP, desired OAuth providers, and signup abuse limits.
-   The application RPC requires a verified account email.
-4. Copy the variables in this directory's `.env.example` into the portal environment.
-   `lib/hackathon/client.ts` deliberately has no fallback to SASE credentials.
-5. Insert a draft `hackathons` record with the actual dates, venue, contact,
-   application window, RSVP deadline, and links. All timestamps include a timezone.
-   `timezone` controls display; timestamps are stored as `timestamptz`.
-6. Create an organizer account through Auth, then bootstrap its permissions in the
-   SQL editor. Use actual UUIDs:
+`hackathon.applications.user_id` references `auth.users.id`, the same identity
+referenced by `public.profiles.id`. Existing members sign in with their existing
+password/provider and submit an application under their current user ID. No account
+copying, email-based matching, or synchronization is necessary. External attendees
+also use `auth.users`, without a `public.profiles` row unless they join the club.
+
+All hackathon tables and application RPCs live in the `hackathon` schema inside
+this database. Club tables stay in `public`. This prevents collisions with existing
+or future club tables named `teams`, `sponsors`, `applications`, etc. Staff roles,
+application status, QR credentials, and attendance are separate from club roles,
+paid membership, points, and attendance.
+
+New account creation no longer automatically means club enrollment:
+
+- Existing members and their profile values are preserved.
+- New email/provider signups in the hacker portal do not create a club profile.
+- Explicit club registration (`signup_profile_complete`) and club invitations
+  (`account_context: club`) retain profile creation through the existing handler.
+- Signing in through the club website enrolls a missing club profile through
+  `public.ensure_club_profile()`. This only creates the caller's ordinary profile;
+  it cannot set admin privileges, paid membership, or points. The hacker portal
+  never calls this function. Existing member records are never overwritten.
+- The old `mark_luma_hacks_participant_on_submission` trigger is removed so
+  preregistration answers cannot modify club profiles. Historical submissions and
+  profile columns remain intact. Preregistrations are not silently converted into
+  verified applications or consent records. Do not reapply the old
+  `database/changes/luma_hacks_preregistration.sql` migration afterward.
+
+## Apply once
+
+1. Deploy this code update to the SASE site first, particularly
+   `lib/member-session.ts` and `lib/member-onboarding.ts`. Existing sign-ins continue
+   to work before the migration because their profiles already exist or are still
+   created by the old trigger. Deploying the migration first could temporarily
+   leave new club OAuth accounts without a profile on older code.
+2. In the **existing project's** SQL editor, run `001_backend.sql` once as
+   `postgres`. It is transactional and requires the existing `public.profiles`
+   table and `public.handle_new_user()` handler. It adds the new schemas, adjusts
+   the signup trigger, and provides the explicit club enrollment RPC. Do not rerun
+   `database/schema.sql`: that file drops club tables. No rollback of the old
+   standalone migration is needed because it was never applied.
+3. In Supabase API settings, **add `hackathon` to Exposed schemas**, preserving
+   `public` and any other existing entries and their order. Do not expose
+   `hackathon_private`. See [Supabase custom-schema setup](https://supabase.com/docs/guides/api/using-custom-schemas).
+4. Configure the portal with the same `NEXT_PUBLIC_SUPABASE_URL` and
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY` as SASE, as shown in this directory's `.env.example`.
+   Keep `SUPABASE_SERVICE_ROLE_KEY` server-only if automation needs it.
+5. Add the portal's own callback URLs to the existing Auth redirect allowlist.
+   Preserve SASE's Site URL and callbacks. Portal email verification/signup links
+   should explicitly specify a portal `emailRedirectTo`; portal OAuth should
+   specify its own `redirectTo`. Never send portal sign-ins to the SASE club
+   callback, because that callback intentionally enrolls club members. Use the
+   existing Auth provider and SMTP settings. Applications require verified email.
+   Portal signup metadata must not include the club enrollment markers above.
+6. Insert a draft `hackathon.hackathons` record with the actual dates, venue,
+   contact, application window, RSVP deadline, and links. All timestamps include
+   a timezone. `timezone` controls display; timestamps use `timestamptz`.
+7. Bootstrap hackathon staff using an existing Auth user ID. Being a club admin
+   does not automatically grant hackathon admin access:
 
    ```sql
-   insert into public.hackathon_staff(hackathon_id,user_id,role)
-   values ('EVENT-UUID','AUTH-USER-UUID','admin');
+   insert into hackathon.hackathon_staff(hackathon_id,user_id,role)
+   values ('EVENT-UUID','EXISTING-AUTH-USER-UUID','admin');
    ```
 
-7. Import the approved MLH school list into `schools` (`id`, `name`,
-   `source_version`) and ISO alpha-2 countries into `countries` (`code`, `name`).
-   No fabricated or incomplete school list is seeded. Import these before launch.
-8. Insert `application_terms` with the current organizer/MLH-approved checkbox
-   wording and version; set `is_current=true`. The two mandatory choices must be
-   true; the marketing choice is recorded independently and may be false. These
-   fields are a storage model, not a certification of current MLH requirements.
-9. Add and publish tracks/prizes, sponsors/partners, FAQs, maps, locations, and
-   schedule entries. Set the event's `is_published=true` when ready. Add private
-   `hacker_resources` for Wi-Fi and `perks` for sponsor redemption information,
-   with explicit unlock times. Store participant-facing redemption codes only,
-   never your own server API secrets.
-10. Run the verification below, then connect the separate portal UI using the
-    client and API adapter. No SASE page, middleware, or auth flow is changed.
+8. Import the approved school list into `hackathon.schools` (`id`, `name`,
+   `source_version`) and ISO alpha-2 countries into `hackathon.countries`
+   (`code`, `name`). No fabricated school list is seeded.
+9. Insert `hackathon.application_terms` with current organizer/MLH-approved
+   checkbox wording and version; set `is_current=true`. The two mandatory choices
+   must be true. Marketing is recorded independently and may be false. This
+   storage model is not a certification of current MLH requirements.
+10. Add and publish tracks/prizes, sponsors/partners, FAQs, maps, locations and
+    schedule entries under `hackathon`. Publish the event when ready. Add private
+    `hacker_resources` for Wi-Fi and `perks` for participant-facing redemption
+    information with explicit unlock times. Never store server API secrets there.
+11. Run the checks below and smoke-test both sites with existing club members and
+    external attendees before opening applications. The portal UI and hosting are
+    separate work; this change provides the backend and client adapter.
 
 ## API contract
 
-Supabase exposes the tables through its REST API and functions through `/rest/v1/rpc`.
-Use the project's publishable key plus the signed-in user's access token. The
-portable TypeScript adapter is `lib/hackathon/api.ts`:
+Supabase exposes the tables and RPCs through its REST API after the schema is
+exposed. The adapter uses `client.schema("hackathon")` for data/RPC calls and the
+shared project's Auth/Storage services. Raw REST reads require
+`Accept-Profile: hackathon`; writes and RPCs require `Content-Profile: hackathon`.
+Use the publishable key plus the signed-in user's access token. Unqualified table
+names below refer to `hackathon`, not `public`. The adapter is
+`lib/hackathon/api.ts`:
 
 ```ts
 import { createHackathonClient } from "@/lib/hackathon/client";
 import { hackathonApi } from "@/lib/hackathon/api";
 
-const client = createHackathonClient(); // create once per browser app/session
+const client = createHackathonClient(); // same project/accounts, separate portal session
 const api = hackathonApi(client);
 const landing = await api.landing("your-event-slug");
 // Sign in using client.auth, then:
@@ -80,7 +130,8 @@ const dashboard = await api.dashboard(landing.event.id);
 The schema does not enable Realtime automatically; polling works without it.
 If adding Realtime later, explicitly configure publication and recheck subscription
 authorization. An application is unique per verified account per hackathon.
-Anonymous applications are deliberately unsupported.
+Anonymous applications are deliberately unsupported. The same accounts work on both
+sites, but login sessions are not automatically shared across separate domains.
 
 ## Permissions and workflows
 
@@ -126,13 +177,14 @@ node scripts/test-hackathon-db.mjs
 ```
 
 The suite runs the real migration in embedded PostgreSQL with minimal Supabase
-Auth/Storage stubs. It exercises SQL syntax, RLS/grants, consent, applicant status,
+Auth/Storage stubs plus the real club profile schema and protection triggers. It
+checks existing-account foreign keys, preservation of club profiles/attendance,
+external signup isolation, explicit club enrollment, SQL syntax, RLS/grants, consent, applicant status,
 cross-account privacy, team capacity, duplicate scans, and resource unlock rules.
 Supabase-hosted OAuth/email delivery and actual Storage upload/MIME enforcement
 still require a staging project smoke test with anonymous, hacker, volunteer and
 admin sessions. The stubs do not validate the hosted services.
 
-Not provisioned here: a hosted Supabase project, production credentials, actual
-event data, MLH-approved catalogs/terms, email notifications, portal UI, or hosting.
-Existing SASE accounts are not automatically copied or linked. A standalone
-project uses separate accounts; shared sign-in would be a separate SSO decision.
+Not configured here: live migrations/API settings, actual event data, approved
+catalogs/terms, portal callback URLs, email notifications, portal UI, or hosting.
+No new Supabase project, separate account directory, or SSO service is required.
