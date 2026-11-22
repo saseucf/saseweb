@@ -7,7 +7,7 @@ import supabase from "@/lib/auth";
 
 type Question = {
   id: string;
-  type: "short_text" | "paragraph" | "multiple_choice" | "checkbox" | "select" | "wheel";
+  type: "short_text" | "paragraph" | "multiple_choice" | "checkbox";
   label: string;
   required: boolean;
   options?: string[];
@@ -32,8 +32,6 @@ export default function FormResponsePage() {
   const [answers, setAnswers] = useState<Answers>({});
   const [message, setMessage] = useState("Loading form...");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
-  const [wheelSelections, setWheelSelections] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function loadForm() {
@@ -79,11 +77,6 @@ export default function FormResponsePage() {
 
   function updateAnswer(questionId: string, value: string | string[]) {
     setAnswers((current) => ({ ...current, [questionId]: value }));
-  }
-
-  function updateWheelAnswer(questionId: string, value: string) {
-    setWheelSelections((current) => ({ ...current, [questionId]: value }));
-    updateAnswer(questionId, value === "Other" ? "" : value);
   }
 
   function toggleCheckbox(questionId: string, option: string, checked: boolean) {
@@ -181,41 +174,11 @@ export default function FormResponsePage() {
     );
   }
 
-  const isLumaHacks = params.slug === "lumahacks";
-  const pageClassName = isLumaHacks ? "sase-page lumahacks-page" : "sase-page";
-
-  if (isLumaHacks && !hasStarted) {
-    return (
-      <main className={pageClassName}>
-        <LumaHacksDecorations />
-        <div className="lumahacks-intro max-w-3xl mx-auto text-center py-16 md:py-28 px-6">
-          <p className="sase-eyebrow">UCF SASE presents</p>
-          <h1 className="lumahacks-title mt-4">LumaHacks</h1>
-          <p className="lumahacks-subtitle">Preregistration</p>
-          <p className="text-xl text-gray-600 mt-6 max-w-xl mx-auto">
-            {form.description || "Join us for LumaHacks. Preregister now to save your spot."}
-          </p>
-          <button
-            type="button"
-            className="sase-primary-button mt-10 min-w-48"
-            onClick={() => setHasStarted(true)}
-          >
-            Start preregistration
-          </button>
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <main className={pageClassName}>
-      {isLumaHacks && <LumaHacksDecorations />}
-      <div className={isLumaHacks ? "sase-page-header lumahacks-header" : "sase-page-header"}>
+    <main className="sase-page">
+      <div className="sase-page-header">
         <p className="sase-eyebrow">UCF SASE / Form</p>
-        <h1 className={isLumaHacks ? "lumahacks-title" : undefined}>
-          {isLumaHacks ? "LumaHacks" : form.title}
-        </h1>
-        {isLumaHacks && <p className="lumahacks-subtitle">Preregistration</p>}
+        <h1>{form.title}</h1>
         <Link
           href="/forms"
           className="sase-secondary-button mx-auto block max-w-max text-center mt-6"
@@ -225,7 +188,7 @@ export default function FormResponsePage() {
         {form.description && <p className="mt-4">{form.description}</p>}
       </div>
       
-      <div className={`lumahacks-form-card bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden${isLumaHacks ? " is-lumahacks" : ""}`}>
+      <div className="bg-card rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#e2e8f0] p-8 md:p-12 max-w-3xl mx-auto mt-8 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#171d52] via-[#5579bd] to-[#171d52]"></div>
         
         <form className="flex flex-col gap-10 mt-4" onSubmit={submitForm}>
@@ -280,45 +243,6 @@ export default function FormResponsePage() {
                 </div>
               )}
 
-              {question.type === "select" && (
-                <select
-                  className="w-full rounded-xl border border-border bg-gray-50 p-4 outline-none focus:bg-card focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
-                  value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
-                  onChange={(event) => updateAnswer(question.id, event.target.value)}
-                  required={question.required}
-                >
-                  <option value="">Select an option</option>
-                  {question.options?.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              )}
-
-              {question.type === "wheel" && (
-                <div className="flex flex-col gap-3">
-                  <select
-                    className="w-full rounded-xl border border-border bg-gray-50 p-4 outline-none focus:bg-card focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
-                    value={wheelSelections[question.id] || ""}
-                    onChange={(event) => updateWheelAnswer(question.id, event.target.value)}
-                    required={question.required && wheelSelections[question.id] !== "Other"}
-                  >
-                    <option value="">Spin to choose an option</option>
-                    {question.options?.map((option) => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                  {wheelSelections[question.id] === "Other" && (
-                    <input
-                      className="w-full rounded-xl border border-border bg-gray-50 p-4 outline-none focus:bg-card focus:border-[#5579bd] focus:ring-4 focus:ring-[#e9eef8] transition-all text-[#171d52] font-medium"
-                      placeholder="Type your answer"
-                      value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
-                      onChange={(event) => updateAnswer(question.id, event.target.value)}
-                      required={question.required}
-                    />
-                  )}
-                </div>
-              )}
-
               {question.type === "checkbox" && (
                 <div className="flex flex-col gap-4">
                   {question.options?.map((option) => (
@@ -358,21 +282,5 @@ export default function FormResponsePage() {
         </form>
       </div>
     </main>
-  );
-}
-
-function LumaHacksDecorations() {
-  return (
-    <div className="lumahacks-decorations" aria-hidden="true">
-      <span className="lumahacks-bubbles lumahacks-bubbles-one" />
-      <span className="lumahacks-bubbles lumahacks-bubbles-two" />
-      <span className="lumahacks-jellyfish lumahacks-jellyfish-one" />
-      <span className="lumahacks-jellyfish lumahacks-jellyfish-two" />
-      <span className="lumahacks-jellyfish lumahacks-jellyfish-three" />
-      <span className="lumahacks-fish lumahacks-fish-one" />
-      <span className="lumahacks-fish lumahacks-fish-two" />
-      <span className="lumahacks-fish lumahacks-fish-three" />
-      <span className="lumahacks-fish lumahacks-fish-four" />
-    </div>
   );
 }

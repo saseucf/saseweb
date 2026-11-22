@@ -15,8 +15,6 @@
 
 # next.js
 /.next/
-/apps/hacker-portal/.next/
-/apps/hacker-portal/node_modules/
 /out/
 
 # production
@@ -46,3 +44,7 @@ next-env.d.ts
 
 # Private operational backups and recovery reports
 /.local-backups/
+
+/.lumahacks-export/
+/apps/hacker-portal/.next/
+/apps/hacker-portal/node_modules/

@@ -9,11 +9,7 @@
     "lint": "next lint",
     "test": "tsx --test tests/**/*.test.ts",
     "test:zeffy": "tsx --test tests/zeffy.test.ts",
-    "typecheck": "tsc --noEmit",
-    "dev:portal": "node scripts/hacker-portal.mjs dev",
-    "build:portal": "node scripts/hacker-portal.mjs build",
-    "start:portal": "node scripts/hacker-portal.mjs start",
-    "typecheck:portal": "tsc --noEmit -p apps/hacker-portal/tsconfig.json"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

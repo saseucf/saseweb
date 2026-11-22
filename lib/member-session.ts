@@ -4,19 +4,11 @@ import supabase from "@/lib/auth";
 import { parseJoinProfile, profileIsComplete, skipsProfileQuestions } from "@/lib/unified-auth";
 
 export async function memberDestination(user: User, destination: string) {
-  // This runs only in the club sign-in flow, never in the hacker portal.
-  // Shared Auth identities may exist without a club profile until they join here.
-  let { data: profile, error } = await supabase.from("profiles").select("first_name, last_name, major, year, school, name_confirmed").eq("id", user.id).maybeSingle();
-  if (error) throw new Error("Your profile could not be loaded. Please try again.");
-  if (!profile) {
-    const { error: enrollError } = await supabase.rpc("ensure_club_profile");
-    if (enrollError) throw new Error("Your club profile could not be created. Please try again.");
-    ({ data: profile, error } = await supabase.from("profiles").select("first_name, last_name, major, year, school, name_confirmed").eq("id", user.id).maybeSingle());
-    if (error || !profile) throw new Error("Your club profile could not be loaded. Please try again.");
-  }
   // OAuth already supplies the account identity. Demographics are optional and
   // must not delay a member returning to an event check-in.
   if (skipsProfileQuestions(user)) return destination;
+  const { data: profile, error } = await supabase.from("profiles").select("first_name, last_name, major, year, school, name_confirmed").eq("id", user.id).maybeSingle();
+  if (error) throw new Error("Your profile could not be loaded. Please try again.");
   if (!profileIsComplete(profile) && user.user_metadata?.signup_profile_complete === true) {
     // Signup collects these fields before Auth creates the account. Finish the
     // profile only after obtaining a real session, including email verification.
