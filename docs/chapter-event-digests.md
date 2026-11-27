@@ -1,10 +1,10 @@
 # Chapter event digests
 
-Go to **Manage Events → Discord Event Groups** to create a group or update its
-Discord channel and role IDs. Choose that group when creating or editing an
-event. The event list marks upcoming published events that still need a group.
-Existing events start unassigned and stay out of Discord digests until an
-officer assigns them.
+Under **Manage Events ? Discord reminder channels**, configure a Discord channel
+and role for Tech, Pro-Dev, Pre-Health, and General. Workshop reminders follow
+the subcategory selected in the event form. All other events, including older
+workshops without a subcategory, use General. Existing events use their saved
+event type automatically.
 
 The bot sends each group its published events for the day at 9 a.m. Eastern.
 The Sunday 6 p.m. Eastern digest covers the following Monday through Sunday.
@@ -14,10 +14,8 @@ the separate `hackathon` schema.
 ## Rollout
 
 1. Apply `database/changes/add-chapter-event-digests.sql` after the event
-   status migration. It adds new tables and a nullable group column and
-   preserves existing reminder flags.
-2. Deploy the website and assign the groups and upcoming events you want to
-   include. Verify the bot can send to the configured channels and mention the
+   status migration. It adds the destination and delivery tables.
+2. Deploy the website and configure all four destinations. Verify the bot can send to the configured channels and mention the
    configured roles.
 3. Switch to the companion bot version and stop instances using the old
    per-event and Monday reminder jobs. Configure the bot with

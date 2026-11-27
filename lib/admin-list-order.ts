@@ -45,7 +45,6 @@ export type AdminListEvent = EditableItem & {
   start_time: string; end_time: string; capacity: number | null; points: number;
   host: string | null; status: "draft" | "published" | "cancelled";
   forms?: { id: string; title: string }[]; checkin_count?: number; rsvp_count?: number;
-  discord_group_name?: string | null;
 };
 export function isCompletedEvent(event: { end_time?: string | null; start_time?: string | null }, now: number) {
   const end = time(event.end_time) || time(event.start_time);

@@ -1,11 +1,7 @@
 import EventForm from "@/components/events/event-form";
-import { getEventGroupOptions } from "@/lib/event-groups";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
-export default async function NewEventPage() {
-    const groups = await getEventGroupOptions();
+export default function NewEventPage() {
     return (
         <main className="sase-page sase-admin-page pt-[120px]">
             <Link href="/admin/events" className="sase-secondary-button mb-6 inline-block">
@@ -17,7 +13,7 @@ export default async function NewEventPage() {
             </div>
 
             <div className="sase-creator-panel mt-8">
-                <EventForm groups={groups} />
+                <EventForm />
             </div>
         </main>
     );

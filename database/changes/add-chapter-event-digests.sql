@@ -2,12 +2,10 @@ BEGIN;
 
 CREATE TABLE public.event_groups (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name text NOT NULL CHECK (name = btrim(name) AND char_length(name) BETWEEN 1 AND 80),
+    name text NOT NULL UNIQUE CHECK (name IN ('Pre-Health', 'Pro-Dev', 'Tech', 'General')),
     discord_channel_id text NOT NULL CHECK (discord_channel_id ~ '^[1-9][0-9]{16,19}$'),
     discord_role_id text NOT NULL CHECK (discord_role_id ~ '^[1-9][0-9]{16,19}$')
 );
-
-CREATE UNIQUE INDEX event_groups_name_key ON public.event_groups (lower(name));
 
 ALTER TABLE public.event_groups ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.event_groups FROM PUBLIC, anon, authenticated;
@@ -20,11 +18,8 @@ CREATE POLICY event_groups_admins_insert ON public.event_groups
 CREATE POLICY event_groups_admins_update ON public.event_groups
     FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
-ALTER TABLE public.events
-    ADD COLUMN event_group_id uuid REFERENCES public.event_groups(id);
-
-CREATE INDEX events_chapter_digest_idx ON public.events (event_group_id, start_time, id)
-    WHERE status = 'published' AND event_group_id IS NOT NULL;
+CREATE INDEX events_chapter_digest_idx ON public.events (start_time, id)
+    WHERE status = 'published';
 
 CREATE TABLE public.chapter_digest_deliveries (
     event_group_id uuid NOT NULL REFERENCES public.event_groups(id),
@@ -64,7 +59,12 @@ LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path = pg_catalog AS $$
                 ORDER BY events.start_time, events.id
             ) AS events
         FROM public.event_groups AS groups
-        JOIN public.events ON events.event_group_id = groups.id
+        JOIN public.events ON groups.name = CASE events.event_type
+            WHEN 'Workshop - Pre-Health' THEN 'Pre-Health'
+            WHEN 'Workshop - Pro-Dev' THEN 'Pro-Dev'
+            WHEN 'Workshop - Tech' THEN 'Tech'
+            ELSE 'General'
+        END
         WHERE groups.id = p_group_id
             AND groups.discord_channel_id = p_channel_id AND groups.discord_role_id = p_role_id
             AND events.status = 'published'

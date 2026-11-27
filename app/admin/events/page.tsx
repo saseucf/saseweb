@@ -2,7 +2,6 @@ import Link from "next/link";
 import { createServerSupabase } from "@/lib/supabase-server";
 import AdminEventsClient from "@/components/events/admin-events-client";
 import { latestEditTimes } from "@/lib/admin-list-order";
-import { getEventGroupOptions } from "@/lib/event-groups";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +22,6 @@ type Event = {
     forms?: { id: string, title: string }[];
     checkin_count?: number;
     rsvp_count?: number;
-    event_group_id?: string | null;
-    discord_group_name?: string | null;
 };
 
 export default async function AdminEventsPage() {
@@ -69,13 +66,6 @@ export default async function AdminEventsPage() {
     }
 
     const events = (eventsData ?? []) as Event[];
-    const groups = await getEventGroupOptions();
-    if (groups) {
-        const names = new Map(groups.map(group => [group.id, group.name]));
-        for (const event of events) {
-            event.discord_group_name = names.get(event.event_group_id ?? "") ?? null;
-        }
-    }
     const { data: editLogs } = await supabase.from("admin_logs").select("entity_id, created_at")
         .eq("entity_type", "events").eq("action", "update").order("created_at", { ascending: false }).limit(1000);
     const editTimes = latestEditTimes(editLogs ?? []);
@@ -125,7 +115,7 @@ export default async function AdminEventsPage() {
 
                 <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
                     <Link href="/admin/events/groups" className="sase-secondary-button">
-                        Discord Event Groups
+                        Discord reminder channels
                     </Link>
                     <Link
                         href="/forms/admin"

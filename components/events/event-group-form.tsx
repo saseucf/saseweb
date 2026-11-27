@@ -10,7 +10,7 @@ type EventGroup = {
     discord_role_id: string;
 };
 
-export default function EventGroupForm({ group }: { group?: EventGroup }) {
+export default function EventGroupForm({ name, group }: { name: string; group?: EventGroup }) {
     const [result, setResult] = useState({ ok: false, message: "" });
     const [pending, setPending] = useState(false);
     const inputClass = "rounded-lg border border-border bg-card px-3 py-2";
@@ -22,8 +22,7 @@ export default function EventGroupForm({ group }: { group?: EventGroup }) {
         setPending(true);
         setResult({ ok: false, message: "" });
         try {
-            const next = await saveEventGroup(group?.id ?? null, new FormData(form));
-            if (next.ok && !group) form.reset();
+            const next = await saveEventGroup(name, new FormData(form));
             setResult(next);
         } catch {
             setResult({ ok: false, message: "Could not save this event group. Refresh the page and try again." });
@@ -34,10 +33,7 @@ export default function EventGroupForm({ group }: { group?: EventGroup }) {
 
     return (
         <form onSubmit={submit} className="sase-form-card grid gap-4">
-            <label className="grid gap-1 text-sm font-semibold">
-                Group name
-                <input className={inputClass} name="name" defaultValue={group?.name} maxLength={80} required />
-            </label>
+            <h2 className="text-xl font-bold">{name}</h2>
             <label className="grid gap-1 text-sm font-semibold">
                 Discord channel ID
                 <input className={inputClass} name="discord_channel_id" defaultValue={group?.discord_channel_id} inputMode="numeric" pattern="[1-9][0-9]{16,19}" required />
@@ -47,7 +43,7 @@ export default function EventGroupForm({ group }: { group?: EventGroup }) {
                 <input className={inputClass} name="discord_role_id" defaultValue={group?.discord_role_id} inputMode="numeric" pattern="[1-9][0-9]{16,19}" required />
             </label>
             <button className="sase-primary-button justify-self-start" type="submit" disabled={pending}>
-                {pending ? "Saving..." : group ? "Save group" : "Create group"}
+                {pending ? "Saving..." : "Save channel and role"}
             </button>
             {result.message && (
                 <p role={result.ok ? "status" : "alert"} className={result.ok ? "text-sm text-muted-foreground" : "text-sm text-red-600"}>

@@ -59,7 +59,7 @@ before(async () => {
         $$;
         GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
         CREATE TABLE public.events (
-            id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text NOT NULL,
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text NOT NULL, event_type text,
             location text, start_time timestamptz NOT NULL, status text NOT NULL,
             reminded boolean NOT NULL DEFAULT false
         );
@@ -69,17 +69,17 @@ before(async () => {
     sql(migration);
     sql(`
         INSERT INTO public.event_groups VALUES
-          ('${first}', 'Chapter', '10000000000000001', '10000000000000002'),
-          ('${second}', 'Members', '10000000000000003', '10000000000000004'),
-          ('${empty}', 'Empty', '10000000000000005', '10000000000000006');
-        INSERT INTO public.events (id, title, location, start_time, status, event_group_id) VALUES
-          ('00000000-0000-4000-8000-000000000010', 'Second same-start event', 'UCF', '${start}', 'published', '${first}'),
-          ('00000000-0000-4000-8000-000000000009', 'First same-start event', 'UCF', '${start}', 'published', '${first}'),
-          ('00000000-0000-4000-8000-000000000011', 'Draft', NULL, '2026-12-01 06:00+00', 'draft', '${first}'),
-          ('00000000-0000-4000-8000-000000000012', 'Cancelled', NULL, '2026-12-01 06:00+00', 'cancelled', '${first}'),
-          ('00000000-0000-4000-8000-000000000013', 'At end boundary', NULL, '${end}', 'published', '${first}'),
-          ('00000000-0000-4000-8000-000000000014', 'Before start', NULL, '2026-11-30 04:59:59+00', 'published', '${first}'),
-          ('00000000-0000-4000-8000-000000000015', 'Other group', NULL, '2026-12-02 05:00+00', 'published', '${second}');
+          ('${first}', 'Tech', '10000000000000001', '10000000000000002'),
+          ('${second}', 'General', '10000000000000003', '10000000000000004'),
+          ('${empty}', 'Pre-Health', '10000000000000005', '10000000000000006');
+        INSERT INTO public.events (id, title, location, start_time, status, event_type) VALUES
+          ('00000000-0000-4000-8000-000000000010', 'Second same-start event', 'UCF', '${start}', 'published', 'Workshop - Tech'),
+          ('00000000-0000-4000-8000-000000000009', 'First same-start event', 'UCF', '${start}', 'published', 'Workshop - Tech'),
+          ('00000000-0000-4000-8000-000000000011', 'Draft', NULL, '2026-12-01 06:00+00', 'draft', 'Workshop - Tech'),
+          ('00000000-0000-4000-8000-000000000012', 'Cancelled', NULL, '2026-12-01 06:00+00', 'cancelled', 'Workshop - Tech'),
+          ('00000000-0000-4000-8000-000000000013', 'At end boundary', NULL, '${end}', 'published', 'Workshop - Tech'),
+          ('00000000-0000-4000-8000-000000000014', 'Before start', NULL, '2026-11-30 04:59:59+00', 'published', 'Workshop - Tech'),
+          ('00000000-0000-4000-8000-000000000015', 'Other group', NULL, '2026-12-02 05:00+00', 'published', 'Workshop');
     `);
 });
 
@@ -95,7 +95,7 @@ test(`published groups and chronological half-open windows`, () => {
     assert.equal(digest.discord_role_id, '10000000000000002');
     assert.equal(sql(`SET ROLE service_role; SELECT ${claim(empty)} IS NULL;`), 't');
     assert.equal(sql(`SELECT count(*) FROM public.chapter_digest_deliveries WHERE event_group_id = '${empty}';`), '0');
-    assert.equal(sql("SELECT reminded AND event_group_id IS NULL FROM public.events WHERE title = 'Existing event';"), 't');
+    assert.equal(sql("SELECT reminded FROM public.events WHERE title = 'Existing event';"), 't');
 });
 
 test('two workers claim once, including after acknowledgement and restart', async () => {
@@ -119,7 +119,24 @@ test('group configuration is admin-only and delivery state is service-RPC-only',
     assert.throws(() => sql('SET ROLE anon; SELECT * FROM public.event_groups;'), /permission denied/);
     assert.equal(sql('SET ROLE authenticated; SELECT count(*) FROM public.event_groups;'), '0');
     assert.throws(() => sql("SET ROLE authenticated; INSERT INTO public.event_groups (name, discord_channel_id, discord_role_id) VALUES ('X', '10000000000000001', '10000000000000002');"), /row-level security/);
-    assert.equal(sql(`SET ROLE authenticated; SET test.admin = 'true'; UPDATE public.event_groups SET name = 'Chapter members' WHERE id = '${first}' RETURNING name;`), 'Chapter members');
+    assert.equal(sql(`SET ROLE authenticated; SET test.admin = 'true'; UPDATE public.event_groups SET discord_role_id = '10000000000000002' WHERE id = '${first}' RETURNING name;`), 'Tech');
     assert.throws(() => sql(`SET ROLE authenticated; SET test.admin = 'true'; SELECT ${claim(first)};`), /permission denied/);
     assert.throws(() => sql('SET ROLE service_role; SELECT * FROM public.chapter_digest_deliveries;'), /permission denied/);
+});
+
+test('routes every workshop subcategory and sends other event types to General', () => {
+    const pro = '00000000-0000-4000-8000-000000000004';
+    sql(`INSERT INTO public.event_groups VALUES ('${pro}', 'Pro-Dev', '10000000000000007', '10000000000000008');
+        INSERT INTO public.events (title, event_type, status, start_time)
+        SELECT t, t, 'published', '2027-01-05 15:00+00' FROM unnest(ARRAY[
+          'Workshop - Tech', 'Workshop - Pro-Dev', 'Workshop - Pre-Health', 'Workshop', 'General Body Meeting'
+        ]) AS t;`);
+    for (const [group, channel, role, expected] of [
+        [first, 1, 2, ['Workshop - Tech']], [pro, 7, 8, ['Workshop - Pro-Dev']],
+        [empty, 5, 6, ['Workshop - Pre-Health']], [second, 3, 4, ['General Body Meeting', 'Workshop']],
+    ]) {
+        const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest('${group}', 'daily',
+          '2027-01-05 05:00+00', '2027-01-06 05:00+00', '1000000000000000${channel}', '1000000000000000${role}');`));
+        assert.deepEqual(digest.events.map(event => event.title).sort(), expected);
+    }
 });

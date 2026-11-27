@@ -1,3 +1,4 @@
+import { REMINDER_ROUTES } from "@/lib/event-groups";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import EventGroupForm from "@/components/events/event-group-form";
@@ -22,26 +23,17 @@ export default async function EventGroupsPage() {
                 &larr; Back to Events
             </Link>
             <div className="sase-page-header">
-                <h1>Discord event groups</h1>
-                <p>Assign a group when editing an event to include it in that group&apos;s Discord digests.</p>
+                <h1>Discord reminder channels</h1>
+                <p>Workshop reminders follow the event?s subcategory. All other events use General.</p>
             </div>
             {error ? (
                 <p className="mt-8 text-red-600" role="alert">Could not load event groups. Refresh the page and try again.</p>
             ) : (
-                <>
-                    <section className="sase-content-section">
-                        <h2 className="mb-4 text-xl font-bold">New group</h2>
-                        <EventGroupForm />
-                    </section>
-                    {!!groups?.length && (
-                        <section className="sase-content-section">
-                            <h2 className="mb-4 text-xl font-bold">Existing groups</h2>
-                            <div className="sase-form-grid !mt-0">
-                                {groups.map(group => <EventGroupForm key={group.id} group={group} />)}
-                            </div>
-                        </section>
-                    )}
-                </>
+                <section className="sase-content-section sase-form-grid">
+                    {REMINDER_ROUTES.map(name => (
+                        <EventGroupForm key={name} name={name} group={groups?.find(group => group.name === name)} />
+                    ))}
+                </section>
             )}
         </main>
     );
