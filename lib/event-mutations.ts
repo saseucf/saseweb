@@ -1,4 +1,3 @@
-import { REMINDER_ROUTES } from "@/lib/event-groups";
 import type { AdminAuthorization } from "@/lib/admin-membership-core";
 import { DEFAULT_EVENT_LOCATION, DEFAULT_EVENT_POINTS } from "@/lib/event-scheduling";
 
@@ -37,11 +36,6 @@ function validatedEvent(input: Record<string, unknown>) {
     start_time: new Date(start).toISOString(), end_time: new Date(end).toISOString(),
     points, capacity: input.capacity ?? null, status: input.status,
   };
-  if (Object.hasOwn(input, "reminder_audience")) {
-    const audience = input.reminder_audience;
-    if (audience !== null && (typeof audience !== "string" || !REMINDER_ROUTES.includes(audience))) throw new Error("Choose a valid reminder audience.");
-    data.reminder_audience = audience;
-  }
   if (Object.hasOwn(input, "academic_field_id")) {
     if (input.academic_field_id != null && (typeof input.academic_field_id !== "string" || !uuid.test(input.academic_field_id))) throw new Error("Choose a valid event category.");
     data.academic_field_id = input.academic_field_id ?? null;

@@ -130,13 +130,10 @@ test('routes every workshop subcategory and sends other event types to General',
         INSERT INTO public.events (title, event_type, status, start_time)
         SELECT t, t, 'published', '2027-01-05 15:00+00' FROM unnest(ARRAY[
           'Workshop - Tech', 'Workshop - Pro-Dev', 'Workshop - Pre-Health', 'Workshop', 'General Body Meeting'
-        ]) AS t;
-        INSERT INTO public.events (title, event_type, reminder_audience, status, start_time) VALUES
-          ('Career panel', 'Panel', 'Pro-Dev', 'published', '2027-01-05 16:00+00'),
-          ('Open workshop', 'Workshop - Tech', 'General', 'published', '2027-01-05 17:00+00');`);
+        ]) AS t;`);
     for (const [group, channel, role, expected] of [
-        [first, 1, 2, ['Workshop - Tech']], [pro, 7, 8, ['Career panel', 'Workshop - Pro-Dev']],
-        [empty, 5, 6, ['Workshop - Pre-Health']], [second, 3, 4, ['General Body Meeting', 'Open workshop', 'Workshop']],
+        [first, 1, 2, ['Workshop - Tech']], [pro, 7, 8, ['Workshop - Pro-Dev']],
+        [empty, 5, 6, ['Workshop - Pre-Health']], [second, 3, 4, ['General Body Meeting', 'Workshop']],
     ]) {
         const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest('${group}', 'daily',
           '2027-01-05 05:00+00', '2027-01-06 05:00+00', '1000000000000000${channel}', '1000000000000000${role}');`));
@@ -144,14 +141,18 @@ test('routes every workshop subcategory and sends other event types to General',
     }
 });
 
-test('routes explicitly selected Service, Socials, and Fundraisers events to their own digests', () => {
-    for (const name of ['Service', 'Socials', 'Fundraisers']) {
-        const id = sql(`INSERT INTO public.event_groups (name, discord_channel_id, discord_role_id)
-            VALUES ('${name}', '10000000000000011', '10000000000000012') RETURNING id;`);
-        sql(`INSERT INTO public.events (title, event_type, reminder_audience, status, start_time)
-            VALUES ('${name} event', 'Other', '${name}', 'published', '2027-02-01 15:00+00');`);
-        const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest('${id}', 'daily',
-            '2027-02-01 05:00+00', '2027-02-02 05:00+00', '10000000000000011', '10000000000000012');`));
-        assert.deepEqual(digest.events.map(event => event.title), [name + ' event']);
+test('service, social and fundraiser event types use their own channel', () => {
+    const routes = [['Service', 'Service'], ['Social', 'Socials'], ['Fundraiser', 'Fundraisers']];
+    for (const [eventType, audience] of routes) {
+        sql(`INSERT INTO public.events (title, event_type, status, start_time)
+            VALUES ('${eventType} event', '${eventType}', 'published', '2027-02-01 15:00+00');`);
+        sql(`INSERT INTO public.event_groups (name, discord_channel_id, discord_role_id)
+            VALUES ('${audience}', '10000000000000011', '10000000000000012');`);
+    }
+    for (const [eventType, audience] of routes) {
+        const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest(id, 'daily',
+            '2027-02-01 05:00+00', '2027-02-02 05:00+00', discord_channel_id, discord_role_id)
+            FROM public.event_groups WHERE name = '${audience}';`));
+        assert.deepEqual(digest.events.map(event => event.title), [eventType + ' event']);
     }
 });
