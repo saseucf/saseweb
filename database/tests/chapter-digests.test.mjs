@@ -38,7 +38,8 @@ function parallelSql(input) {
     });
 }
 function claim(group, kind = 'weekly', from = start, until = end) {
-    return `public.claim_chapter_digest('${group}', '${kind}', '${from}', '${until}')`;
+    const index = [first, second, empty].indexOf(group) * 2;
+    return `public.claim_chapter_digest('${group}', '${kind}', '${from}', '${until}', '1000000000000000${index + 1}', '1000000000000000${index + 2}')`;
 }
 
 before(async () => {
@@ -97,7 +98,9 @@ after(() => { if (started) docker(['rm', '-f', container]); });
 
 for (const database of ['postgres', 'legacy']) {
     test(`published groups and chronological half-open windows on ${database} schema`, () => {
-        assert.deepEqual(JSON.parse(sql('SET ROLE service_role; SELECT public.list_chapter_digest_groups();', database)), [first, second, empty]);
+        assert.deepEqual(JSON.parse(sql('SET ROLE service_role; SELECT public.list_chapter_digest_groups();', database)).map(group => group.id), [first, second, empty]);
+        const stale = claim(first).replace('10000000000000001', '99999999999999999');
+        assert.equal(sql(`SET ROLE service_role; SELECT ${stale} IS NULL;`, database), 't');
         const digest = JSON.parse(sql(`SET ROLE service_role; SELECT ${claim(first)};`, database));
         assert.deepEqual(digest.events.map(event => event.title), ['First same-start event', 'Second same-start event']);
         assert.equal(digest.discord_channel_id, '10000000000000001');

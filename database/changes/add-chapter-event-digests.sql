@@ -41,7 +41,8 @@ REVOKE ALL ON public.chapter_digest_deliveries FROM PUBLIC, anon, authenticated,
 CREATE FUNCTION public.list_chapter_digest_groups()
 RETURNS jsonb
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog AS $$
-    SELECT coalesce(jsonb_agg(id ORDER BY id), '[]'::jsonb)
+    SELECT coalesce(jsonb_agg(jsonb_build_object('id', id, 'discord_channel_id', discord_channel_id,
+        'discord_role_id', discord_role_id) ORDER BY id), '[]'::jsonb)
     FROM public.event_groups;
 $$;
 
@@ -49,7 +50,9 @@ CREATE FUNCTION public.claim_chapter_digest(
     p_group_id uuid,
     p_kind text,
     p_window_start timestamptz,
-    p_window_end timestamptz
+    p_window_end timestamptz,
+    p_channel_id text,
+    p_role_id text
 )
 RETURNS jsonb
 LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path = pg_catalog AS $$
@@ -63,6 +66,7 @@ LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path = pg_catalog AS $$
         FROM public.event_groups AS groups
         JOIN public.events ON events.event_group_id = groups.id
         WHERE groups.id = p_group_id
+            AND groups.discord_channel_id = p_channel_id AND groups.discord_role_id = p_role_id
             AND events.status = 'published'
             AND events.start_time >= p_window_start
             AND events.start_time < p_window_end
@@ -96,10 +100,10 @@ LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path = pg_catalog AS $$
 $$;
 
 REVOKE EXECUTE ON FUNCTION public.list_chapter_digest_groups() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.claim_chapter_digest(uuid, text, timestamptz, timestamptz) FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.claim_chapter_digest(uuid, text, timestamptz, timestamptz, text, text) FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.finish_chapter_digest(uuid, text, timestamptz) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.list_chapter_digest_groups() TO service_role;
-GRANT EXECUTE ON FUNCTION public.claim_chapter_digest(uuid, text, timestamptz, timestamptz) TO service_role;
+GRANT EXECUTE ON FUNCTION public.claim_chapter_digest(uuid, text, timestamptz, timestamptz, text, text) TO service_role;
 GRANT EXECUTE ON FUNCTION public.finish_chapter_digest(uuid, text, timestamptz) TO service_role;
 
 COMMIT;
