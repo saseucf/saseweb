@@ -1,4 +1,5 @@
 import EventForm from "@/components/events/event-form";
+import { getEventGroupOptions } from "@/lib/event-groups";
 import { createServerSupabase } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 
@@ -28,6 +29,7 @@ export default async function EditEventPage({
         notFound();
     }
 
+    const groups = event.hackathon_id ? null : await getEventGroupOptions();
     return (
         <main className="sase-page sase-admin-page pt-[120px]">
             <Link href="/admin/events" className="sase-secondary-button mb-6 inline-block">
@@ -39,7 +41,7 @@ export default async function EditEventPage({
             </div>
 
             <div className="sase-creator-panel mt-8">
-                <EventForm event={event} />
+                <EventForm event={event} groups={groups} />
             </div>
         </main>
     );

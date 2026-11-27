@@ -40,6 +40,12 @@ function validatedEvent(input: Record<string, unknown>) {
     if (input.academic_field_id != null && (typeof input.academic_field_id !== "string" || !uuid.test(input.academic_field_id))) throw new Error("Choose a valid event category.");
     data.academic_field_id = input.academic_field_id ?? null;
   }
+  if (Object.hasOwn(input, "event_group_id")) {
+    if (input.event_group_id != null && (typeof input.event_group_id !== "string" || !uuid.test(input.event_group_id))) {
+      throw new Error("Choose a valid Discord event group.");
+    }
+    data.event_group_id = input.event_group_id ?? null;
+  }
   return data;
 }
 
@@ -48,6 +54,10 @@ function missingCategory(error: DatabaseError) {
 }
 
 function databaseMessage(error: DatabaseError) {
+  if (/event_group/i.test(error.message ?? "")) {
+    if (error.code === "23503") return "The selected Discord event group is unavailable. Choose another group or leave it unassigned.";
+    if (["PGRST204", "42703"].includes(error.code ?? "")) return "Discord event groups are unavailable. Refresh the page and try again.";
+  }
   if (missingCategory(error)) return "Event categories are not configured. Choose no category and save again.";
   if (error.code === "42501") return "Administrator permission is required to change events.";
   if (error.code === "23503") return "The selected category is unavailable. Choose another category or leave it blank.";

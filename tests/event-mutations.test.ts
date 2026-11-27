@@ -19,6 +19,7 @@ test("an uncategorized event can be created against the live schema without cate
     assert.equal(mutation.type, "save");
     if (mutation.type === "save") {
       assert.equal("academic_field_id" in mutation.eventData, false);
+      assert.equal("event_group_id" in mutation.eventData, false);
       assert.equal(mutation.existingId, undefined);
       assert.equal(mutation.eventData.title, "Workshop");
     }
@@ -110,4 +111,38 @@ test("edit history is recorded after a successful write with the authorized acto
   }));
   assert.deepEqual(result, { ok: true });
   assert.deepEqual(calls, ["write", "history", "refresh"]);
+});
+
+test("the event form can assign or clear a Discord group on create and edit", async () => {
+  for (const existingId of [undefined, id]) for (const group of [id, null]) {
+    const result = await executeEventMutation({ type: "save", eventData: { ...fields, event_group_id: group }, existingId }, dependencies({
+      write: async mutation => {
+        assert.equal(mutation.type, "save");
+        if (mutation.type === "save") {
+          assert.equal(mutation.existingId, existingId);
+          assert.equal(mutation.eventData.event_group_id, group);
+        }
+        return { error: null };
+      },
+    }));
+    assert.deepEqual(result, { ok: true });
+  }
+});
+
+test("invalid or unavailable Discord groups surface an error without clearing the assignment", async () => {
+  const invalid = await executeEventMutation({ type: "save", eventData: { ...fields, event_group_id: "invalid" } }, dependencies({
+    write: async () => assert.fail("No write for an invalid group"),
+  }));
+  assert.deepEqual(invalid, { ok: false, error: "Choose a valid Discord event group." });
+
+  let writes = 0;
+  const unavailable = await executeEventMutation({ type: "save", eventData: { ...fields, event_group_id: id } }, dependencies({
+    write: async () => {
+      writes++;
+      return { error: { code: "23503", message: "events_event_group_id_fkey" } };
+    },
+  }));
+  assert.equal(writes, 1);
+  if (unavailable.ok) assert.fail("Unavailable group was accepted");
+  assert.match(unavailable.error, /selected Discord event group is unavailable/);
 });
