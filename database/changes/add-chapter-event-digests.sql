@@ -2,7 +2,7 @@ BEGIN;
 
 CREATE TABLE public.event_groups (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name text NOT NULL UNIQUE CHECK (name IN ('Pre-Health', 'Pro-Dev', 'Tech', 'General')),
+    name text NOT NULL UNIQUE CHECK (name IN ('General', 'Pro-Dev', 'Tech', 'Pre-Health', 'Service', 'Socials', 'Fundraisers')),
     discord_channel_id text NOT NULL CHECK (discord_channel_id ~ '^[1-9][0-9]{16,19}$'),
     discord_role_id text NOT NULL CHECK (discord_role_id ~ '^[1-9][0-9]{16,19}$')
 );
@@ -19,7 +19,7 @@ CREATE POLICY event_groups_admins_update ON public.event_groups
     FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 ALTER TABLE public.events ADD COLUMN reminder_audience text
-    CHECK (reminder_audience IN ('General', 'Tech', 'Pro-Dev', 'Pre-Health'));
+    CHECK (reminder_audience IN ('General', 'Pro-Dev', 'Tech', 'Pre-Health', 'Service', 'Socials', 'Fundraisers'));
 
 CREATE INDEX events_chapter_digest_idx ON public.events (start_time, id)
     WHERE status = 'published';

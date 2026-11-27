@@ -113,7 +113,7 @@ test("edit history is recorded after a successful write with the authorized acto
 });
 
 test("saving an event preserves, clears, or rejects the selected reminder audience", async () => {
-  for (const audience of ["Pro-Dev", "General", null, "unknown"]) {
+  for (const audience of ["General", "Pro-Dev", "Tech", "Pre-Health", "Service", "Socials", "Fundraisers", null, "unknown"]) {
     const writes: EventMutation[] = [];
     const result = await executeEventMutation({ type: "save", eventData: { ...fields, reminder_audience: audience } },
       dependencies({ write: async mutation => { writes.push(mutation); return { error: null }; } }));

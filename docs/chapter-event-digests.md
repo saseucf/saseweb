@@ -15,7 +15,7 @@ the separate `hackathon` schema.
 
 1. Apply `database/changes/add-chapter-event-digests.sql` after the event
    status migration. It adds the destination and delivery tables and the nullable `events.reminder_audience` override.
-2. Deploy the website and configure all four destinations. Verify the bot can send to the configured channels and mention the
+2. Deploy the website and configure all seven destinations. Verify the bot can send to the configured channels and mention the
    configured roles.
 3. Switch to the companion bot version and stop instances using the old
    per-event and Monday reminder jobs. Configure the bot with

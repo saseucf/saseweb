@@ -143,3 +143,15 @@ test('routes every workshop subcategory and sends other event types to General',
         assert.deepEqual(digest.events.map(event => event.title).sort(), expected);
     }
 });
+
+test('routes explicitly selected Service, Socials, and Fundraisers events to their own digests', () => {
+    for (const name of ['Service', 'Socials', 'Fundraisers']) {
+        const id = sql(`INSERT INTO public.event_groups (name, discord_channel_id, discord_role_id)
+            VALUES ('${name}', '10000000000000011', '10000000000000012') RETURNING id;`);
+        sql(`INSERT INTO public.events (title, event_type, reminder_audience, status, start_time)
+            VALUES ('${name} event', 'Other', '${name}', 'published', '2027-02-01 15:00+00');`);
+        const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest('${id}', 'daily',
+            '2027-02-01 05:00+00', '2027-02-02 05:00+00', '10000000000000011', '10000000000000012');`));
+        assert.deepEqual(digest.events.map(event => event.title), [name + ' event']);
+    }
+});

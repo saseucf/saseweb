@@ -35,7 +35,7 @@ export default function EventGroupForm({ name, group }: { name: string; group?: 
         <form onSubmit={submit} className="sase-form-card grid gap-4">
             <h2 className="text-xl font-bold">{name}</h2>
             <label className="grid gap-1 text-sm font-semibold">
-                Discord channel ID
+                Discord channel ID for #{name.toLowerCase()}-announcements
                 <input className={inputClass} name="discord_channel_id" defaultValue={group?.discord_channel_id} inputMode="numeric" pattern="[1-9][0-9]{16,19}" required />
             </label>
             <label className="grid gap-1 text-sm font-semibold">
