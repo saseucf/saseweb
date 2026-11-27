@@ -1,7 +1,6 @@
 # Chapter event digests
 
-In **Manage Events**, open **Discord reminder channels** to configure a channel and
-role for each audience. Service, Social, and Fundraiser events use their respective channels. Workshops follow their subcategory. Other events use General. Existing events use their saved event type.
+Service, Social, and Fundraiser events use their respective channels. Workshops follow their subcategory. Other events use General. Existing events use their saved event type.
 
 The bot sends each group its published events for the day at 9 a.m. Eastern.
 The Sunday 6 p.m. Eastern digest covers the following Monday through Sunday.
@@ -11,8 +10,8 @@ the separate `hackathon` schema.
 ## Rollout
 
 1. Apply `database/changes/add-chapter-event-digests.sql` after the event
-   status migration. It adds the destination and delivery tables.
-2. Deploy the website and configure all seven destinations. Verify the bot can send to the configured channels and mention the
+   status migration. It adds the delivery table and service-only claim and completion functions.
+2. Configure the seven channel and role pairs on the bot host as documented in the bot README. Verify the bot can send to the configured channels and mention the
    configured roles.
 3. Switch to the companion bot version and stop instances using the old
    per-event and Monday reminder jobs. Configure the bot with

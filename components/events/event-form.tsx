@@ -4,7 +4,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { WORKSHOP_SUBCATEGORIES } from "@/lib/event-groups";
+
 import { PRESET_EVENT_TYPES, getEventTypeColor } from "@/lib/event-type-colors";
 import { saveEvent } from "@/app/actions/events";
 import { getAcademicFields } from "@/app/actions/academic-fields";
@@ -55,6 +55,7 @@ export default function EventForm({
     }
 
     // Event type logic
+    const WORKSHOP_SUBCATEGORIES = ["Pre-Health", "Pro-Dev", "Tech"];
 
     const initialType = existingEvent?.event_type ?? "";
     const isWorkshopSub = initialType.startsWith("Workshop - ");

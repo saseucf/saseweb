@@ -113,10 +113,7 @@ export default async function AdminEventsPage() {
                     <p className="mt-2 text-gray-500">Create, edit, and launch events.</p>
                 </div>
 
-                <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
-                    <Link href="/admin/events/groups" className="sase-secondary-button">
-                        Discord reminder channels
-                    </Link>
+                <div className="flex gap-3 mt-4 sm:mt-0">
                     <Link
                         href="/forms/admin"
                         className="sase-secondary-button"

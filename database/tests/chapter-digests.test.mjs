@@ -5,9 +5,9 @@ import { spawn, spawnSync } from 'node:child_process';
 
 const container = `sase-chapter-digests-${process.pid}`;
 const migration = readFileSync(new URL('../changes/add-chapter-event-digests.sql', import.meta.url), 'utf8');
-const first = '00000000-0000-4000-8000-000000000001';
-const second = '00000000-0000-4000-8000-000000000002';
-const empty = '00000000-0000-4000-8000-000000000003';
+const first = 'Tech';
+const second = 'General';
+const empty = 'Pre-Health';
 const start = '2026-11-30 05:00+00';
 const end = '2026-12-07 05:00+00';
 
@@ -38,8 +38,7 @@ function parallelSql(input) {
     });
 }
 function claim(group, kind = 'weekly', from = start, until = end) {
-    const index = [first, second, empty].indexOf(group) * 2;
-    return `public.claim_chapter_digest('${group}', '${kind}', '${from}', '${until}', '1000000000000000${index + 1}', '1000000000000000${index + 2}')`;
+    return `public.claim_chapter_digest('${group}', '${kind}', '${from}', '${until}')`;
 }
 
 before(async () => {
@@ -68,10 +67,6 @@ before(async () => {
     `);
     sql(migration);
     sql(`
-        INSERT INTO public.event_groups VALUES
-          ('${first}', 'Tech', '10000000000000001', '10000000000000002'),
-          ('${second}', 'General', '10000000000000003', '10000000000000004'),
-          ('${empty}', 'Pre-Health', '10000000000000005', '10000000000000006');
         INSERT INTO public.events (id, title, location, start_time, status, event_type) VALUES
           ('00000000-0000-4000-8000-000000000010', 'Second same-start event', 'UCF', '${start}', 'published', 'Workshop - Tech'),
           ('00000000-0000-4000-8000-000000000009', 'First same-start event', 'UCF', '${start}', 'published', 'Workshop - Tech'),
@@ -86,15 +81,10 @@ before(async () => {
 after(() => { if (started) docker(['rm', '-f', container]); });
 
 test(`published groups and chronological half-open windows`, () => {
-    assert.deepEqual(JSON.parse(sql('SET ROLE service_role; SELECT public.list_chapter_digest_groups();')).map(group => group.id), [first, second, empty]);
-    const stale = claim(first).replace('10000000000000001', '99999999999999999');
-    assert.equal(sql(`SET ROLE service_role; SELECT ${stale} IS NULL;`), 't');
     const digest = JSON.parse(sql(`SET ROLE service_role; SELECT ${claim(first)};`));
-    assert.deepEqual(digest.events.map(event => event.title), ['First same-start event', 'Second same-start event']);
-    assert.equal(digest.discord_channel_id, '10000000000000001');
-    assert.equal(digest.discord_role_id, '10000000000000002');
+    assert.deepEqual(digest.map(event => event.title), ['First same-start event', 'Second same-start event']);
     assert.equal(sql(`SET ROLE service_role; SELECT ${claim(empty)} IS NULL;`), 't');
-    assert.equal(sql(`SELECT count(*) FROM public.chapter_digest_deliveries WHERE event_group_id = '${empty}';`), '0');
+    assert.equal(sql(`SELECT count(*) FROM public.chapter_digest_deliveries WHERE audience = '${empty}';`), '0');
     assert.equal(sql("SELECT reminded FROM public.events WHERE title = 'Existing event';"), 't');
 });
 
@@ -107,7 +97,7 @@ test('two workers claim once, including after acknowledgement and restart', asyn
     assert.equal(sql(`SET ROLE service_role; SELECT ${claim(second)} IS NULL;`), 't');
     assert.equal(sql(`SET ROLE service_role; SELECT public.finish_chapter_digest('${second}', 'weekly', '${start}');`), 't');
     assert.equal(sql(`SET ROLE service_role; SELECT ${claim(second)} IS NULL;`), 't');
-    assert.equal(sql(`SELECT delivered_at IS NOT NULL FROM public.chapter_digest_deliveries WHERE event_group_id = '${second}';`), 't');
+    assert.equal(sql(`SELECT delivered_at IS NOT NULL FROM public.chapter_digest_deliveries WHERE audience = '${second}';`), 't');
 });
 
 test('separate digest kinds and start dates have independent delivery records', () => {
@@ -115,29 +105,23 @@ test('separate digest kinds and start dates have independent delivery records', 
     assert.equal(sql(`SET ROLE service_role; SELECT ${claim(first, 'daily', end, '2026-12-08 05:00+00')} IS NOT NULL;`), 't');
 });
 
-test('group configuration is admin-only and delivery state is service-RPC-only', () => {
-    assert.throws(() => sql('SET ROLE anon; SELECT * FROM public.event_groups;'), /permission denied/);
-    assert.equal(sql('SET ROLE authenticated; SELECT count(*) FROM public.event_groups;'), '0');
-    assert.throws(() => sql("SET ROLE authenticated; INSERT INTO public.event_groups (name, discord_channel_id, discord_role_id) VALUES ('X', '10000000000000001', '10000000000000002');"), /row-level security/);
-    assert.equal(sql(`SET ROLE authenticated; SET test.admin = 'true'; UPDATE public.event_groups SET discord_role_id = '10000000000000002' WHERE id = '${first}' RETURNING name;`), 'Tech');
+test('delivery claims are service-only', () => {
     assert.throws(() => sql(`SET ROLE authenticated; SET test.admin = 'true'; SELECT ${claim(first)};`), /permission denied/);
     assert.throws(() => sql('SET ROLE service_role; SELECT * FROM public.chapter_digest_deliveries;'), /permission denied/);
 });
 
 test('routes every workshop subcategory and sends other event types to General', () => {
-    const pro = '00000000-0000-4000-8000-000000000004';
-    sql(`INSERT INTO public.event_groups VALUES ('${pro}', 'Pro-Dev', '10000000000000007', '10000000000000008');
-        INSERT INTO public.events (title, event_type, status, start_time)
+    sql(`INSERT INTO public.events (title, event_type, status, start_time)
         SELECT t, t, 'published', '2027-01-05 15:00+00' FROM unnest(ARRAY[
           'Workshop - Tech', 'Workshop - Pro-Dev', 'Workshop - Pre-Health', 'Workshop', 'General Body Meeting'
         ]) AS t;`);
-    for (const [group, channel, role, expected] of [
-        [first, 1, 2, ['Workshop - Tech']], [pro, 7, 8, ['Workshop - Pro-Dev']],
-        [empty, 5, 6, ['Workshop - Pre-Health']], [second, 3, 4, ['General Body Meeting', 'Workshop']],
+    for (const [group, expected] of [
+        [first, ['Workshop - Tech']], ['Pro-Dev', ['Workshop - Pro-Dev']],
+        [empty, ['Workshop - Pre-Health']], [second, ['General Body Meeting', 'Workshop']],
     ]) {
         const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest('${group}', 'daily',
-          '2027-01-05 05:00+00', '2027-01-06 05:00+00', '1000000000000000${channel}', '1000000000000000${role}');`));
-        assert.deepEqual(digest.events.map(event => event.title).sort(), expected);
+          '2027-01-05 05:00+00', '2027-01-06 05:00+00');`));
+        assert.deepEqual(digest.map(event => event.title).sort(), expected);
     }
 });
 
@@ -146,13 +130,10 @@ test('service, social and fundraiser event types use their own channel', () => {
     for (const [eventType, audience] of routes) {
         sql(`INSERT INTO public.events (title, event_type, status, start_time)
             VALUES ('${eventType} event', '${eventType}', 'published', '2027-02-01 15:00+00');`);
-        sql(`INSERT INTO public.event_groups (name, discord_channel_id, discord_role_id)
-            VALUES ('${audience}', '10000000000000011', '10000000000000012');`);
     }
     for (const [eventType, audience] of routes) {
-        const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest(id, 'daily',
-            '2027-02-01 05:00+00', '2027-02-02 05:00+00', discord_channel_id, discord_role_id)
-            FROM public.event_groups WHERE name = '${audience}';`));
-        assert.deepEqual(digest.events.map(event => event.title), [eventType + ' event']);
+        const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest('${audience}', 'daily',
+            '2027-02-01 05:00+00', '2027-02-02 05:00+00');`));
+        assert.deepEqual(digest.map(event => event.title), [eventType + ' event']);
     }
 });
