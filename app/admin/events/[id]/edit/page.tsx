@@ -29,7 +29,7 @@ export default async function EditEventPage({
         notFound();
     }
 
-    const groups = event.hackathon_id ? null : await getEventGroupOptions();
+    const groups = await getEventGroupOptions();
     return (
         <main className="sase-page sase-admin-page pt-[120px]">
             <Link href="/admin/events" className="sase-secondary-button mb-6 inline-block">

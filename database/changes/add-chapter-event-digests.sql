@@ -70,8 +70,6 @@ LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path = pg_catalog AS $$
             AND events.status = 'published'
             AND events.start_time >= p_window_start
             AND events.start_time < p_window_end
-            -- The existing hackathon association is optional on website databases.
-            AND to_jsonb(events)->>'hackathon_id' IS NULL
         GROUP BY groups.id
     ), claim AS (
         INSERT INTO public.chapter_digest_deliveries (event_group_id, kind, window_start)

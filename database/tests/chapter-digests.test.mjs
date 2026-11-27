@@ -52,67 +52,51 @@ before(async () => {
         await new Promise(resolve => setTimeout(resolve, 500));
     }
     assert.ok(ready, 'disposable Postgres started');
-    sql(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS; CREATE DATABASE legacy;`);
-    for (const database of ['postgres', 'legacy']) {
-        sql(`
-            CREATE FUNCTION public.is_admin() RETURNS boolean LANGUAGE sql AS $$
-                SELECT current_setting('test.admin', true) = 'true';
-            $$;
-            GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
-            CREATE TABLE public.events (
-                id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text NOT NULL,
-                location text, start_time timestamptz NOT NULL, status text NOT NULL,
-                reminded boolean NOT NULL DEFAULT false
-            );
-            INSERT INTO public.events (title, start_time, status, reminded)
-                VALUES ('Existing event', '2026-12-02 05:00+00', 'published', true);
-            ${database === 'legacy' ? `
-                CREATE TABLE public.hackathons (id uuid PRIMARY KEY);
-                INSERT INTO public.hackathons VALUES ('${first}');
-                ALTER TABLE public.events ADD COLUMN hackathon_id uuid REFERENCES public.hackathons (id);
-            ` : ''}
-        `, database);
-        sql(migration, database);
-        sql(`
-            INSERT INTO public.event_groups VALUES
-              ('${first}', 'Chapter', '10000000000000001', '10000000000000002'),
-              ('${second}', 'Members', '10000000000000003', '10000000000000004'),
-              ('${empty}', 'Empty', '10000000000000005', '10000000000000006');
-            INSERT INTO public.events (id, title, location, start_time, status, event_group_id) VALUES
-              ('00000000-0000-4000-8000-000000000010', 'Second same-start event', 'UCF', '${start}', 'published', '${first}'),
-              ('00000000-0000-4000-8000-000000000009', 'First same-start event', 'UCF', '${start}', 'published', '${first}'),
-              ('00000000-0000-4000-8000-000000000011', 'Draft', NULL, '2026-12-01 06:00+00', 'draft', '${first}'),
-              ('00000000-0000-4000-8000-000000000012', 'Cancelled', NULL, '2026-12-01 06:00+00', 'cancelled', '${first}'),
-              ('00000000-0000-4000-8000-000000000013', 'At end boundary', NULL, '${end}', 'published', '${first}'),
-              ('00000000-0000-4000-8000-000000000014', 'Before start', NULL, '2026-11-30 04:59:59+00', 'published', '${first}'),
-              ('00000000-0000-4000-8000-000000000015', 'Other group', NULL, '2026-12-02 05:00+00', 'published', '${second}');
-            ${database === 'legacy' ? `
-                INSERT INTO public.events (title, start_time, status, event_group_id, hackathon_id)
-                    VALUES ('Legacy hackathon', '${start}', 'published', '${first}', '${first}');
-            ` : ''}
-        `, database);
-    }
+    sql(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;`);
+    sql(`
+        CREATE FUNCTION public.is_admin() RETURNS boolean LANGUAGE sql AS $$
+            SELECT current_setting('test.admin', true) = 'true';
+        $$;
+        GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+        CREATE TABLE public.events (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text NOT NULL,
+            location text, start_time timestamptz NOT NULL, status text NOT NULL,
+            reminded boolean NOT NULL DEFAULT false
+        );
+        INSERT INTO public.events (title, start_time, status, reminded)
+            VALUES ('Existing event', '2026-12-02 05:00+00', 'published', true);
+    `);
+    sql(migration);
+    sql(`
+        INSERT INTO public.event_groups VALUES
+          ('${first}', 'Chapter', '10000000000000001', '10000000000000002'),
+          ('${second}', 'Members', '10000000000000003', '10000000000000004'),
+          ('${empty}', 'Empty', '10000000000000005', '10000000000000006');
+        INSERT INTO public.events (id, title, location, start_time, status, event_group_id) VALUES
+          ('00000000-0000-4000-8000-000000000010', 'Second same-start event', 'UCF', '${start}', 'published', '${first}'),
+          ('00000000-0000-4000-8000-000000000009', 'First same-start event', 'UCF', '${start}', 'published', '${first}'),
+          ('00000000-0000-4000-8000-000000000011', 'Draft', NULL, '2026-12-01 06:00+00', 'draft', '${first}'),
+          ('00000000-0000-4000-8000-000000000012', 'Cancelled', NULL, '2026-12-01 06:00+00', 'cancelled', '${first}'),
+          ('00000000-0000-4000-8000-000000000013', 'At end boundary', NULL, '${end}', 'published', '${first}'),
+          ('00000000-0000-4000-8000-000000000014', 'Before start', NULL, '2026-11-30 04:59:59+00', 'published', '${first}'),
+          ('00000000-0000-4000-8000-000000000015', 'Other group', NULL, '2026-12-02 05:00+00', 'published', '${second}');
+    `);
 });
 
 after(() => { if (started) docker(['rm', '-f', container]); });
 
-for (const database of ['postgres', 'legacy']) {
-    test(`published groups and chronological half-open windows on ${database} schema`, () => {
-        assert.deepEqual(JSON.parse(sql('SET ROLE service_role; SELECT public.list_chapter_digest_groups();', database)).map(group => group.id), [first, second, empty]);
-        const stale = claim(first).replace('10000000000000001', '99999999999999999');
-        assert.equal(sql(`SET ROLE service_role; SELECT ${stale} IS NULL;`, database), 't');
-        const digest = JSON.parse(sql(`SET ROLE service_role; SELECT ${claim(first)};`, database));
-        assert.deepEqual(digest.events.map(event => event.title), ['First same-start event', 'Second same-start event']);
-        assert.equal(digest.discord_channel_id, '10000000000000001');
-        assert.equal(digest.discord_role_id, '10000000000000002');
-        assert.equal(sql(`SET ROLE service_role; SELECT ${claim(empty)} IS NULL;`, database), 't');
-        assert.equal(sql(`SELECT count(*) FROM public.chapter_digest_deliveries WHERE event_group_id = '${empty}';`, database), '0');
-        assert.equal(sql("SELECT reminded AND event_group_id IS NULL FROM public.events WHERE title = 'Existing event';", database), 't');
-        if (database === 'legacy') {
-            assert.equal(sql(`SELECT count(*) FROM public.events WHERE hackathon_id = '${first}';`, database), '1');
-        }
-    });
-}
+test(`published groups and chronological half-open windows`, () => {
+    assert.deepEqual(JSON.parse(sql('SET ROLE service_role; SELECT public.list_chapter_digest_groups();')).map(group => group.id), [first, second, empty]);
+    const stale = claim(first).replace('10000000000000001', '99999999999999999');
+    assert.equal(sql(`SET ROLE service_role; SELECT ${stale} IS NULL;`), 't');
+    const digest = JSON.parse(sql(`SET ROLE service_role; SELECT ${claim(first)};`));
+    assert.deepEqual(digest.events.map(event => event.title), ['First same-start event', 'Second same-start event']);
+    assert.equal(digest.discord_channel_id, '10000000000000001');
+    assert.equal(digest.discord_role_id, '10000000000000002');
+    assert.equal(sql(`SET ROLE service_role; SELECT ${claim(empty)} IS NULL;`), 't');
+    assert.equal(sql(`SELECT count(*) FROM public.chapter_digest_deliveries WHERE event_group_id = '${empty}';`), '0');
+    assert.equal(sql("SELECT reminded AND event_group_id IS NULL FROM public.events WHERE title = 'Existing event';"), 't');
+});
 
 test('two workers claim once, including after acknowledgement and restart', async () => {
     const results = await Promise.all([

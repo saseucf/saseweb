@@ -24,7 +24,6 @@ type EventData = {
     status: "draft" | "published" | "cancelled";
     academic_field_id?: string | null;
     event_group_id?: string | null;
-    hackathon_id?: string | null;
 };
 
 type EventFormProps = {
@@ -332,29 +331,27 @@ export default function EventForm({
                 </div>
             </div>
 
-            {!existingEvent?.hackathon_id && (
-                <div className="flex flex-col gap-1">
-                    {groups && (groups.length > 0 || existingEvent?.event_group_id) ? (
-                        <>
-                            <label htmlFor="event_group_id" className="text-sm font-semibold">Discord event group</label>
-                            <select id="event_group_id" name="event_group_id" defaultValue={existingEvent?.event_group_id ?? ""}
-                                aria-describedby="event-group-help" className="rounded-lg border border-border bg-card px-3 py-2">
-                                <option value="">Unassigned</option>
-                                {existingEvent?.event_group_id && !groups.some(group => group.id === existingEvent.event_group_id) && (
-                                    <option value={existingEvent.event_group_id}>Current group</option>
-                                )}
-                                {groups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
-                            </select>
-                            <p id="event-group-help" className="text-sm text-muted-foreground">Published events appear in this group&apos;s Discord digests.</p>
-                        </>
-                    ) : (
-                        <p className="text-sm text-muted-foreground">
-                            {groups ? "Create a Discord event group to add events to digests." : "Discord event groups are unavailable."}
-                        </p>
-                    )}
-                    <Link href="/admin/events/groups" className="self-start text-sm underline">Manage Discord event groups</Link>
-                </div>
-            )}
+            <div className="flex flex-col gap-1">
+                {groups && (groups.length > 0 || existingEvent?.event_group_id) ? (
+                    <>
+                        <label htmlFor="event_group_id" className="text-sm font-semibold">Discord event group</label>
+                        <select id="event_group_id" name="event_group_id" defaultValue={existingEvent?.event_group_id ?? ""}
+                            aria-describedby="event-group-help" className="rounded-lg border border-border bg-card px-3 py-2">
+                            <option value="">Unassigned</option>
+                            {existingEvent?.event_group_id && !groups.some(group => group.id === existingEvent.event_group_id) && (
+                                <option value={existingEvent.event_group_id}>Current group</option>
+                            )}
+                            {groups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
+                        </select>
+                        <p id="event-group-help" className="text-sm text-muted-foreground">Published events appear in this group&apos;s Discord digests.</p>
+                    </>
+                ) : (
+                    <p className="text-sm text-muted-foreground">
+                        {groups ? "Create a Discord event group to add events to digests." : "Discord event groups are unavailable."}
+                    </p>
+                )}
+                <Link href="/admin/events/groups" className="self-start text-sm underline">Manage Discord event groups</Link>
+            </div>
 
             {(academicFields.length > 0 || existingEvent?.academic_field_id) && <div className="flex flex-col gap-1">
                 <label

@@ -24,7 +24,6 @@ type Event = {
     checkin_count?: number;
     rsvp_count?: number;
     event_group_id?: string | null;
-    hackathon_id?: string | null;
     discord_group_name?: string | null;
 };
 
@@ -74,7 +73,7 @@ export default async function AdminEventsPage() {
     if (groups) {
         const names = new Map(groups.map(group => [group.id, group.name]));
         for (const event of events) {
-            if (!event.hackathon_id) event.discord_group_name = names.get(event.event_group_id ?? "") ?? null;
+            event.discord_group_name = names.get(event.event_group_id ?? "") ?? null;
         }
     }
     const { data: editLogs } = await supabase.from("admin_logs").select("entity_id, created_at")
