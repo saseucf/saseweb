@@ -209,7 +209,7 @@ export default function EventForm({
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-5 sase-creator-page"
+            className="flex flex-col gap-4 sase-creator-page"
         >
             {/* Basic event information */}
             <div className="flex flex-col gap-1">

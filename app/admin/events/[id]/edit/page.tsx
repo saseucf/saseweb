@@ -29,16 +29,14 @@ export default async function EditEventPage({
     }
 
     return (
-        <main className="sase-page sase-admin-page pt-[120px]">
-            <Link href="/admin/events" className="sase-secondary-button mb-6 inline-block">
-                &larr; Back to Events
-            </Link>
-            <div className="sase-page-header">
-                <p className="sase-eyebrow">UCF SASE / Admin workspace</p>
+        <main className="sase-page sase-admin-page sase-event-editor">
+            <header className="sase-event-editor-header">
                 <h1>Edit Event</h1>
-            </div>
-
-            <div className="sase-creator-panel mt-8">
+                <Link href="/admin/events" className="sase-secondary-button">
+                    &larr; Back to Events
+                </Link>
+            </header>
+            <div className="sase-creator-panel">
                 <EventForm event={event} />
             </div>
         </main>
