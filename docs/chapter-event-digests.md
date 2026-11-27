@@ -1,10 +1,10 @@
 # Chapter event digests
 
-Under **Manage Events ? Discord reminder channels**, configure a Discord channel
-and role for Tech, Pro-Dev, Pre-Health, and General. Workshop reminders follow
-the subcategory selected in the event form. All other events, including older
-workshops without a subcategory, use General. Existing events use their saved
-event type automatically.
+In **Manage Events**, open **Discord reminder channels** to configure a channel and
+role for each audience. On the event form, **Reminder audience** defaults to the
+workshop subcategory or General. Officers can override it for any event or choose
+**Use event default** to resume automatic routing. Existing events follow the
+default until an officer picks an audience.
 
 The bot sends each group its published events for the day at 9 a.m. Eastern.
 The Sunday 6 p.m. Eastern digest covers the following Monday through Sunday.
@@ -14,7 +14,7 @@ the separate `hackathon` schema.
 ## Rollout
 
 1. Apply `database/changes/add-chapter-event-digests.sql` after the event
-   status migration. It adds the destination and delivery tables.
+   status migration. It adds the destination and delivery tables and the nullable `events.reminder_audience` override.
 2. Deploy the website and configure all four destinations. Verify the bot can send to the configured channels and mention the
    configured roles.
 3. Switch to the companion bot version and stop instances using the old

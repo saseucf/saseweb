@@ -111,3 +111,18 @@ test("edit history is recorded after a successful write with the authorized acto
   assert.deepEqual(result, { ok: true });
   assert.deepEqual(calls, ["write", "history", "refresh"]);
 });
+
+test("saving an event preserves, clears, or rejects the selected reminder audience", async () => {
+  for (const audience of ["Pro-Dev", "General", null, "unknown"]) {
+    const writes: EventMutation[] = [];
+    const result = await executeEventMutation({ type: "save", eventData: { ...fields, reminder_audience: audience } },
+      dependencies({ write: async mutation => { writes.push(mutation); return { error: null }; } }));
+    assert.equal(result.ok, audience !== "unknown");
+    if (audience === "unknown") assert.equal(writes.length, 0);
+    else {
+      const saved = writes[0];
+      assert.ok(saved?.type === "save");
+      assert.equal(saved.eventData.reminder_audience, audience);
+    }
+  }
+});

@@ -130,10 +130,13 @@ test('routes every workshop subcategory and sends other event types to General',
         INSERT INTO public.events (title, event_type, status, start_time)
         SELECT t, t, 'published', '2027-01-05 15:00+00' FROM unnest(ARRAY[
           'Workshop - Tech', 'Workshop - Pro-Dev', 'Workshop - Pre-Health', 'Workshop', 'General Body Meeting'
-        ]) AS t;`);
+        ]) AS t;
+        INSERT INTO public.events (title, event_type, reminder_audience, status, start_time) VALUES
+          ('Career panel', 'Panel', 'Pro-Dev', 'published', '2027-01-05 16:00+00'),
+          ('Open workshop', 'Workshop - Tech', 'General', 'published', '2027-01-05 17:00+00');`);
     for (const [group, channel, role, expected] of [
-        [first, 1, 2, ['Workshop - Tech']], [pro, 7, 8, ['Workshop - Pro-Dev']],
-        [empty, 5, 6, ['Workshop - Pre-Health']], [second, 3, 4, ['General Body Meeting', 'Workshop']],
+        [first, 1, 2, ['Workshop - Tech']], [pro, 7, 8, ['Career panel', 'Workshop - Pro-Dev']],
+        [empty, 5, 6, ['Workshop - Pre-Health']], [second, 3, 4, ['General Body Meeting', 'Open workshop', 'Workshop']],
     ]) {
         const digest = JSON.parse(sql(`SELECT public.claim_chapter_digest('${group}', 'daily',
           '2027-01-05 05:00+00', '2027-01-06 05:00+00', '1000000000000000${channel}', '1000000000000000${role}');`));

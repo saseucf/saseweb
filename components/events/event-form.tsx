@@ -4,7 +4,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { WORKSHOP_SUBCATEGORIES } from "@/lib/event-groups";
+import { defaultReminderAudience, REMINDER_ROUTES, WORKSHOP_SUBCATEGORIES } from "@/lib/event-groups";
 import { PRESET_EVENT_TYPES, getEventTypeColor } from "@/lib/event-type-colors";
 import { saveEvent } from "@/app/actions/events";
 import { getAcademicFields } from "@/app/actions/academic-fields";
@@ -22,6 +22,7 @@ type EventData = {
     points: number;
     host: string | null;
     status: "draft" | "published" | "cancelled";
+    reminder_audience?: string | null;
     academic_field_id?: string | null;
 };
 
@@ -66,6 +67,10 @@ export default function EventForm({
         isWorkshopSub ? initialType.replace("Workshop - ", "") : ""
     );
     const [customEventType, setCustomEventType] = useState(isPreset || isWorkshopSub ? "" : initialType);
+    const [audienceOverride, setAudienceOverride] = useState<string | null>(existingEvent?.reminder_audience ?? null);
+    const audienceType = eventTypeSelection === "Workshop" ? `Workshop - ${workshopSubcategory}`
+        : eventTypeSelection === "custom" ? customEventType.trim() : eventTypeSelection;
+    const defaultAudience = defaultReminderAudience(audienceType);
     const initialDuration = durationMinutes(existingEvent?.start_time, existingEvent?.end_time);
     const [startValue, setStartValue] = useState(toDateTimeLocal(existingEvent?.start_time));
     const [duration, setDuration] = useState(EVENT_DURATIONS.includes(initialDuration) ? String(initialDuration) : Number.isSafeInteger(initialDuration) && initialDuration <= 10080 ? "custom" : "manual");
@@ -178,6 +183,7 @@ export default function EventForm({
             title,
             description: description || null,
             event_type: eventType,
+            reminder_audience: audienceOverride,
             location: location || DEFAULT_EVENT_LOCATION,
             start_time: startTimeISO,
             end_time: endTimeISO,
@@ -325,6 +331,18 @@ export default function EventForm({
                         />
                     )}
                 </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+                <label htmlFor="reminder_audience" className="text-sm font-semibold">Reminder audience</label>
+                <select id="reminder_audience" name="reminder_audience" value={audienceOverride ?? defaultAudience}
+                    onChange={event => setAudienceOverride(event.target.value)}
+                    className="rounded-lg border border-border bg-card px-3 py-2" aria-describedby="reminder-audience-help">
+                    {REMINDER_ROUTES.map(name => <option key={name} value={name}>{name}</option>)}
+                </select>
+                <p id="reminder-audience-help" className="text-sm text-muted-foreground">Sets the Discord channel and role for daily and weekly reminders.</p>
+                {audienceOverride !== null && <button type="button" onClick={() => setAudienceOverride(null)}
+                    className="self-start text-sm underline">Use event default ({defaultAudience})</button>}
             </div>
 
             {(academicFields.length > 0 || existingEvent?.academic_field_id) && <div className="flex flex-col gap-1">

@@ -18,6 +18,9 @@ CREATE POLICY event_groups_admins_insert ON public.event_groups
 CREATE POLICY event_groups_admins_update ON public.event_groups
     FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
+ALTER TABLE public.events ADD COLUMN reminder_audience text
+    CHECK (reminder_audience IN ('General', 'Tech', 'Pro-Dev', 'Pre-Health'));
+
 CREATE INDEX events_chapter_digest_idx ON public.events (start_time, id)
     WHERE status = 'published';
 
@@ -59,12 +62,12 @@ LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path = pg_catalog AS $$
                 ORDER BY events.start_time, events.id
             ) AS events
         FROM public.event_groups AS groups
-        JOIN public.events ON groups.name = CASE events.event_type
+        JOIN public.events ON groups.name = coalesce(events.reminder_audience, CASE events.event_type
             WHEN 'Workshop - Pre-Health' THEN 'Pre-Health'
             WHEN 'Workshop - Pro-Dev' THEN 'Pro-Dev'
             WHEN 'Workshop - Tech' THEN 'Tech'
             ELSE 'General'
-        END
+        END)
         WHERE groups.id = p_group_id
             AND groups.discord_channel_id = p_channel_id AND groups.discord_role_id = p_role_id
             AND events.status = 'published'

@@ -24,7 +24,7 @@ export default async function EventGroupsPage() {
             </Link>
             <div className="sase-page-header">
                 <h1>Discord reminder channels</h1>
-                <p>Workshop reminders follow the event?s subcategory. All other events use General.</p>
+                <p>Workshop reminders follow the event?s subcategory. Other events default to General. Officers can change the reminder audience on any event.</p>
             </div>
             {error ? (
                 <p className="mt-8 text-red-600" role="alert">Could not load event groups. Refresh the page and try again.</p>
