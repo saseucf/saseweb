@@ -4,6 +4,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+
 import { PRESET_EVENT_TYPES, getEventTypeColor } from "@/lib/event-type-colors";
 import { saveEvent } from "@/app/actions/events";
 import { getAcademicFields } from "@/app/actions/academic-fields";
@@ -55,6 +56,7 @@ export default function EventForm({
 
     // Event type logic
     const WORKSHOP_SUBCATEGORIES = ["Pre-Health", "Pro-Dev", "Tech"];
+
     const initialType = existingEvent?.event_type ?? "";
     const isWorkshopSub = initialType.startsWith("Workshop - ");
     const isPreset = initialType === "" ? false : PRESET_EVENT_TYPES.some(p => p.label === initialType);
@@ -208,7 +210,7 @@ export default function EventForm({
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-5 sase-creator-page"
+            className="flex flex-col gap-4 sase-creator-page"
         >
             {/* Basic event information */}
             <div className="flex flex-col gap-1">
